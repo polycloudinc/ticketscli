@@ -1,7 +1,10 @@
 {
-  "name": "@aleisium/als-tickets-cli",
+  "name": "@aleisium/tickets",
   "version": "0.0.0",
   "description": "CLI for the Markdown Tickets System",
+  "bin": {
+    "tickets": "tickets.sh"
+  },
   "files": [
     "tickets.sh"
   ],
