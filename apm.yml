@@ -1,0 +1,10 @@
+name: als_sys_app_tickets
+version: 1.0.0
+description: APM project for als_sys_app_tickets
+author: Developer
+dependencies:
+  apm:
+    - ssh://git@forgejo.aleisium.com:222/aleisium/als_sys_app_opmc.git
+  mcp: []
+includes: auto
+scripts: {}

@@ -1,0 +1,17 @@
+{
+  "name": "@aleisium/als-tickets-cli",
+  "version": "0.0.0",
+  "description": "CLI for the Markdown Tickets System",
+  "files": [
+    "tickets.sh"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@forgejo.aleisium.com:222/aleisium/als_sys_app_tickets.git",
+    "directory": "als-tickets-cli/als-tickets-cli-main"
+  },
+  "publishConfig": {
+    "registry": "https://forgejo.aleisium.com/api/packages/aleisium/npm/"
+  },
+  "license": "MIT"
+}

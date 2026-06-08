@@ -1,0 +1,79 @@
+name: Publish Packages
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish:
+    runs-on: docker
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Configure npm for Forgejo package registry
+        run: |
+          npm config set "//forgejo.aleisium.com/api/packages/aleisium/npm/:_authToken" "${{ secrets.NPM_TOKEN }}"
+
+      - name: Derive modver version
+        id: version
+        run: |
+          REVISION=$(git rev-list HEAD --count)
+
+          API="${{ github.server_url }}/api/v1/repos/${{ github.repository }}/actions/variables/VERSION_BUILDNUMBER"
+          CURRENT=$(curl -sS -H "Authorization: token ${{ secrets.REPO_TOKEN }}" "${API}" 2>/dev/null | node -p "JSON.parse(require('fs').readFileSync('/dev/stdin','utf8')).value // 0" 2>/dev/null || echo 0)
+          BUILD=$((CURRENT + 1))
+
+          echo "revision=${REVISION}" >> "$GITHUB_OUTPUT"
+          echo "build=${BUILD}" >> "$GITHUB_OUTPUT"
+          echo "Revision: ${REVISION}, Build: ${BUILD}"
+
+      - name: Publish CLI module
+        run: |
+          set -x
+          REVISION=${{ steps.version.outputs.revision }}
+          BUILD=${{ steps.version.outputs.build }}
+          REGISTRY=https://forgejo.aleisium.com/api/packages/aleisium/npm/
+          COMPONENT_DIR="als-tickets-cli/als-tickets-cli-main"
+
+          echo "=========================================="
+          echo "Publishing: ${COMPONENT_DIR}"
+          echo "=========================================="
+
+          cd "${COMPONENT_DIR}"
+
+          PACKAGE_NAME=$(node -p "require('./package.json').name")
+          CURRENT_VERSION=$(node -p "require('./package.json').version")
+          MAJOR=$(echo "${CURRENT_VERSION}" | cut -d. -f1)
+          MINOR=$(echo "${CURRENT_VERSION}" | cut -d. -f2)
+
+          VERSION="${MAJOR}.${MINOR}.${REVISION}"
+          echo "Package: ${PACKAGE_NAME}"
+          echo "Version: ${VERSION} (build: ${BUILD})"
+
+          npm version "${VERSION}" --no-git-tag-version
+
+          npm publish --registry "${REGISTRY}" --fetch-retries=0
+
+      - name: Increment VERSION_BUILDNUMBER
+        run: |
+          BUILD=${{ steps.version.outputs.build }}
+          API="${{ github.server_url }}/api/v1/repos/${{ github.repository }}/actions/variables/VERSION_BUILDNUMBER"
+          HTTP_CODE=$(curl -sS -o /dev/null -w "%{http_code}" -X PUT -H "Content-Type: application/json" -H "Authorization: token ${{ secrets.REPO_TOKEN }}" -d "{\"value\":\"${BUILD}\"}" "${API}")
+          if [ "${HTTP_CODE}" = "404" ]; then
+            curl -sSf -X POST -H "Content-Type: application/json" -H "Authorization: token ${{ secrets.REPO_TOKEN }}" -d "{\"value\":\"${BUILD}\"}" "${API}"
+          fi
