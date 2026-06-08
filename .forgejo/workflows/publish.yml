@@ -45,6 +45,7 @@ jobs:
       - name: Publish CLI module
         run: |
           set -x
+          source version
           VERSION_REVISION=${{ steps.version.outputs.revision }}
           VERSION_BUILD=${{ steps.version.outputs.build }}
           REGISTRY=https://forgejo.aleisium.com/api/packages/aleisium/npm/
@@ -57,9 +58,6 @@ jobs:
           cd "${COMPONENT_DIR}"
 
           PACKAGE_NAME=$(node -p "require('./package.json').name")
-          CURRENT_VERSION=$(node -p "require('./package.json').version")
-          VERSION_MAJOR=$(echo "${CURRENT_VERSION}" | cut -d. -f1)
-          VERSION_MINOR=$(echo "${CURRENT_VERSION}" | cut -d. -f2)
 
           VERSION="${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_REVISION}"
           echo "Package: ${PACKAGE_NAME}"
