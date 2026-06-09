@@ -1,0 +1,34 @@
+name: Publish Agent Skill (APM)
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'apm.yml'
+      - '.apm/**'
+      - 'als-tickets-skill/**'
+      - '.forgejo/workflows/publish-skills.yaml'
+      - 'version'
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: docker
+    container:
+      image: node:22
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Tag and push
+        run: |
+          source version
+          VERSION_REVISION=$(git rev-list HEAD --count)
+          TAG="v${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_REVISION}"
+          echo "Tagging ${TAG}"
+          git config user.email "ci@forgejo.aleisium.com"
+          git config user.name "Forgejo CI"
+          git tag -a "${TAG}" -m "Release ${TAG}"
+          git push origin "${TAG}"
