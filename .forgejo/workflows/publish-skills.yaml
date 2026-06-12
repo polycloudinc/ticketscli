@@ -21,6 +21,11 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Configure npm for Forgejo registry
+        run: |
+          npm config set "@aleisium:registry" "https://forgejo.aleisium.com/api/packages/aleisium/npm/"
+          npm config set "//forgejo.aleisium.com/api/packages/aleisium/npm/:_authToken" "${{ secrets.NPM_TOKEN }}"
+
       - name: Increment Build Number
         id: build
         uses: https://forgejo.aleisium.com/aleisium/actions/repo-var@master

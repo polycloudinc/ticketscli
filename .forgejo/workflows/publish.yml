@@ -30,6 +30,7 @@ jobs:
 
       - name: Configure npm for Forgejo package registry
         run: |
+          npm config set "@aleisium:registry" "https://forgejo.aleisium.com/api/packages/aleisium/npm/"
           npm config set "//forgejo.aleisium.com/api/packages/aleisium/npm/:_authToken" "${{ secrets.NPM_TOKEN }}"
 
       - name: Increment Build Number
