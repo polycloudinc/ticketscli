@@ -1,0 +1,14 @@
+lockfile_version: '1'
+generated_at: '2026-06-12T16:36:32.000752+00:00'
+apm_version: 0.18.0
+dependencies:
+- repo_url: aleisium/als_sys_app_modver
+  host: forgejo.aleisium.com
+  port: 222
+  resolved_commit: 13e00ca9b7d4f52b76aad127f4de8d8666bed66a
+  package_type: apm_package
+  deployed_files:
+  - .agents/skills/modver-forgejo-workflow
+  content_hash: sha256:38deb95157250ade3033e1a7aa756daf655fcd53d2ada02b7ebb65e09ba02ffb
+local_deployed_files:
+- .agents/skills/tickets

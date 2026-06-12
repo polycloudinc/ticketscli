@@ -6,7 +6,6 @@ on:
     paths:
       - 'apm.yml'
       - '.apm/**'
-      - 'als-tickets-skill/**'
       - '.forgejo/workflows/publish-skills.yaml'
       - 'version'
   workflow_dispatch:
@@ -22,11 +21,17 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Increment Build Number
+        id: build
+        uses: https://forgejo.aleisium.com/aleisium/actions/repo-var@master
+        with:
+          operation: increment
+          name: VERSION_BUILD
+          token: ${{ secrets.REPOSITORY_WRITE }}
+
       - name: Tag and push
         run: |
-          source version
-          VERSION_REVISION=$(git rev-list HEAD --count)
-          TAG="v${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_REVISION}"
+          TAG="v$(npx @aleisium/modver show --style semver)"
           echo "Tagging ${TAG}"
           git config user.email "ci@forgejo.aleisium.com"
           git config user.name "Forgejo CI"

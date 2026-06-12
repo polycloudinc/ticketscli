@@ -2,8 +2,11 @@ name: Publish Packages
 
 on:
   push:
-    branches:
-      - master
+    branches: [master]
+    paths:
+      - 'als-tickets-cli/**'
+      - '.forgejo/workflows/publish.yml'
+      - 'version'
   workflow_dispatch:
 
 permissions:
@@ -29,49 +32,26 @@ jobs:
         run: |
           npm config set "//forgejo.aleisium.com/api/packages/aleisium/npm/:_authToken" "${{ secrets.NPM_TOKEN }}"
 
-      - name: Derive modver version
-        id: version
-        run: |
-          VERSION_REVISION=$(git rev-list HEAD --count)
+      - name: Increment Build Number
+        id: build
+        uses: https://forgejo.aleisium.com/aleisium/actions/repo-var@master
+        with:
+          operation: increment
+          name: VERSION_BUILD
+          token: ${{ secrets.REPOSITORY_WRITE }}
 
-          API="${{ github.server_url }}/api/v1/repos/${{ github.repository }}/actions/variables/VERSION_BUILDNUMBER"
-          CURRENT=$(curl -sS -H "Authorization: token ${{ secrets.REPO_TOKEN }}" "${API}" 2>/dev/null | node -p "JSON.parse(require('fs').readFileSync('/dev/stdin','utf8')).value // 0" 2>/dev/null || echo 0)
-          VERSION_BUILD=$((CURRENT + 1))
-
-          echo "revision=${VERSION_REVISION}" >> "$GITHUB_OUTPUT"
-          echo "build=${VERSION_BUILD}" >> "$GITHUB_OUTPUT"
-          echo "Revision: ${VERSION_REVISION}, Build: ${VERSION_BUILD}"
-
-      - name: Publish CLI module
+      - name: Render Version and Publish
+        working-directory: als-tickets-cli/als-tickets-cli-main
         run: |
           set -x
-          source version
-          VERSION_REVISION=${{ steps.version.outputs.revision }}
-          VERSION_BUILD=${{ steps.version.outputs.build }}
-          REGISTRY=https://forgejo.aleisium.com/api/packages/aleisium/npm/
-          COMPONENT_DIR="als-tickets-cli/als-tickets-cli-main"
-
-          echo "=========================================="
-          echo "Publishing: ${COMPONENT_DIR}"
-          echo "=========================================="
-
-          cd "${COMPONENT_DIR}"
 
           PACKAGE_NAME=$(node -p "require('./package.json').name")
 
-          VERSION="${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_REVISION}"
+          npx @aleisium/modver packagejson --style semver
+
+          VERSION="$(npx @aleisium/modver show --style semver)"
+          BUILD="${{ steps.build.outputs.current }}"
           echo "Package: ${PACKAGE_NAME}"
-          echo "Version: ${VERSION} (build: ${VERSION_BUILD})"
+          echo "Version: ${VERSION} (build: ${BUILD})"
 
-          npm version "${VERSION}" --no-git-tag-version
-
-          npm publish --registry "${REGISTRY}" --fetch-retries=0
-
-      - name: Increment VERSION_BUILDNUMBER
-        run: |
-          VERSION_BUILD=${{ steps.version.outputs.build }}
-          API="${{ github.server_url }}/api/v1/repos/${{ github.repository }}/actions/variables/VERSION_BUILDNUMBER"
-          HTTP_CODE=$(curl -sS -o /dev/null -w "%{http_code}" -X PUT -H "Content-Type: application/json" -H "Authorization: token ${{ secrets.REPO_TOKEN }}" -d "{\"value\":\"${VERSION_BUILD}\"}" "${API}")
-          if [ "${HTTP_CODE}" = "404" ]; then
-            curl -sSf -X POST -H "Content-Type: application/json" -H "Authorization: token ${{ secrets.REPO_TOKEN }}" -d "{\"value\":\"${VERSION_BUILD}\"}" "${API}"
-          fi
+          npm publish --fetch-retries=0
