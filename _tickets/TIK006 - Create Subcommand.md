@@ -7,7 +7,7 @@ code: TIK006
 aliases:
   - TIK006
 name: Create Subcommand
-ticket_status: "[[Backlog]]"
+ticket_status: "[[Complete]]"
 ticket_priority: Medium
 ---
 # Introduction
