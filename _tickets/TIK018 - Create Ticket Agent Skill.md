@@ -7,7 +7,7 @@ code: TIK018
 aliases:
   - TIK018
 name: Create Ticket Agent Skill
-ticket_status: "[[Backlog]]"
+ticket_status: "[[Complete]]"
 ticket_priority: Medium
 ---
 
