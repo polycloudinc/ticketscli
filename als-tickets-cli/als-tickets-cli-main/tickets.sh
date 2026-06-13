@@ -8,6 +8,7 @@ Usage: tickets <subcommand> [options]
 Subcommands:
   list        List tickets from the tickets directory
   validate    Validate a ticket's front matter against the schema
+  create      Create a new ticket file
 
 Options:
   -h, --help  Show this help message
@@ -35,6 +36,17 @@ Options:
   -t, --ticket <code>       Validate a single ticket by code
   -d, --tickets-dir <path>  Path to tickets directory (default: _tickets)
   -h, --help                Show this help message
+EOF
+}
+
+create_usage() {
+  cat <<EOF
+Usage: tickets create --name <subject> [options]
+
+Options:
+  -n, --name <subject>       Subject/name for the new ticket (required)
+  -d, --tickets-dir <path>   Path to tickets directory (default: _tickets)
+  -h, --help                  Show this help message
 EOF
 }
 
@@ -150,6 +162,124 @@ cmd_list() {
 
     printf "%-8s %-50s %-12s\n" "$number" "$subject" "$status"
   done
+}
+
+cmd_create() {
+  local tickets_dir="_tickets"
+  local ticket_name=""
+
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      -n|--name)
+        [[ -z "${2:-}" ]] && { echo "Error: --name requires a subject argument" >&2; exit 1; }
+        ticket_name="$2"
+        shift
+        ;;
+      -d|--tickets-dir)
+        [[ -z "${2:-}" ]] && { echo "Error: --tickets-dir requires a path argument" >&2; exit 1; }
+        tickets_dir="$2"
+        shift
+        ;;
+      -h|--help)
+        create_usage
+        return 0
+        ;;
+      -*)
+        echo "Unknown option: $1" >&2
+        echo "Run 'tickets create --help' for usage." >&2
+        exit 1
+        ;;
+      *)
+        echo "Error: unexpected argument '$1'" >&2
+        create_usage
+        exit 1
+        ;;
+    esac
+    shift
+  done
+
+  if [[ -z "$ticket_name" ]]; then
+    echo "Error: --name is required" >&2
+    create_usage
+    exit 1
+  fi
+
+  local repo_root
+  repo_root="$(pwd)"
+  while [[ ! -f "$repo_root/_templates/Ticket.md" && "$repo_root" != "/" ]]; do
+    repo_root="$(dirname "$repo_root")"
+  done
+
+  local template_file="$repo_root/_templates/Ticket.md"
+  if [[ ! -f "$template_file" ]]; then
+    echo "Error: template not found. Expected _templates/Ticket.md relative to the project root." >&2
+    exit 1
+  fi
+
+  local resolved_dir
+  if [[ "$tickets_dir" == /* ]]; then
+    resolved_dir="$tickets_dir"
+  else
+    resolved_dir="$repo_root/$tickets_dir"
+  fi
+
+  local settings_file="$resolved_dir/settings.yaml"
+  local code_prefix
+  if [[ -f "$settings_file" ]]; then
+    code_prefix=$(sed -n 's/^code_prefix: *//p' "$settings_file")
+  else
+    echo "Error: $resolved_dir/settings.yaml not found" >&2
+    exit 1
+  fi
+
+  if [[ -z "$code_prefix" ]]; then
+    echo "Error: code_prefix not set in $resolved_dir/settings.yaml" >&2
+    exit 1
+  fi
+
+  local max_num=0
+  for ticket_file in "$resolved_dir"/*.md; do
+    [[ -f "$ticket_file" ]] || continue
+    local filename
+    filename=$(basename "$ticket_file")
+    if [[ "$filename" =~ ^${code_prefix}([0-9]{3}) ]]; then
+      local num
+      num=$((10#${BASH_REMATCH[1]}))
+      [[ $num -gt $max_num ]] && max_num=$num
+    fi
+  done
+
+  local next_num=$((max_num + 1))
+  local next_code
+  next_code=$(printf "%s%03d" "$code_prefix" "$next_num")
+
+  if ls "$resolved_dir/${next_code}"* &>/dev/null 2>&1; then
+    echo "Error: ticket with code '$next_code' already exists" >&2
+    exit 1
+  fi
+
+  local output_file="$resolved_dir/${next_code} - ${ticket_name}.md"
+
+  local template_body
+  template_body=$(awk '/^---$/{c++; next} c>=2' "$template_file")
+
+  {
+    printf '%s\n' "---"
+    printf '%s\n' 'template: "[[Ticket]]"'
+    printf '%s\n' "kind: ticket"
+    printf '%s\n' "tags:"
+    printf '%s\n' "  - ticket"
+    printf '%s\n' "code: $next_code"
+    printf '%s\n' "aliases:"
+    printf '%s\n' "  - $next_code"
+    printf '%s\n' "name: $ticket_name"
+    printf '%s\n' 'ticket_status: "[[Backlog]]"'
+    printf '%s\n' "ticket_priority: Medium"
+    printf '%s\n' "---"
+    printf '%s' "$template_body"
+  } > "$output_file"
+
+  echo "Created: $output_file"
 }
 
 cmd_validate() {
@@ -425,6 +555,9 @@ case "$subcommand" in
     ;;
   validate)
     cmd_validate "$@"
+    ;;
+  create)
+    cmd_create "$@"
     ;;
   *)
     echo "Unknown subcommand: $subcommand" >&2

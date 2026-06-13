@@ -116,6 +116,38 @@ The command checks three categories of deviations:
 
 Deviations are printed to stderr as bullet points. Exit code 0 if valid, 1 if deviations found.
 
+## Create Subcommand
+
+`tickets create --name <subject>` creates a new ticket file from the template, auto-assigning the next ticket code.
+
+| Flag                | Short | Required | Description                                          |
+|---------------------|-------|----------|------------------------------------------------------|
+| `--name <subject>`  | `-n`  | yes      | Subject/name for the new ticket                      |
+| `--tickets-dir`     | `-d`  | no       | Path to tickets directory (default: `_tickets`)      |
+| `--help`            | `-h`  | no       | Show usage text                                      |
+
+```
+tickets create --name "Add Login Page"     # create with full flag
+tickets create -n "Fix Bug"                # create with short flag
+tickets create -n "Custom" -d /other/dir   # create in a custom directory
+```
+
+### Behavior
+
+The command locates the project root by walking up from the current directory to find `_templates/Ticket.md` (same approach as `cmd_validate`). It reads the `code_prefix` from `<tickets-dir>/settings.yaml` and scans existing ticket filenames to find the highest numeric suffix, then generates the next code as `<Prefix><NNN>` (zero-padded to 3 digits, starting at 001 if no tickets exist).
+
+The template body (everything after the frontmatter) is copied into the new file. The frontmatter is populated with:
+
+| Field              | Value                       |
+|--------------------|-----------------------------|
+| `code`             | Auto-assigned next code     |
+| `aliases`          | Single entry matching code  |
+| `name`             | Value from `--name`         |
+| `ticket_status`    | `[[Backlog]]`               |
+| `ticket_priority`  | `Medium`                    |
+
+If `settings.yaml` is missing or `code_prefix` is not set, the command exits with an error. If a ticket with the generated code already exists, the command exits with an error.
+
 ## Agent Skills
 
 The following agent skills are available to assist with ticket workflows:
