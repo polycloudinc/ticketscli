@@ -70,7 +70,7 @@ cmd_list() {
         [[ -z "${2:-}" ]] && { echo "Error: -s/--status requires a status value" >&2; exit 1; }
         [[ -n "$filter" ]] && { echo "Error: only one filter option may be specified" >&2; exit 1; }
         status_val_lower=$(echo "$2" | tr '[:upper:]' '[:lower:]')
-        known=(backlog ready "in progress" complete duplicate "won't fix")
+        known=(backlog ready inprogress complete duplicate wontfix)
         resolved=""
         for k in "${known[@]}"; do
           if [[ "$k" == "$status_val_lower" ]]; then
@@ -86,7 +86,7 @@ cmd_list() {
           if [[ ${#matches[@]} -eq 1 ]]; then
             resolved="${matches[0]}"
           elif [[ ${#matches[@]} -eq 0 ]]; then
-            echo "Error: invalid status '$2'. Valid statuses: Backlog, Ready, \"In Progress\", Complete, Duplicate, Won't Fix" >&2
+            echo "Error: invalid status '$2'. Valid statuses: backlog, ready, inprogress, complete, duplicate, wontfix" >&2
             exit 1
           else
             echo "Error: ambiguous status '$2'. Matches: ${matches[*]}" >&2
@@ -130,7 +130,7 @@ cmd_list() {
       done)    [[ "$status" != "Complete" && "$status" != "Duplicate" && "$status" != "Won't Fix" ]] && continue ;;
       status:*)
         expected="${filter#status:}"
-        status_lower=$(echo "$status" | tr '[:upper:]' '[:lower:]')
+        status_lower=$(echo "$status" | tr '[:upper:]' '[:lower:]' | tr -d ' ')
         [[ "$status_lower" != "$expected" ]] && continue
         ;;
     esac

@@ -47,7 +47,7 @@ The `ticket_status` field accepts one of the following wiki-linked values:
 | `--group backlog`        | `-g`  | `[[Backlog]]`                             |
 | `--group active`         | `-g`  | `[[Ready]]`, `[[In Progress]]`            |
 | `--group done`           | `-g`  | `[[Complete]]`, `[[Duplicate]]`, `[[Won't Fix]]` |
-| `--status <value>`       | `-s`  | Tickets whose `ticket_status` matches the given value |
+| `--status <value>`       | `-s`  | Tickets whose `ticket_status` matches the given value. Valid values (case-insensitive, single-word): `backlog`, `ready`, `inprogress`, `complete`, `duplicate`, `wontfix`. |
 
 Only one filter (`--group` or `--status`) may be specified at a time.
 
@@ -56,7 +56,7 @@ Only one filter (`--group` or `--status`) may be specified at a time.
 Both `--group` and `--status` accept case-insensitive input and distinguishing substrings (a substring that uniquely identifies one of the valid values).
 
 - `--group act` resolves to `active`, `--group BACKLOG` resolves to `backlog`, `--group don` resolves to `done`
-- `--status prog` resolves to `in progress`, `--status READY` resolves to `ready`, `--status won` resolves to `won't fix`
+- `--status prog` resolves to `inprogress`, `--status READY` resolves to `ready`, `--status won` resolves to `wontfix`
 - An exact match takes priority over substring matching (e.g. `--group backlog` matches even though `backlog` is also a substring of… itself)
 - If the input is ambiguous (matches multiple values), the command prints an error listing the candidates
 - If the input does not match any value, the command prints an error listing all valid values
