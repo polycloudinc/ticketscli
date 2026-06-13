@@ -60,3 +60,22 @@ Both `--group` and `--status` accept case-insensitive input and distinguishing s
 - An exact match takes priority over substring matching (e.g. `--group backlog` matches even though `backlog` is also a substring of… itself)
 - If the input is ambiguous (matches multiple values), the command prints an error listing the candidates
 - If the input does not match any value, the command prints an error listing all valid values
+
+## Agent Skills
+
+The following agent skills are available to assist with ticket workflows:
+
+| Skill              | Description                                                                 | Invoked When                                                                   |
+|--------------------|-----------------------------------------------------------------------------|--------------------------------------------------------------------------------|
+| `list-tickets`     | Lists tickets from `_tickets/` with optional filtering by group or status.  | User asks to list or show tickets.                                             |
+| `review-ticket`    | Reviews a ticket against the current state of the codebase for issues.      | User asks to review a ticket.                                                  |
+| `execution-plan`   | Creates and manages checkbox-based execution plans with optional phasing.   | User asks to create, update, or check off execution plan items in a ticket.    |
+
+### Execution Plan Phasing
+
+The `execution-plan` skill splits tasks into named phases (each a level-three heading) when:
+
+- The total number of tasks exceeds **5**, or
+- Tasks touch **logically different parts of the system** that can be completed and tested individually.
+
+Otherwise, tasks remain as a flat linear checkbox list under a single `# Execution Plan` heading.
