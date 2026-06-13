@@ -20,6 +20,7 @@ Usage: tickets list [options]
 Options:
   -t, --tickets-dir <path>  Path to tickets directory (default: _tickets)
   -g, --group <backlog|active|done>  Filter tickets by status group
+  -s, --status <status>    Filter by status (exact or distinguishing substring, case-insensitive)
   -h, --help                Show this help message
 EOF
 }
@@ -37,11 +38,62 @@ cmd_list() {
         ;;
       -g|--group)
         [[ -z "${2:-}" ]] && { echo "Error: -g/--group requires a value (backlog, active, or done)" >&2; exit 1; }
-        [[ -n "$filter" ]] && { echo "Error: only one -g/--group value may be specified" >&2; exit 1; }
-        case "$2" in
-          backlog|active|done) filter="$2" ;;
-          *) echo "Error: invalid group '$2'. Valid groups: backlog, active, done" >&2; exit 1 ;;
-        esac
+        [[ -n "$filter" ]] && { echo "Error: only one filter option may be specified" >&2; exit 1; }
+        group_val_lower=$(echo "$2" | tr '[:upper:]' '[:lower:]')
+        known=(backlog active done)
+        resolved=""
+        for k in "${known[@]}"; do
+          if [[ "$k" == "$group_val_lower" ]]; then
+            resolved="$k"
+            break
+          fi
+        done
+        if [[ -z "$resolved" ]]; then
+          matches=()
+          for k in "${known[@]}"; do
+            [[ "$k" == *"$group_val_lower"* ]] && matches+=("$k")
+          done
+          if [[ ${#matches[@]} -eq 1 ]]; then
+            resolved="${matches[0]}"
+          elif [[ ${#matches[@]} -eq 0 ]]; then
+            echo "Error: invalid group '$2'. Valid groups: backlog, active, done" >&2
+            exit 1
+          else
+            echo "Error: ambiguous group '$2'. Matches: ${matches[*]}" >&2
+            exit 1
+          fi
+        fi
+        filter="$resolved"
+        shift
+        ;;
+      -s|--status)
+        [[ -z "${2:-}" ]] && { echo "Error: -s/--status requires a status value" >&2; exit 1; }
+        [[ -n "$filter" ]] && { echo "Error: only one filter option may be specified" >&2; exit 1; }
+        status_val_lower=$(echo "$2" | tr '[:upper:]' '[:lower:]')
+        known=(backlog ready "in progress" complete duplicate "won't fix")
+        resolved=""
+        for k in "${known[@]}"; do
+          if [[ "$k" == "$status_val_lower" ]]; then
+            resolved="$k"
+            break
+          fi
+        done
+        if [[ -z "$resolved" ]]; then
+          matches=()
+          for k in "${known[@]}"; do
+            [[ "$k" == *"$status_val_lower"* ]] && matches+=("$k")
+          done
+          if [[ ${#matches[@]} -eq 1 ]]; then
+            resolved="${matches[0]}"
+          elif [[ ${#matches[@]} -eq 0 ]]; then
+            echo "Error: invalid status '$2'. Valid statuses: Backlog, Ready, \"In Progress\", Complete, Duplicate, Won't Fix" >&2
+            exit 1
+          else
+            echo "Error: ambiguous status '$2'. Matches: ${matches[*]}" >&2
+            exit 1
+          fi
+        fi
+        filter="status:$resolved"
         shift
         ;;
       -h|--help)
@@ -76,6 +128,11 @@ cmd_list() {
       backlog) [[ "$status" != "Backlog" ]] && continue ;;
       active)  [[ "$status" != "Ready" && "$status" != "In Progress" ]] && continue ;;
       done)    [[ "$status" != "Complete" && "$status" != "Duplicate" && "$status" != "Won't Fix" ]] && continue ;;
+      status:*)
+        expected="${filter#status:}"
+        status_lower=$(echo "$status" | tr '[:upper:]' '[:lower:]')
+        [[ "$status_lower" != "$expected" ]] && continue
+        ;;
     esac
 
     printf "%-8s %-50s %-12s\n" "$number" "$subject" "$status"
