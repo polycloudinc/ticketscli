@@ -9,6 +9,7 @@ aliases:
 name: Create Subcommand
 ticket_status: "[[Complete]]"
 ticket_priority: Medium
+ticket_rank: 6
 ---
 # Introduction
 

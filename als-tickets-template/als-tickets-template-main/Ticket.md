@@ -8,6 +8,7 @@ aliases:
 name:
 ticket_status:
 ticket_priority:
+ticket_rank:
 ---
 # Introduction
 

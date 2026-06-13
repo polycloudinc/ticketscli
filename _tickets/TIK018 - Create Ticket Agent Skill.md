@@ -9,6 +9,7 @@ aliases:
 name: Create Ticket Agent Skill
 ticket_status: "[[Complete]]"
 ticket_priority: Medium
+ticket_rank: 18
 ---
 
 # Introduction

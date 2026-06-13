@@ -9,6 +9,7 @@ aliases:
 name: Group Switch for List Subcommand
 ticket_status: "[[Complete]]"
 ticket_priority: Medium
+ticket_rank: 9
 ---
 
 # Introduction

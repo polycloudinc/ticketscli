@@ -9,6 +9,7 @@ aliases:
 name: Standardized About Section in Skills
 ticket_status: "[[Complete]]"
 ticket_priority: Medium
+ticket_rank: 15
 ---
 
 # Introduction
