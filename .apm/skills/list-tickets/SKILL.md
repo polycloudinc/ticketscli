@@ -6,6 +6,10 @@ description: Use when the user asks to list tickets, show tickets, or similar li
 
 The tickets system manages work items as Markdown files in the `_tickets/` directory, each with YAML frontmatter containing fields such as `code`, `name`, `ticket_status`, `ticket_priority`, and `ticket_rank`. Tickets progress through statuses: `[[Backlog]]` (unscheduled), `[[Ready]]` (scheduled), `[[In Progress]]` (active work), `[[Complete]]` (done), `[[Duplicate]]`, and `[[Won't Fix]]`. A `tickets` CLI provides `list`, `validate`, and `create` subcommands for managing tickets.
 
+The `tickets` CLI is published as `@aleisium/tickets`. Before running any `tickets` command, determine the correct invocation:
+- If `tickets.sh` exists at the repository root, use `bash tickets.sh`.
+- Otherwise, use `npx @aleisium/tickets`.
+
 # List Tickets
 
 The `tickets list` subcommand displays tickets from the `_tickets/` directory, with optional filtering by status group or specific status.
@@ -79,4 +83,4 @@ The following natural-language aliases map to `--status`:
 
 - The status field in ticket frontmatter is spelled `[[Backlog]]` (single 'g'), but the CLI group flag is `backlog` (double 'g'). Use the CLI spelling (`backlog`, double 'g') for `--group`.
 - Status values are case-insensitive and single-word: `backlog`, `ready`, `inprogress`, `complete`, `duplicate`, `wontfix`.
-- If no keyword or recognizable alias is given, run `tickets list` with no filter.
+- If no keyword or recognizable alias is given, run the tickets CLI `list` subcommand with no filter.
