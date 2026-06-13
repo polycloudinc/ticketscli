@@ -4,7 +4,9 @@ description: Agent skill for working with the tickets system
 author: Developer
 dependencies:
   apm:
-    - ssh://git@forgejo.aleisium.com:222/aleisium/als_sys_app_modver.git
   mcp: []
+devDependencies:
+  apm:
+    - ssh://git@forgejo.aleisium.com:222/aleisium/als_sys_app_modver.git
 includes: auto
 scripts: {}
