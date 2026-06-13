@@ -6,7 +6,6 @@ tags:
 code:
 aliases:
 name:
-subjects:
 ticket_status:
 ticket_priority:
 ---

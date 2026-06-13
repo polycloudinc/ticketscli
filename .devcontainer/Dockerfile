@@ -19,4 +19,7 @@ RUN curl -fsSL https://opencode.ai/install | bash \
   && cp /root/.opencode/bin/opencode /usr/local/bin/opencode \
   && chmod 755 /usr/local/bin/opencode
 
+RUN curl -fsSL https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -o /usr/local/bin/yq \
+  && chmod 755 /usr/local/bin/yq
+
 CMD ["/bin/bash"]

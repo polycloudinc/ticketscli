@@ -7,6 +7,7 @@ Usage: tickets <subcommand> [options]
 
 Subcommands:
   list        List tickets from the tickets directory
+  validate    Validate a ticket's front matter against the schema
 
 Options:
   -h, --help  Show this help message
@@ -18,9 +19,21 @@ list_usage() {
 Usage: tickets list [options]
 
 Options:
-  -t, --tickets-dir <path>  Path to tickets directory (default: _tickets)
+  -d, --tickets-dir <path>  Path to tickets directory (default: _tickets)
   -g, --group <backlog|active|done>  Filter tickets by status group
   -s, --status <status>    Filter by status (exact or distinguishing substring, case-insensitive)
+  -h, --help                Show this help message
+EOF
+}
+
+validate_usage() {
+  cat <<EOF
+Usage: tickets validate [--all | --ticket <code>] [options]
+
+Options:
+  -a, --all                 Validate all tickets
+  -t, --ticket <code>       Validate a single ticket by code
+  -d, --tickets-dir <path>  Path to tickets directory (default: _tickets)
   -h, --help                Show this help message
 EOF
 }
@@ -31,7 +44,7 @@ cmd_list() {
 
   while [[ $# -gt 0 ]]; do
     case "$1" in
-      -t|--tickets-dir)
+      -d|--tickets-dir)
         [[ -z "${2:-}" ]] && { echo "Error: --tickets-dir requires a path argument" >&2; exit 1; }
         tickets_dir="$2"
         shift
@@ -139,6 +152,262 @@ cmd_list() {
   done
 }
 
+cmd_validate() {
+  local tickets_dir="_tickets"
+  local mode=""       # "all" or "single"
+  local ticket_code=""
+
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      -d|--tickets-dir)
+        [[ -z "${2:-}" ]] && { echo "Error: --tickets-dir requires a path argument" >&2; exit 1; }
+        tickets_dir="$2"
+        shift
+        ;;
+      -a|--all)
+        [[ -n "$mode" ]] && { echo "Error: --all and --ticket are mutually exclusive" >&2; exit 1; }
+        mode="all"
+        ;;
+      -t|--ticket)
+        [[ -z "${2:-}" ]] && { echo "Error: --ticket requires a ticket code" >&2; exit 1; }
+        [[ -n "$mode" ]] && { echo "Error: --all and --ticket are mutually exclusive" >&2; exit 1; }
+        mode="single"
+        ticket_code="$2"
+        shift
+        ;;
+      -h|--help)
+        validate_usage
+        return 0
+        ;;
+      -*)
+        echo "Unknown option: $1" >&2
+        echo "Run 'tickets validate --help' for usage." >&2
+        exit 1
+        ;;
+      *)
+        # Backward compat: positional ticket code
+        if [[ -z "$mode" ]]; then
+          mode="single"
+          ticket_code="$1"
+        else
+          echo "Error: unexpected argument '$1'" >&2
+          validate_usage
+          exit 1
+        fi
+        ;;
+    esac
+    shift
+  done
+
+  if [[ -z "$mode" ]]; then
+    echo "Error: --all or --ticket is required" >&2
+    validate_usage
+    exit 1
+  fi
+
+  # Check yq early
+  if ! command -v yq &>/dev/null; then
+    echo "Error: yq is required but not installed. Install it from https://github.com/mikefarah/yq" >&2
+    exit 1
+  fi
+
+  local yq_version
+  yq_version=$(yq --version 2>/dev/null || true)
+  if [[ "$yq_version" != *mikefarah* ]]; then
+    echo "Error: mikefarah/yq (Go) is required. Found: ${yq_version:-unknown}" >&2
+    exit 1
+  fi
+
+  # Find repo root
+  local repo_root
+  repo_root="$(pwd)"
+  while [[ ! -f "$repo_root/_templates/Ticket.md" && "$repo_root" != "/" ]]; do
+    repo_root="$(dirname "$repo_root")"
+  done
+
+  local template_file="$repo_root/_templates/Ticket.md"
+  if [[ ! -f "$template_file" ]]; then
+    echo "Error: template not found. Expected _templates/Ticket.md relative to the project root." >&2
+    exit 1
+  fi
+
+  local settings_file="$repo_root/$tickets_dir/settings.yaml"
+  local code_prefix
+  if [[ -f "$settings_file" ]]; then
+    code_prefix=$(yq eval '.code_prefix // "TIK"' "$settings_file" 2>/dev/null) || code_prefix="TIK"
+  else
+    code_prefix="TIK"
+  fi
+
+  local total_errors=0
+  local ticket_count=0
+
+  if [[ "$mode" == "all" ]]; then
+    local total_tickets=0
+    for ticket_file in "$tickets_dir"/*.md; do
+      [[ "$ticket_file" == "$tickets_dir/*.md" ]] && break
+      [[ -f "$ticket_file" ]] || continue
+      filename=$(basename "$ticket_file")
+      number="${filename%% *}"
+      total_tickets=$((total_tickets + 1))
+      set +e
+      validate_one "$ticket_file" "$template_file" "$code_prefix" "$number"
+      total_errors=$((total_errors + $?))
+      set -e
+      ticket_count=$((ticket_count + 1))
+    done
+    if [[ $total_tickets -eq 0 ]]; then
+      echo "Error: no tickets found in $tickets_dir" >&2
+      exit 1
+    fi
+  else
+    local matches=()
+    for f in "$tickets_dir"/"$ticket_code"*.md; do
+      [[ "$f" == "$tickets_dir/$ticket_code*.md" ]] && break
+      [[ -f "$f" ]] && matches+=("$f")
+    done
+    if [[ ${#matches[@]} -eq 0 ]]; then
+      echo "Error: no ticket found for code '$ticket_code'" >&2
+      exit 1
+    elif [[ ${#matches[@]} -gt 1 ]]; then
+      echo "Error: multiple tickets match code '$ticket_code': ${matches[*]}" >&2
+      exit 1
+    fi
+    local ticket_file="${matches[0]}"
+    filename=$(basename "$ticket_file")
+    number="${filename%% *}"
+    set +e
+    validate_one "$ticket_file" "$template_file" "$code_prefix" "$number"
+    total_errors=$?
+    set -e
+    ticket_count=1
+  fi
+
+  if [[ $total_errors -eq 0 ]]; then
+    if [[ "$mode" == "all" ]]; then
+      echo "$ticket_count ticket(s) validated, no deviations found."
+    fi
+    return 0
+  else
+    return 1
+  fi
+}
+
+validate_one() {
+  local ticket_file="$1"
+  local template_file="$2"
+  local code_prefix="$3"
+  local ticket_code="$4"
+  local errors=0
+
+  echo "Validating: $ticket_file" >&2
+
+  # Extract template keys
+  local template_keys
+  template_keys=$(yq eval --front-matter extract 'keys | .[]' "$template_file" 2>/dev/null || true)
+
+  # Extract ticket keys
+  local ticket_keys
+  ticket_keys=$(yq eval --front-matter extract 'keys | .[]' "$ticket_file" 2>/dev/null || true)
+
+  # Missing fields (in template but not in ticket)
+  while IFS= read -r tkey; do
+    [[ -z "$tkey" ]] && continue
+    if ! echo "$ticket_keys" | grep -Fxq "$tkey"; then
+      echo "- Missing required field: $tkey" >&2
+      errors=$((errors + 1))
+    fi
+  done <<< "$template_keys"
+
+  # Unknown fields (in ticket but not in template)
+  while IFS= read -r tkey; do
+    [[ -z "$tkey" ]] && continue
+    if ! echo "$template_keys" | grep -Fxq "$tkey"; then
+      echo "- Unknown field: $tkey" >&2
+      errors=$((errors + 1))
+    fi
+  done <<< "$ticket_keys"
+
+  # Value constraint validations (hardcoded)
+  local val
+
+  # template must be [[Ticket]]
+  val=$(yq eval --front-matter extract '.template // ""' "$ticket_file" 2>/dev/null || true)
+  if [[ "$val" != "[[Ticket]]" ]]; then
+    echo "- Invalid value for template: expected '[[Ticket]]', got '$val'" >&2
+    errors=$((errors + 1))
+  fi
+
+  # kind must be ticket
+  val=$(yq eval --front-matter extract '.kind // ""' "$ticket_file" 2>/dev/null || true)
+  if [[ "$val" != "ticket" ]]; then
+    echo "- Invalid value for kind: expected 'ticket', got '$val'" >&2
+    errors=$((errors + 1))
+  fi
+
+  # code must match <prefix>\d{3}
+val=$(yq eval --front-matter extract '.code // ""' "$ticket_file" 2>/dev/null || true)
+  if ! [[ "$val" =~ ^${code_prefix}[0-9]{3}$ ]]; then
+    echo "- Invalid value for code: expected pattern '${code_prefix}\\d{3}', got '$val'" >&2
+    errors=$((errors + 1))
+  fi
+
+  # name must be non-empty
+  val=$(yq eval --front-matter extract '.name // ""' "$ticket_file" 2>/dev/null || true)
+  if [[ -z "$val" ]]; then
+    echo "- Invalid value for name: must be non-empty" >&2
+    errors=$((errors + 1))
+  fi
+
+  # aliases must contain exactly one entry matching code
+  local ticket_code_val
+  ticket_code_val=$(yq eval --front-matter extract '.code // ""' "$ticket_file" 2>/dev/null || true)
+  local alias_count
+  alias_count=$(yq eval --front-matter extract '.aliases | length' "$ticket_file" 2>/dev/null || true)
+  if [[ "$alias_count" != "1" ]]; then
+    echo "- Invalid value for aliases: expected exactly 1 entry, got $alias_count" >&2
+    errors=$((errors + 1))
+  else
+    val=$(yq eval --front-matter extract '.aliases[0] // ""' "$ticket_file" 2>/dev/null || true)
+    if [[ "$val" != "$ticket_code_val" ]]; then
+      echo "- Invalid value for aliases: expected '$ticket_code_val', got '$val'" >&2
+      errors=$((errors + 1))
+    fi
+  fi
+
+  # ticket_status must be one of the six known statuses
+  val=$(yq eval --front-matter extract '.ticket_status // ""' "$ticket_file" 2>/dev/null || true)
+  local valid_statuses=("[[Backlog]]" "[[Ready]]" "[[In Progress]]" "[[Complete]]" "[[Duplicate]]" "[[Won't Fix]]")
+  local status_ok=0
+  for s in "${valid_statuses[@]}"; do
+    if [[ "$val" == "$s" ]]; then
+      status_ok=1
+      break
+    fi
+  done
+  if [[ $status_ok -eq 0 ]]; then
+    echo "- Invalid value for ticket_status: got '$val'" >&2
+    errors=$((errors + 1))
+  fi
+
+  # ticket_priority must be one of Low, Medium, High, Critical
+  val=$(yq eval --front-matter extract '.ticket_priority // ""' "$ticket_file" 2>/dev/null || true)
+  local valid_priorities=("Low" "Medium" "High" "Critical")
+  local pri_ok=0
+  for p in "${valid_priorities[@]}"; do
+    if [[ "$val" == "$p" ]]; then
+      pri_ok=1
+      break
+    fi
+  done
+  if [[ $pri_ok -eq 0 ]]; then
+    echo "- Invalid value for ticket_priority: got '$val'" >&2
+    errors=$((errors + 1))
+  fi
+
+  return $errors
+}
+
 if [[ $# -eq 0 ]]; then
   usage
   exit 0
@@ -153,6 +422,9 @@ case "$subcommand" in
     ;;
   list)
     cmd_list "$@"
+    ;;
+  validate)
+    cmd_validate "$@"
     ;;
   *)
     echo "Unknown subcommand: $subcommand" >&2

@@ -2,6 +2,21 @@
 
 Tickets are Markdown files in the `_tickets/` directory with YAML frontmatter.
 
+## Prerequisites
+
+The `validate` subcommand requires **mikefarah/yq** (the Go implementation). The Python `yq` (`kislyuk/yq`, available via `apt`) is not compatible.
+
+```bash
+# Install the correct yq (Go)
+sudo wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/local/bin/yq
+sudo chmod +x /usr/local/bin/yq
+
+# Verify
+yq --version  # Should show: yq (https://github.com/mikefarah/yq/) version v4.x.x
+```
+
+The dev container Dockerfile installs `yq` automatically.
+
 ## Filename Convention
 
 ```
@@ -60,6 +75,46 @@ Both `--group` and `--status` accept case-insensitive input and distinguishing s
 - An exact match takes priority over substring matching (e.g. `--group backlog` matches even though `backlog` is also a substring of… itself)
 - If the input is ambiguous (matches multiple values), the command prints an error listing the candidates
 - If the input does not match any value, the command prints an error listing all valid values
+
+## Validate Subcommand
+
+`tickets validate <ticket-code>` validates a ticket's YAML front matter against the standard ticket schema.
+
+```
+tickets validate TIK001                 # validate a single ticket
+tickets validate -t ./_tickets TIK001   # specify tickets directory
+```
+
+### Schema Source
+
+The mandatory field set is derived from the ticket template at `_templates/Ticket.md`. Every field in the template must be present in each ticket.
+
+The project code prefix is read from `_tickets/settings.yaml`:
+
+```yaml
+code_prefix: TIK
+```
+
+### Validation Checks
+
+The command checks three categories of deviations:
+
+1. **Missing fields** — fields in the template but absent from the ticket
+2. **Unknown fields** — fields in the ticket but not in the template
+3. **Invalid values** — hardcoded constraints for specific fields
+
+| Field             | Constraint                                                       |
+|-------------------|------------------------------------------------------------------|
+| `template`        | Must be `"[[Ticket]]"`                                          |
+| `kind`            | Must be `ticket`                                                 |
+| `code`            | Must match `<code_prefix>\d{3}` (e.g. `TIK001`)                 |
+| `name`            | Must be non-empty                                                |
+| `aliases`         | Must contain exactly one entry matching `code`                    |
+| `ticket_status`   | One of: `[[Backlog]]`, `[[Ready]]`, `[[In Progress]]`, `[[Complete]]`, `[[Duplicate]]`, `[[Won't Fix]]` |
+| `ticket_priority` | One of: `Low`, `Medium`, `High`, `Critical`                      |
+| `tags`            | No value constraint                                              |
+
+Deviations are printed to stderr as bullet points. Exit code 0 if valid, 1 if deviations found.
 
 ## Agent Skills
 
