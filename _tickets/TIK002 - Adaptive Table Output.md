@@ -7,7 +7,6 @@ code: TIK002
 aliases:
   - TIK002
 name: Adaptive Table Output
-subjects: cli
 ticket_status: "[[Backlog]]"
 ticket_priority: Medium
 ---

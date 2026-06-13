@@ -7,10 +7,8 @@ code: TIK016
 aliases:
   - TIK016
 name: Execution Plan Agent Skill
-subjects: agent
 ticket_status: "[[Complete]]"
 ticket_priority: Medium
-ticket_rank: 16
 ---
 
 # Introduction

@@ -7,7 +7,6 @@ code: TIK001
 aliases:
   - TIK001
 name: List Subcommand
-subjects: cli
 ticket_status: "[[Complete]]"
 ticket_priority: Medium
 ---

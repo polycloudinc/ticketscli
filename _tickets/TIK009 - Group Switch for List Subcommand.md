@@ -7,7 +7,6 @@ code: TIK009
 aliases:
   - TIK009
 name: Group Switch for List Subcommand
-subjects: cli
 ticket_status: "[[Complete]]"
 ticket_priority: Medium
 ---

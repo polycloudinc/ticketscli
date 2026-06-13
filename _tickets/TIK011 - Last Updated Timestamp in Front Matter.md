@@ -7,10 +7,8 @@ code: TIK011
 aliases:
   - TIK011
 name: Last Updated Timestamp in Front Matter
-subjects: cli
 ticket_status: "[[Backlog]]"
 ticket_priority: Medium
-ticket_rank: 11
 ---
 # Introduction
 

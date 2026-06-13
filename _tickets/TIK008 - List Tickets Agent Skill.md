@@ -7,7 +7,6 @@ code: TIK008
 aliases:
   - TIK008
 name: List Tickets Agent Skill
-subjects: cli
 ticket_status: "[[Complete]]"
 ticket_priority: Medium
 ---

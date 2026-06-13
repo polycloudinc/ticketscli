@@ -7,7 +7,6 @@ code: TIK005
 aliases:
   - TIK005
 name: Ticket Rank Field
-subjects: cli
 ticket_status: "[[Backlog]]"
 ticket_priority: Medium
 ---

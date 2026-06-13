@@ -7,7 +7,6 @@ code: TIK004
 aliases:
   - TIK004
 name: Kanban Subcommand
-subjects: cli
 ticket_status: "[[Backlog]]"
 ticket_priority: Medium
 ---

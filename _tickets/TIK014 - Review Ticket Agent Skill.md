@@ -7,10 +7,8 @@ code: TIK014
 aliases:
   - TIK014
 name: Review Ticket Agent Skill
-subjects: agent
 ticket_status: "[[Complete]]"
 ticket_priority: Medium
-ticket_rank: 14
 ---
 
 # Introduction

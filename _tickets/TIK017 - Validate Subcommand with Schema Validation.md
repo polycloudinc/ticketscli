@@ -1,16 +1,14 @@
 ---
 template: "[[Ticket]]"
-kind: ticketx
+kind: ticket
 tags:
   - ticket
 code: TIK017
 aliases:
   - TIK017
 name: Validate Subcommand with Schema Validation
-subjects: cli
 ticket_status: "[[Complete]]"
 ticket_priority: Medium
-ticket_rank: 17
 ---
 
 # Introduction

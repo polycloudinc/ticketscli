@@ -7,7 +7,6 @@ code: TIK007
 aliases:
   - TIK007
 name: Agent Skill For Tickets
-subjects: cli
 ticket_status: "[[Complete]]"
 ticket_priority: Medium
 ---

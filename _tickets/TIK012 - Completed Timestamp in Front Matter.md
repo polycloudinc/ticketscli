@@ -7,10 +7,8 @@ code: TIK012
 aliases:
   - TIK012
 name: Completed Timestamp in Front Matter
-subjects: cli
 ticket_status: "[[Backlog]]"
 ticket_priority: Medium
-ticket_rank: 12
 ---
 # Introduction
 

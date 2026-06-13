@@ -7,10 +7,8 @@ code: TIK013
 aliases:
   - TIK013
 name: Change History Journal in Ticket Body
-subjects: cli
 ticket_status: "[[Backlog]]"
 ticket_priority: Medium
-ticket_rank: 13
 ---
 # Introduction
 

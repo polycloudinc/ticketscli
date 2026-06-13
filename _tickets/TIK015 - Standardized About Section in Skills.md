@@ -7,10 +7,8 @@ code: TIK015
 aliases:
   - TIK015
 name: Standardized About Section in Skills
-subjects: agent
 ticket_status: "[[Complete]]"
 ticket_priority: Medium
-ticket_rank: 15
 ---
 
 # Introduction

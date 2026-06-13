@@ -7,7 +7,6 @@ code: TIK003
 aliases:
   - TIK003
 name: Status Filter
-subjects: cli
 ticket_status: "[[Complete]]"
 ticket_priority: Medium
 ---
