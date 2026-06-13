@@ -3,6 +3,10 @@ name: review-ticket
 description: Use when the user asks to review a ticket against the current state of the codebase. Do not use for creating, ranking, kanban, or updating ticket status.
 ---
 
+# About Tickets System
+
+The tickets system manages work items as Markdown files in the `_tickets/` directory, each with YAML frontmatter containing fields such as `code`, `name`, `ticket_status`, `ticket_priority`, and `ticket_rank`. Tickets progress through statuses: `[[Backlog]]` (unscheduled), `[[Ready]]` (scheduled), `[[In Progress]]` (active work), `[[Complete]]` (done), `[[Duplicate]]`, and `[[Won't Fix]]`. A `tickets` CLI provides a `list` subcommand for listing tickets with filtering by status group or explicit status.
+
 # Review Ticket
 
 Read the ticket file and review it against the current state of the codebase. Identify any open questions, inconsistencies, or ambiguities.
