@@ -9,7 +9,7 @@ aliases:
 name: Adaptive Table Output
 ticket_status: "[[Backlog]]"
 ticket_priority: Medium
-ticket_rank: 2
+ticket_rank: 1
 ---
 # Introduction
 

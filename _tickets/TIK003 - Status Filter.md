@@ -9,7 +9,7 @@ aliases:
 name: Status Filter
 ticket_status: "[[Complete]]"
 ticket_priority: Medium
-ticket_rank: 3
+ticket_rank: 
 ---
 # Introduction
 

@@ -9,7 +9,7 @@ aliases:
 name: Change History Journal in Ticket Body
 ticket_status: "[[Backlog]]"
 ticket_priority: Medium
-ticket_rank: 13
+ticket_rank: 5
 ---
 # Introduction
 

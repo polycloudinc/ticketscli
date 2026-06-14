@@ -9,7 +9,7 @@ aliases:
 name: Completed Timestamp in Front Matter
 ticket_status: "[[Backlog]]"
 ticket_priority: Medium
-ticket_rank: 12
+ticket_rank: 6
 ---
 # Introduction
 

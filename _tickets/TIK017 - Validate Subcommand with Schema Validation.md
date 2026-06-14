@@ -9,7 +9,7 @@ aliases:
 name: Validate Subcommand with Schema Validation
 ticket_status: "[[Complete]]"
 ticket_priority: Medium
-ticket_rank: 17
+ticket_rank: 
 ---
 
 # Introduction
