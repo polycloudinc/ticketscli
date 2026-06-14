@@ -7,12 +7,12 @@ code: TIK036
 aliases:
   - TIK036
 name: Update List Ticket Skill To Support Limit Flag
-ticket_status: "[[Ready]]"
+ticket_status: "[[Complete]]"
 ticket_priority: Medium
-ticket_rank: 3
+ticket_rank: 
 ticket_created: 2026-06-14T07:26:31Z
-ticket_updated: 2026-06-14T08:32:03Z
-ticket_completed: 
+ticket_updated: 2026-06-14T08:52:28Z
+ticket_completed: 2026-06-14T08:52:27Z
 ---
 # Introduction
 
@@ -33,8 +33,19 @@ Update the `list-tickets` agent skill to recognize numeric limits in user prompt
 
 # Technical Solution
 
-TODO
+Edit `.apm/skills/list-tickets/SKILL.md` (the canonical source; `.agents/skills/` is synchronized from `.apm/` by the APM command):
+
+1. Update the `description` frontmatter field to mention numeric limit support.
+2. Add `--limit` / `-l` examples to the CLI reference block, with a note that it is not a filter and can be combined with `--group` or `--status`.
+3. Add a **Limit Detection** section after the Filter Selection section covering:
+   - Quantity/ordinal indicators (`top N`, `first N`, `show N`, `give me N`, etc.).
+   - Combining `--limit` with group/status filters.
+   - Disambiguation from ticket code references (e.g., "ticket 5" means TIK005, not limit 5).
+4. Sync the edited `.apm/skills/list-tickets/SKILL.md` to `.agents/skills/list-tickets/SKILL.md`.
 
 # Execution Plan
 
-TODO 
+- [x] Update `description` frontmatter in `.apm/skills/list-tickets/SKILL.md` to mention limit detection.
+- [x] Add `--limit` / `-l` examples to the CLI reference block with usage note.
+- [x] Add Limit Detection section with indicator patterns and disambiguation rules.
+- [x] Sync updated skill file to `.agents/skills/list-tickets/SKILL.md`. 
