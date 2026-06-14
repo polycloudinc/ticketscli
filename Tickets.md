@@ -35,11 +35,12 @@ tags:
   - ticket
 code: TIK001
 aliases:
+  - TIK001
 name: List Subcommand
-subjects: cli
 ticket_status: "[[Backlog]]"
 ticket_priority: Medium
 ticket_rank: 32
+ticket_created: 2026-06-14T03:02:32Z
 ---
 ```
 
@@ -114,6 +115,7 @@ The command checks three categories of deviations:
 | `ticket_status`   | One of: `[[Backlog]]`, `[[Ready]]`, `[[In Progress]]`, `[[Complete]]`, `[[Duplicate]]`, `[[Won't Fix]]` |
 | `ticket_priority` | One of: `Low`, `Medium`, `High`, `Critical`                      |
 | `ticket_rank`     | Must be present and hold an integer value                      |
+| `ticket_created`  | Must be ISO 8601 UTC (e.g. `2026-06-13T14:30:00Z`)             |
 | `tags`            | No value constraint                                              |
 
 Deviations are printed to stderr as bullet points. Exit code 0 if valid, 1 if deviations found.
@@ -148,6 +150,7 @@ The template body (everything after the frontmatter) is copied into the new file
 | `ticket_status`    | `[[Backlog]]`               |
 | `ticket_priority`  | `Medium`                    |
 | `ticket_rank`       | `max_existing_rank + 1` (or `1` if no tickets exist) |
+| `ticket_created`    | Current UTC timestamp in ISO 8601 format (`YYYY-MM-DDThh:mm:ssZ`) |
 
 If `settings.yaml` is missing or `code_prefix` is not set, the command exits with an error. If a ticket with the generated code already exists, the command exits with an error.
 

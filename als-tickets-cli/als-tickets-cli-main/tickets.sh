@@ -747,6 +747,9 @@ cmd_create() {
     printf '%s\n' 'ticket_status: "[[Backlog]]"'
     printf '%s\n' "ticket_priority: Medium"
     printf '%s\n' "ticket_rank: $next_rank"
+    local created_ts
+    created_ts=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+    printf '%s\n' "ticket_created: $created_ts"
     printf '%s\n' "---"
     printf '%s' "$template_body"
   } > "$output_file"
@@ -1022,6 +1025,13 @@ val=$(yq eval --front-matter extract '.code // ""' "$ticket_file" 2>/dev/null ||
     fi
   elif [[ ! "$val" =~ ^[0-9]+$ ]]; then
     echo "- Invalid value for ticket_rank: expected an integer, got '$val'" >&2
+    errors=$((errors + 1))
+  fi
+
+  # ticket_created: if present must be ISO 8601 UTC (Z suffix)
+  val=$(yq eval --front-matter extract '.ticket_created // ""' "$ticket_file" 2>/dev/null || true)
+  if [[ -n "$val" ]] && ! [[ "$val" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$ ]]; then
+    echo "- Invalid value for ticket_created: expected ISO 8601 UTC (e.g. 2026-06-13T14:30:00Z), got '$val'" >&2
     errors=$((errors + 1))
   fi
 
