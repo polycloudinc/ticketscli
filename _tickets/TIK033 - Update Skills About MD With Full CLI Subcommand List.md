@@ -9,9 +9,9 @@ aliases:
 name: Update Skills About MD With Full CLI Subcommand List
 ticket_status: "[[Backlog]]"
 ticket_priority: Medium
-ticket_rank: 9
+ticket_rank: 8
 ticket_created: 2026-06-14T07:23:09Z
-ticket_updated: 2026-06-14T07:23:09Z
+ticket_updated: 2026-06-14T07:46:34Z
 ticket_completed:
 ---
 # Introduction

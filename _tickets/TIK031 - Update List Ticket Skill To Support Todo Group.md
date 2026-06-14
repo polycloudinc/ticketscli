@@ -7,12 +7,12 @@ code: TIK031
 aliases:
   - TIK031
 name: Update List Ticket Skill To Support Todo Group
-ticket_status: "[[Backlog]]"
+ticket_status: "[[Ready]]"
 ticket_priority: Medium
-ticket_rank: 7
+ticket_rank: 1
 ticket_created: 2026-06-14T07:20:52Z
-ticket_updated: 2026-06-14T07:20:52Z
-ticket_completed:
+ticket_updated: 2026-06-14T07:46:06Z
+ticket_completed: 
 ---
 # Introduction
 

@@ -7,12 +7,12 @@ code: TIK030
 aliases:
   - TIK030
 name: Rank Ticket Agent Skill
-ticket_status: "[[Backlog]]"
+ticket_status: "[[Ready]]"
 ticket_priority: Medium
-ticket_rank: 6
+ticket_rank: 2
 ticket_created: 2026-06-14T07:20:15Z
-ticket_updated: 2026-06-14T07:20:15Z
-ticket_completed:
+ticket_updated: 2026-06-14T07:46:06Z
+ticket_completed: 
 ---
 # Introduction
 

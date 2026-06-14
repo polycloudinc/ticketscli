@@ -9,9 +9,9 @@ aliases:
 name: Publish Project As Open Source
 ticket_status: "[[Backlog]]"
 ticket_priority: Medium
-ticket_rank: 5
+ticket_rank: 6
 ticket_created: 2026-06-14T07:19:17Z
-ticket_updated: 2026-06-14T07:19:17Z
+ticket_updated: 2026-06-14T07:46:34Z
 ticket_completed:
 ---
 # Introduction
