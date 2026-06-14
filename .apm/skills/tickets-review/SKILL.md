@@ -1,5 +1,5 @@
 ---
-name: review-ticket
+name: tickets-review
 description: Use when the user asks to review a ticket against the current state of the codebase, or says "review next ticket" to review the highest-ranked upcoming ticket. The skill handles reviewing a specific ticket by name/code, reviewing the current ticket, and reviewing the next highest-ranked ticket. Do not use for creating, ranking, kanban, or updating ticket status.
 ---
 

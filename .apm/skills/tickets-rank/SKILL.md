@@ -1,5 +1,5 @@
 ---
-name: rank-ticket
+name: tickets-rank
 description: Use when the user asks to promote, demote, reorder, or change the rank of a ticket. The user's message should include both the ticket code and the direction (up, down, top, bottom). Do not use for creating, listing, reviewing, or updating ticket status.
 ---
 

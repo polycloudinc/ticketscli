@@ -1,5 +1,5 @@
 ---
-name: list-tickets
+name: tickets-list
 description: Use when the user asks to list tickets, show tickets, or similar listing phrases. The user may include a group keyword, status value, or numeric limit (e.g., "top 5", "first 10") to filter by. Only covers the `list` subcommand.
 ---
 # About Tickets System

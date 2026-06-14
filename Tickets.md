@@ -330,16 +330,16 @@ The following agent skills are available to assist with ticket workflows:
 
 | Skill              | Description                                                                 | Invoked When                                                                   |
 |--------------------|-----------------------------------------------------------------------------|--------------------------------------------------------------------------------|
-| `create-ticket`    | Creates a new ticket from the template with auto-assigned code. Extracts a name from the user's message and uses the `tickets create` subcommand. | User asks to create a new ticket.                                               |
-| `list-tickets`     | Lists tickets from `_tickets/` with optional filtering by group, status, or a numeric limit (e.g., "top 5", "first 10").  | User asks to list or show tickets.                                             |
-| `review-ticket`    | Reviews a ticket against the current state of the codebase for issues. Also accepts "review next ticket" to automatically locate and review the highest-ranked upcoming ticket.   | User asks to review a ticket or says "review next ticket".                     |
-| `execution-plan`   | Creates and manages checkbox-based execution plans with optional phasing.   | User asks to create, update, or check off execution plan items in a ticket.    |
-| `transition-ticket`| Transitions a ticket between statuses using the `tickets transition` CLI.  | User asks to transition, move, or change the status of a ticket.               |
-| `rank-ticket`      | Adjusts ticket priority with the `tickets rank` CLI subcommands (`up`, `down`, `first`, `last`). | User asks to promote, demote, reorder, or change the rank of a ticket.         |
+| `tickets-create`        | Creates a new ticket from the template with auto-assigned code. Extracts a name from the user's message and uses the `tickets create` subcommand. | User asks to create a new ticket.                                               |
+| `tickets-list`          | Lists tickets from `_tickets/` with optional filtering by group, status, or a numeric limit (e.g., "top 5", "first 10").  | User asks to list or show tickets.                                             |
+| `tickets-review`        | Reviews a ticket against the current state of the codebase for issues. Also accepts "review next ticket" to automatically locate and review the highest-ranked upcoming ticket.   | User asks to review a ticket or says "review next ticket".                     |
+| `tickets-execution-plan`| Creates and manages checkbox-based execution plans with optional phasing.   | User asks to create, update, or check off execution plan items in a ticket.    |
+| `tickets-transition`    | Transitions a ticket between statuses using the `tickets transition` CLI.  | User asks to transition, move, or change the status of a ticket.               |
+| `tickets-rank`          | Adjusts ticket priority with the `tickets rank` CLI subcommands (`up`, `down`, `first`, `last`). | User asks to promote, demote, reorder, or change the rank of a ticket.         |
 
 ### Execution Plan Phasing
 
-The `execution-plan` skill splits tasks into named phases (each a level-three heading) when:
+The `tickets-execution-plan` skill splits tasks into named phases (each a level-three heading) when:
 
 - The total number of tasks exceeds **5**, or
 - Tasks touch **logically different parts of the system** that can be completed and tested individually.

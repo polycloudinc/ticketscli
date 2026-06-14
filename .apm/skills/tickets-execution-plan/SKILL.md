@@ -1,5 +1,5 @@
 ---
-name: execution-plan
+name: tickets-execution-plan
 description: Use when the user asks to create, update, or check off execution plan items in a ticket. Do not use for listing, creating, updating ticket status, ranking, kanban, or reviewing tickets.
 ---
 

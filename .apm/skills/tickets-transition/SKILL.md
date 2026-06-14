@@ -1,5 +1,5 @@
 ---
-name: transition-ticket
+name: tickets-transition
 description: Use when the user asks to transition a ticket, move a ticket, or change a ticket's status. The user's message should include both the ticket code and the target status. Do not use for creating, listing, ranking, or reviewing tickets.
 ---
 

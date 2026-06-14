@@ -1,5 +1,5 @@
 ---
-name: create-ticket
+name: tickets-create
 description: Use when the user asks to create a new ticket. Extracts a name from the user's message and uses the `tickets create` subcommand. Do not use for listing, reviewing, ranking, or updating ticket status.
 ---
 
