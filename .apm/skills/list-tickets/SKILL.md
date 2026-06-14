@@ -21,6 +21,7 @@ tickets list                       # all tickets (no filter)
 tickets list --group backlog       # Backlog tickets
 tickets list --group active        # Ready and In Progress tickets
 tickets list --group done          # Complete, Duplicate, and Won't Fix tickets
+tickets list --group todo          # Backlog, Ready, and In Progress tickets sorted by rank
 tickets list --status inprogress   # only In Progress tickets
 tickets list --status wontfix      # only Won't Fix tickets
 tickets list -t /path/to/dir       # custom tickets directory
@@ -39,6 +40,7 @@ Use `--group` for broad categories:
 | `backlog`                | `tickets list --group backlog` |
 | `active`                 | `tickets list --group active`  |
 | `done`                   | `tickets list --group done`    |
+| `todo`                   | `tickets list --group todo`    |
 
 ### Status mapping
 
@@ -54,7 +56,7 @@ Use `--status` for specific status values (case-insensitive, single-word):
 
 ### Priority rule
 
-If a keyword matches both a group alias and a specific status, `--status` takes priority because it is more specific. For example, "in progress" maps to `--status inprogress`, not `--group active`.
+If a keyword matches both a group alias and a specific status, `--status` takes priority because it is more specific. For example, "in progress" maps to `--status inprogress`, not `--group active`. Exception: `todo` maps to `--group todo` (all non-done tickets), not `--status backlog`.
 
 ## Group Aliases
 
@@ -62,9 +64,10 @@ The following natural-language aliases map to `--group`:
 
 | Group    | Aliases                                                           |
 |----------|-------------------------------------------------------------------|
-| backlog  | pending, unscheduled, queued, awaiting, todo, to-do, not started, upcoming |
+| backlog  | pending, unscheduled, queued, awaiting, not started                      |
 | active   | in progress, current, underway, being worked, working             |
 | done     | completed, finished, closed, resolved, complete                   |
+| todo     | upcoming, remaining, open, outstanding                          |
 
 ## Status Aliases
 
@@ -72,7 +75,7 @@ The following natural-language aliases map to `--status`:
 
 | Status     | Aliases                                                           |
 |------------|-------------------------------------------------------------------|
-| backlog    | pending, unscheduled, queued, awaiting, todo, to-do, not started, upcoming |
+| backlog    | pending, unscheduled, queued, awaiting, not started                       |
 | ready      | scheduled, prepared, staged, standing by                          |
 | inprogress | in progress, current, underway, being worked, working, wip        |
 | complete   | done, completed, finished, closed, resolved                       |
