@@ -610,7 +610,7 @@ cmd_list() {
 
     frontmatter=$(sed -n '/^---$/,/^---$/p' "$ticket")
     subject=$(echo "$frontmatter" | grep '^name:' | sed 's/^name: //')
-    [[ ${#subject} -gt 50 ]] && subject="${subject:0:47}..."
+    [[ ${#subject} -gt 41 ]] && subject="${subject:0:38}..."
     status=$(echo "$frontmatter" | grep '^ticket_status:' | sed 's/^ticket_status: //' | tr -d '"' | sed 's/^\[\[//; s/\]\]$//')
 
     case "$filter" in
@@ -633,15 +633,15 @@ cmd_list() {
     printf '%s\t%s\t%s\t%s\n' "$rank_val" "$number" "$subject" "$status" >> "$tmpfile"
   done
 
-  printf "%-8s %-47s %6s %-12s\n" "Code" "Subject" "Rank" "Status"
-  printf "%-8s %-47s %6s %-12s\n" "----" "-------" "----" "------"
+  printf "%-8s %-41s %6s %-12s\n" "Code" "Subject" "Rank" "Status"
+  printf "%-8s %-41s %6s %-12s\n" "----" "-------" "----" "------"
 
   sort -t$'\t' -k1 -n "$tmpfile" | head -n "${limit:-999999}" | while IFS=$'\t' read -r rank_val number subject status; do
     local display_rank="$rank_val"
     case "$status" in
       Complete|Duplicate|"Won't Fix") display_rank="-" ;;
     esac
-    printf "%-8s %-47s %6s %-12s\n" "$number" "$subject" "$display_rank" "$status"
+    printf "%-8s %-41s %6s %-12s\n" "$number" "$subject" "$display_rank" "$status"
   done
 
   rm -f "$tmpfile"
