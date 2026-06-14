@@ -9,6 +9,7 @@ Subcommands:
   list              List tickets from the tickets directory
   validate          Validate a ticket's front matter against the schema
   create            Create a new ticket file
+  transition        Transition a ticket to a new status
   rank              Normalize ticket ranks across all tickets
   rank up           Promote a ticket's priority
   rank down         Demote a ticket's priority
@@ -107,6 +108,18 @@ Usage: tickets rank last --ticket <code> [options]
 
 Options:
   -t, --ticket <code>        Ticket code to move to the lowest rank
+  -d, --tickets-dir <path>   Path to tickets directory (default: _tickets)
+  -h, --help                  Show this help message
+EOF
+}
+
+transition_usage() {
+  cat <<EOF
+Usage: tickets transition --ticket <code> --target <status> [options]
+
+Options:
+  -t, --ticket <code>        Ticket code to transition
+  -T, --target <status>      Target status (backlog, ready, inprogress, complete, duplicate, wontfix; case-insensitive, fuzzy-matched)
   -d, --tickets-dir <path>   Path to tickets directory (default: _tickets)
   -h, --help                  Show this help message
 EOF
@@ -1038,6 +1051,140 @@ val=$(yq eval --front-matter extract '.code // ""' "$ticket_file" 2>/dev/null ||
   return $errors
 }
 
+cmd_transition() {
+  local tickets_dir="_tickets"
+  local ticket_code=""
+  local target_status=""
+
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      -t|--ticket)
+        [[ -z "${2:-}" ]] && { echo "Error: --ticket requires a ticket code" >&2; exit 1; }
+        ticket_code="$2"
+        shift
+        ;;
+      -T|--target)
+        [[ -z "${2:-}" ]] && { echo "Error: --target requires a status value" >&2; exit 1; }
+        target_status="$2"
+        shift
+        ;;
+      -d|--tickets-dir)
+        [[ -z "${2:-}" ]] && { echo "Error: --tickets-dir requires a path argument" >&2; exit 1; }
+        tickets_dir="$2"
+        shift
+        ;;
+      -h|--help)
+        transition_usage
+        return 0
+        ;;
+      *)
+        echo "Unknown option: $1" >&2
+        echo "Run 'tickets transition --help' for usage." >&2
+        exit 1
+        ;;
+    esac
+    shift
+  done
+
+  if [[ -z "$ticket_code" ]]; then
+    echo "Error: --ticket is required" >&2
+    transition_usage
+    exit 1
+  fi
+
+  if [[ -z "$target_status" ]]; then
+    echo "Error: --target is required" >&2
+    transition_usage
+    exit 1
+  fi
+
+  local target_lower
+  target_lower=$(echo "$target_status" | tr '[:upper:]' '[:lower:]')
+  local known=(backlog ready inprogress complete duplicate wontfix)
+  local target_canonical=""
+  for k in "${known[@]}"; do
+    if [[ "$k" == "$target_lower" ]]; then
+      target_canonical="$k"
+      break
+    fi
+  done
+  if [[ -z "$target_canonical" ]]; then
+    local matches=()
+    for k in "${known[@]}"; do
+      [[ "$k" == *"$target_lower"* ]] && matches+=("$k")
+    done
+    if [[ ${#matches[@]} -eq 1 ]]; then
+      target_canonical="${matches[0]}"
+    elif [[ ${#matches[@]} -eq 0 ]]; then
+      echo "Error: invalid status '$target_status'. Valid statuses: backlog, ready, inprogress, complete, duplicate, wontfix" >&2
+      exit 1
+    else
+      echo "Error: ambiguous status '$target_status'. Matches: ${matches[*]}" >&2
+      exit 1
+    fi
+  fi
+
+  local ticket_file
+  ticket_file=$(find_ticket_by_code "$tickets_dir" "$ticket_code") || true
+  if [[ -z "$ticket_file" ]]; then
+    echo "Error: no ticket found for code '$ticket_code'" >&2
+    exit 1
+  fi
+
+  local current_status
+  current_status=$(sed -n '/^---$/,/^---$/p' "$ticket_file" | grep '^ticket_status:' | sed 's/^ticket_status: //' | tr -d '"' | sed 's/^\[\[//; s/\]\]$//')
+  local current_lower
+  current_lower=$(echo "$current_status" | tr '[:upper:]' '[:lower:]' | tr -d ' ')
+
+  if [[ "$current_lower" == "$target_canonical" ]]; then
+    echo "Ticket $ticket_code is already in status '$current_status'."
+    return 0
+  fi
+
+  local status_label
+  case "$target_canonical" in
+    backlog)    status_label="[[Backlog]]" ;;
+    ready)      status_label="[[Ready]]" ;;
+    inprogress) status_label="[[In Progress]]" ;;
+    complete)   status_label="[[Complete]]" ;;
+    duplicate)  status_label="[[Duplicate]]" ;;
+    wontfix)    status_label="[[Won't Fix]]" ;;
+  esac
+
+  case "$target_canonical" in
+    complete|duplicate|wontfix)
+      sed -i "/^ticket_rank:/ s/:.*/: /" "$ticket_file"
+      ;;
+  esac
+
+  case "$current_status" in
+    "Complete"|"Duplicate"|"Won't Fix")
+      local current_rank
+      current_rank=$(get_ticket_rank "$ticket_file")
+      if [[ -z "$current_rank" || ! "$current_rank" =~ ^[0-9]+$ ]]; then
+        local max_rank=0
+        for f in "$tickets_dir"/*.md; do
+          [[ -f "$f" ]] || continue
+          local r
+          r=$(get_ticket_rank "$f")
+          [[ "$r" =~ ^[0-9]+$ && "$r" -gt "$max_rank" ]] && max_rank="$r"
+        done
+        sed -i "/^ticket_rank:/ s/:.*/: $((max_rank + 1))/" "$ticket_file"
+      fi
+      ;;
+  esac
+
+  sed -i "/^ticket_status:/ s/: .*/: \"$status_label\"/" "$ticket_file"
+
+  case "$target_canonical" in
+    complete|duplicate|wontfix)
+      normalize_ranks "$tickets_dir" >/dev/null
+      ;;
+  esac
+
+  echo "Transitioned $ticket_code to '$target_canonical'."
+}
+
 if [[ $# -eq 0 ]]; then
   usage
   exit 0
@@ -1058,6 +1205,9 @@ case "$subcommand" in
     ;;
   create)
     cmd_create "$@"
+    ;;
+  transition)
+    cmd_transition "$@"
     ;;
   rank)
     case "${1:-}" in

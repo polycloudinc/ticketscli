@@ -185,6 +185,50 @@ All mutation subcommands normalize ranks first (closing gaps) before applying th
 
 The `tickets list` output is sorted ascending by `ticket_rank`. Tickets without a rank or with a non-integer rank value sort after all ranked tickets.
 
+## Transition Subcommand
+
+`tickets transition --ticket <code> --target <status>` changes a ticket's `ticket_status` with built-in business rules for rank management.
+
+| Flag                | Short | Required | Description                                          |
+|---------------------|-------|----------|------------------------------------------------------|
+| `--ticket <code>`   | `-t`  | yes      | Ticket code to transition (e.g., `TIK001`)           |
+| `--target <status>` | `-T`  | yes      | Target status (case-insensitive, fuzzy-matched)      |
+| `--tickets-dir`     | `-d`  | no       | Path to tickets directory (default: `_tickets`)      |
+| `--help`            | `-h`  | no       | Show usage text                                      |
+
+```
+tickets transition --ticket TIK001 --target inprogress
+tickets transition -t TIK019 -T complete
+tickets transition --ticket TIK003 --target ready -d /other/dir
+```
+
+### Target Status Values
+
+The `--target` switch accepts the same canonical status values as the `--status` flag on the `list` subcommand: `backlog`, `ready`, `inprogress`, `complete`, `duplicate`, `wontfix`. Input is case-insensitive and supports distinguishing substrings (e.g., `comp` uniquely resolves to `complete`). Ambiguous or invalid inputs produce an error listing the valid values or candidates.
+
+| Canonical     | Maps to frontmatter       |
+|---------------|---------------------------|
+| `backlog`     | `"[[Backlog]]"`           |
+| `ready`       | `"[[Ready]]"`             |
+| `inprogress`  | `"[[In Progress]]"`       |
+| `complete`    | `"[[Complete]]"`          |
+| `duplicate`   | `"[[Duplicate]]"`         |
+| `wontfix`     | `"[[Won't Fix]]"`         |
+
+### Behavior
+
+Any transition from any status to any status is allowed. If the ticket is already in the target status, the command prints a message and exits without changes.
+
+**Transitioning to a done status** (`complete`, `duplicate`, `wontfix`):
+
+- The `ticket_rank` field is cleared.
+- Rank normalization is triggered (reusing the same logic as `tickets rank`), closing gaps across all tickets.
+
+**Transitioning from a done status to an active status** (`backlog`, `ready`, `inprogress`):
+
+- If the `ticket_rank` field is empty, it is set to `max_existing_rank + 1`, placing the reactivated ticket at the end of the active ranked set.
+- No normalization is triggered on reactivation.
+
 ## Agent Skills
 
 The following agent skills are available to assist with ticket workflows:
