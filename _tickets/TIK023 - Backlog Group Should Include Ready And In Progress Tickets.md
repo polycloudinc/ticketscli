@@ -7,9 +7,9 @@ code: TIK023
 aliases:
   - TIK023
 name: Backlog Group Should Include Ready And In Progress Tickets
-ticket_status: "[[Backlog]]"
+ticket_status: "[[Won't Fix]]"
 ticket_priority: Medium
-ticket_rank: 7
+ticket_rank: 
 ticket_created: 2026-06-14T04:20:19Z
 ---
 # Introduction
