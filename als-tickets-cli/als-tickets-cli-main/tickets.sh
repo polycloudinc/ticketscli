@@ -158,6 +158,7 @@ normalize_ranks() {
 
   local new_rank=1
   local count=0
+  local ticket_file
   while IFS=$'\t' read -r _ ticket_file; do
     sed -i "/^ticket_rank:/ s/: .*/: $new_rank/" "$ticket_file"
     touch_ticket_updated "$ticket_file"
