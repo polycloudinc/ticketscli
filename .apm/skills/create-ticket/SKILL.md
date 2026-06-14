@@ -34,4 +34,3 @@ When the user asks to create a ticket:
    - **Execution Plan**: Replace the entire TODO placeholder line (the long description that starts with `TODO:`) with just the bare word `TODO`.
 
 6. Report the created ticket code and filename to the user.
-
