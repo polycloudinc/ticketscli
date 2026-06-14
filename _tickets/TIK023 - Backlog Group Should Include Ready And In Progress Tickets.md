@@ -9,7 +9,7 @@ aliases:
 name: Backlog Group Should Include Ready And In Progress Tickets
 ticket_status: "[[Backlog]]"
 ticket_priority: Medium
-ticket_rank: 8
+ticket_rank: 7
 ticket_created: 2026-06-14T04:20:19Z
 ---
 # Introduction
