@@ -57,6 +57,8 @@ The `ticket_status` field accepts one of the following wiki-linked values:
 | `[[Duplicate]]`   | Duplicate of another ticket           | `--group done`    |
 | `[[Won't Fix]]`   | Will not be implemented               | `--group done`    |
 
+The `--group todo` filter returns tickets from both `--group backlog` and `--group active` (i.e., `[[Backlog]]`, `[[Ready]]`, `[[In Progress]]`), sorted by rank.
+
 ## CLI Filters
 
 | Flag                     | Short | Matches                                   |
@@ -64,6 +66,7 @@ The `ticket_status` field accepts one of the following wiki-linked values:
 | `--group backlog`        | `-g`  | `[[Backlog]]`                             |
 | `--group active`         | `-g`  | `[[Ready]]`, `[[In Progress]]`            |
 | `--group done`           | `-g`  | `[[Complete]]`, `[[Duplicate]]`, `[[Won't Fix]]` |
+| `--group todo`           | `-g`  | `[[Backlog]]`, `[[Ready]]`, `[[In Progress]]`    |
 | `--status <value>`       | `-s`  | Tickets whose `ticket_status` matches the given value. Valid values (case-insensitive, single-word): `backlog`, `ready`, `inprogress`, `complete`, `duplicate`, `wontfix`. |
 | `--limit <N>`            | `-l`  | Limits output to the first N tickets after filtering and sorting. `N` must be a positive integer >= 1. If the limit exceeds the number of matching tickets, all are displayed.
 
@@ -73,7 +76,7 @@ Only one filter (`--group` or `--status`) may be specified at a time. `--limit` 
 
 Both `--group` and `--status` accept case-insensitive input and distinguishing substrings (a substring that uniquely identifies one of the valid values).
 
-- `--group act` resolves to `active`, `--group BACKLOG` resolves to `backlog`, `--group don` resolves to `done`
+- `--group act` resolves to `active`, `--group BACKLOG` resolves to `backlog`, `--group don` resolves to `done`, `--group tod` resolves to `todo`
 - `--status prog` resolves to `inprogress`, `--status READY` resolves to `ready`, `--status won` resolves to `wontfix`
 - An exact match takes priority over substring matching (e.g. `--group backlog` matches even though `backlog` is also a substring of… itself)
 - If the input is ambiguous (matches multiple values), the command prints an error listing the candidates

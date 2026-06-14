@@ -30,7 +30,7 @@ a non-integer rank value sort last.
 
 Options:
   -d, --tickets-dir <path>  Path to tickets directory (default: _tickets)
-  -g, --group <backlog|active|done>  Filter tickets by status group
+  -g, --group <backlog|active|done|todo>  Filter tickets by status group
   -l, --limit <N>           Limit output to the first N tickets after filtering and sorting
   -s, --status <status>    Filter by status (exact or distinguishing substring, case-insensitive)
   -h, --help                Show this help message
@@ -520,10 +520,10 @@ cmd_list() {
         shift
         ;;
       -g|--group)
-        [[ -z "${2:-}" ]] && { echo "Error: -g/--group requires a value (backlog, active, or done)" >&2; exit 1; }
+         [[ -z "${2:-}" ]] && { echo "Error: -g/--group requires a value (backlog, active, done, or todo)" >&2; exit 1; }
         [[ -n "$filter" ]] && { echo "Error: only one filter option may be specified" >&2; exit 1; }
         group_val_lower=$(echo "$2" | tr '[:upper:]' '[:lower:]')
-        known=(backlog active done)
+        known=(backlog active done todo)
         resolved=""
         for k in "${known[@]}"; do
           if [[ "$k" == "$group_val_lower" ]]; then
@@ -616,6 +616,7 @@ cmd_list() {
     case "$filter" in
       backlog) [[ "$status" != "Backlog" ]] && continue ;;
       active)  [[ "$status" != "Ready" && "$status" != "In Progress" ]] && continue ;;
+      todo)    [[ "$status" != "Backlog" && "$status" != "Ready" && "$status" != "In Progress" ]] && continue ;;
       done)    [[ "$status" != "Complete" && "$status" != "Duplicate" && "$status" != "Won't Fix" ]] && continue ;;
       status:*)
         expected="${filter#status:}"
