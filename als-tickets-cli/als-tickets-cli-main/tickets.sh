@@ -31,6 +31,7 @@ a non-integer rank value sort last.
 Options:
   -d, --tickets-dir <path>  Path to tickets directory (default: _tickets)
   -g, --group <backlog|active|done>  Filter tickets by status group
+  -l, --limit <N>           Limit output to the first N tickets after filtering and sorting
   -s, --status <status>    Filter by status (exact or distinguishing substring, case-insensitive)
   -h, --help                Show this help message
 EOF
@@ -509,6 +510,7 @@ cmd_rank() {
 cmd_list() {
   local tickets_dir="_tickets"
   local filter=""
+  local limit=""
 
   while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -581,6 +583,12 @@ cmd_list() {
         list_usage
         return 0
         ;;
+      -l|--limit)
+        [[ -z "${2:-}" ]] && { echo "Error: -l/--limit requires a positive integer argument" >&2; exit 1; }
+        [[ "$2" =~ ^[1-9][0-9]*$ ]] || { echo "Error: -l/--limit must be a positive integer (>= 1), got '$2'" >&2; exit 1; }
+        limit="$2"
+        shift
+        ;;
       *)
         echo "Unknown option: $1" >&2
         echo "Run 'tickets list --help' for usage." >&2
@@ -628,7 +636,7 @@ cmd_list() {
   printf "%-8s %-47s %6s %-12s\n" "Code" "Subject" "Rank" "Status"
   printf "%-8s %-47s %6s %-12s\n" "----" "-------" "----" "------"
 
-  sort -t$'\t' -k1 -n "$tmpfile" | while IFS=$'\t' read -r rank_val number subject status; do
+  sort -t$'\t' -k1 -n "$tmpfile" | head -n "${limit:-999999}" | while IFS=$'\t' read -r rank_val number subject status; do
     local display_rank="$rank_val"
     case "$status" in
       Complete|Duplicate|"Won't Fix") display_rank="-" ;;

@@ -65,8 +65,9 @@ The `ticket_status` field accepts one of the following wiki-linked values:
 | `--group active`         | `-g`  | `[[Ready]]`, `[[In Progress]]`            |
 | `--group done`           | `-g`  | `[[Complete]]`, `[[Duplicate]]`, `[[Won't Fix]]` |
 | `--status <value>`       | `-s`  | Tickets whose `ticket_status` matches the given value. Valid values (case-insensitive, single-word): `backlog`, `ready`, `inprogress`, `complete`, `duplicate`, `wontfix`. |
+| `--limit <N>`            | `-l`  | Limits output to the first N tickets after filtering and sorting. `N` must be a positive integer >= 1. If the limit exceeds the number of matching tickets, all are displayed.
 
-Only one filter (`--group` or `--status`) may be specified at a time.
+Only one filter (`--group` or `--status`) may be specified at a time. `--limit` is not a filter and may be combined with `--group` or `--status`.
 
 ### Fuzzy Matching
 

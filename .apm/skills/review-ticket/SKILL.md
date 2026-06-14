@@ -37,6 +37,6 @@ A one-liner stating whether the ticket appears ready to be worked or not.
 
 When the user says "review next ticket" and no specific ticket code or name is provided:
 
-1. Run `bash tickets.sh list --group backlog` to get tickets sorted ascending by `ticket_rank`.
+1. Run `bash tickets.sh list -l 1` to get the single highest-ranked ticket.
 2. Take the first ticket from the output (the one with the lowest `ticket_rank` value).
 3. Read that ticket file and review it using the standard procedure above.
