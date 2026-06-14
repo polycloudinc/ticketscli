@@ -10,6 +10,7 @@ name: Create Subcommand
 ticket_status: "[[Complete]]"
 ticket_priority: Medium
 ticket_rank: 
+ticket_created: 2026-06-09T06:11:51Z
 ---
 # Introduction
 

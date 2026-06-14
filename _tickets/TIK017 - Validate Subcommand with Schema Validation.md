@@ -10,6 +10,7 @@ name: Validate Subcommand with Schema Validation
 ticket_status: "[[Complete]]"
 ticket_priority: Medium
 ticket_rank: 
+ticket_created: 2026-06-13T09:59:21Z
 ---
 
 # Introduction

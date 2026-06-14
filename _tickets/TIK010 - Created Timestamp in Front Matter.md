@@ -10,6 +10,7 @@ name: Created Timestamp in Front Matter
 ticket_status: "[[Backlog]]"
 ticket_priority: Medium
 ticket_rank: 3
+ticket_created: 2026-06-13T07:20:45Z
 ---
 # Introduction
 

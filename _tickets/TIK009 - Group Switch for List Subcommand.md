@@ -10,6 +10,7 @@ name: Group Switch for List Subcommand
 ticket_status: "[[Complete]]"
 ticket_priority: Medium
 ticket_rank: 
+ticket_created: 2026-06-13T04:37:23Z
 ---
 
 # Introduction
