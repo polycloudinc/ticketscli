@@ -9,7 +9,7 @@ aliases:
 name: Transition Subcommand
 ticket_status: "[[Backlog]]"
 ticket_priority: Medium
-ticket_rank: 6
+ticket_rank: 1
 ticket_created: 2026-06-14T03:29:55Z
 ---
 # Introduction
