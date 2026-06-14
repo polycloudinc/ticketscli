@@ -113,6 +113,7 @@ The command checks three categories of deviations:
 | `aliases`         | Must contain exactly one entry matching `code`                    |
 | `ticket_status`   | One of: `[[Backlog]]`, `[[Ready]]`, `[[In Progress]]`, `[[Complete]]`, `[[Duplicate]]`, `[[Won't Fix]]` |
 | `ticket_priority` | One of: `Low`, `Medium`, `High`, `Critical`                      |
+| `ticket_rank`     | Must be present and hold an integer value                      |
 | `tags`            | No value constraint                                              |
 
 Deviations are printed to stderr as bullet points. Exit code 0 if valid, 1 if deviations found.
@@ -146,8 +147,40 @@ The template body (everything after the frontmatter) is copied into the new file
 | `name`             | Value from `--name`         |
 | `ticket_status`    | `[[Backlog]]`               |
 | `ticket_priority`  | `Medium`                    |
+| `ticket_rank`       | `max_existing_rank + 1` (or `1` if no tickets exist) |
 
 If `settings.yaml` is missing or `code_prefix` is not set, the command exits with an error. If a ticket with the generated code already exists, the command exits with an error.
+
+## Rank Subcommand
+
+`tickets rank` normalizes ranks across all tickets, closing gaps by reassigning contiguous 1..N integers while preserving the existing relative ordering.
+
+```
+tickets rank                         # normalize all ranks
+tickets rank -d /other/dir           # normalize in a custom directory
+```
+
+### Rank Mutation Subcommands
+
+| Subcommand   | Description                                                                  |
+|-------------|------------------------------------------------------------------------------|
+| `rank up`   | Promote a ticket's priority. Swaps the target ticket's rank with the ticket at `rank - 1`. Accepts `--ticket` / `-t`. |
+| `rank down` | Demote a ticket's priority. Swaps the target ticket's rank with the ticket at `rank + 1`. Accepts `--ticket` / `-t`. |
+| `rank first` | Move a ticket to rank 1, shifting all tickets between the old and new positions down by 1. Accepts `--ticket` / `-t`. |
+| `rank last`  | Move a ticket to the lowest rank, shifting all tickets between the old and new positions up by 1. Accepts `--ticket` / `-t`. |
+
+```
+tickets rank up --ticket TIK003      # promote TIK003
+tickets rank down -t TIK005          # demote TIK005
+tickets rank first --ticket TIK004   # move TIK004 to rank 1
+tickets rank last -t TIK002          # move TIK002 to lowest rank
+```
+
+All mutation subcommands normalize ranks first (closing gaps) before applying the operation. If the target is already at the boundary (rank 1 for `up`/`first`, highest rank number for `down`/`last`), the command prints a message and exits without changes.
+
+### List Sorting
+
+The `tickets list` output is sorted ascending by `ticket_rank`. Tickets without a rank or with a non-integer rank value sort after all ranked tickets.
 
 ## Agent Skills
 

@@ -6,9 +6,14 @@ usage() {
 Usage: tickets <subcommand> [options]
 
 Subcommands:
-  list        List tickets from the tickets directory
-  validate    Validate a ticket's front matter against the schema
-  create      Create a new ticket file
+  list              List tickets from the tickets directory
+  validate          Validate a ticket's front matter against the schema
+  create            Create a new ticket file
+  rank              Normalize ticket ranks across all tickets
+  rank up           Promote a ticket's priority
+  rank down         Demote a ticket's priority
+  rank first        Move a ticket to rank 1
+  rank last         Move a ticket to the lowest rank
 
 Options:
   -h, --help  Show this help message
@@ -18,6 +23,9 @@ EOF
 list_usage() {
   cat <<EOF
 Usage: tickets list [options]
+
+Output is sorted ascending by ticket_rank. Tickets without a rank or with
+a non-integer rank value sort last.
 
 Options:
   -d, --tickets-dir <path>  Path to tickets directory (default: _tickets)
@@ -48,6 +56,441 @@ Options:
   -d, --tickets-dir <path>   Path to tickets directory (default: _tickets)
   -h, --help                  Show this help message
 EOF
+}
+
+rank_usage() {
+  cat <<EOF
+Usage: tickets rank [options]
+
+Options:
+  -d, --tickets-dir <path>  Path to tickets directory (default: _tickets)
+  -h, --help                 Show this help message
+EOF
+}
+
+rank_up_usage() {
+  cat <<EOF
+Usage: tickets rank up --ticket <code> [options]
+
+Options:
+  -t, --ticket <code>        Ticket code to promote
+  -d, --tickets-dir <path>   Path to tickets directory (default: _tickets)
+  -h, --help                  Show this help message
+EOF
+}
+
+rank_down_usage() {
+  cat <<EOF
+Usage: tickets rank down --ticket <code> [options]
+
+Options:
+  -t, --ticket <code>        Ticket code to demote
+  -d, --tickets-dir <path>   Path to tickets directory (default: _tickets)
+  -h, --help                  Show this help message
+EOF
+}
+
+rank_first_usage() {
+  cat <<EOF
+Usage: tickets rank first --ticket <code> [options]
+
+Options:
+  -t, --ticket <code>        Ticket code to move to rank 1
+  -d, --tickets-dir <path>   Path to tickets directory (default: _tickets)
+  -h, --help                  Show this help message
+EOF
+}
+
+rank_last_usage() {
+  cat <<EOF
+Usage: tickets rank last --ticket <code> [options]
+
+Options:
+  -t, --ticket <code>        Ticket code to move to the lowest rank
+  -d, --tickets-dir <path>   Path to tickets directory (default: _tickets)
+  -h, --help                  Show this help message
+EOF
+}
+
+normalize_ranks() {
+  local tickets_dir="$1"
+  local tmpfile
+  tmpfile=$(mktemp)
+
+  for ticket in "$tickets_dir"/*.md; do
+    [[ "$ticket" == "$tickets_dir/.gitkeep" ]] && continue
+    [[ -f "$ticket" ]] || continue
+
+    local status
+    status=$(sed -n '/^---$/,/^---$/p' "$ticket" | grep '^ticket_status:' | sed 's/^ticket_status: *//' | tr -d '"' | sed 's/^\[\[//; s/\]\]$//')
+
+    case "$status" in
+      "Complete"|"Duplicate"|"Won't Fix")
+        sed -i "/^ticket_rank:/ s/:.*/: /" "$ticket"
+        continue
+        ;;
+    esac
+
+    local rank_val
+    rank_val=$(sed -n '/^---$/,/^---$/p' "$ticket" | grep '^ticket_rank:' | sed 's/^ticket_rank: *//')
+
+    if [[ "$rank_val" =~ ^[0-9]+$ ]]; then
+      printf '%d\t%s\n' "$rank_val" "$ticket" >> "$tmpfile"
+    else
+      printf '%d\t%s\n' 999999 "$ticket" >> "$tmpfile"
+    fi
+  done
+
+  local new_rank=1
+  local count=0
+  while IFS=$'\t' read -r _ ticket_file; do
+    sed -i "/^ticket_rank:/ s/: .*/: $new_rank/" "$ticket_file"
+    new_rank=$((new_rank + 1))
+    count=$((count + 1))
+  done < <(sort -t$'\t' -k1 -n -k2 "$tmpfile")
+
+  rm -f "$tmpfile"
+  echo "$count ticket(s) normalized."
+}
+
+find_ticket_by_code() {
+  local tickets_dir="$1"
+  local code="$2"
+  for f in "$tickets_dir"/"$code"*.md; do
+    [[ -f "$f" ]] && { echo "$f"; return 0; }
+  done
+  return 1
+}
+
+get_ticket_rank() {
+  local ticket_file="$1"
+  sed -n '/^---$/,/^---$/p' "$ticket_file" | grep '^ticket_rank:' | sed 's/^ticket_rank: *//'
+}
+
+set_ticket_rank() {
+  local ticket_file="$1"
+  local new_rank="$2"
+  sed -i "/^ticket_rank:/ s/: .*/: $new_rank/" "$ticket_file"
+}
+
+cmd_rank_up() {
+  local tickets_dir="_tickets"
+  local ticket_code=""
+
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      -t|--ticket)
+        [[ -z "${2:-}" ]] && { echo "Error: --ticket requires a ticket code" >&2; exit 1; }
+        ticket_code="$2"
+        shift
+        ;;
+      -d|--tickets-dir)
+        [[ -z "${2:-}" ]] && { echo "Error: --tickets-dir requires a path argument" >&2; exit 1; }
+        tickets_dir="$2"
+        shift
+        ;;
+      -h|--help)
+        rank_up_usage
+        return 0
+        ;;
+      *)
+        echo "Unknown option: $1" >&2
+        rank_up_usage
+        exit 1
+        ;;
+    esac
+    shift
+  done
+
+  if [[ -z "$ticket_code" ]]; then
+    echo "Error: --ticket is required" >&2
+    rank_up_usage
+    exit 1
+  fi
+
+  normalize_ranks "$tickets_dir"
+
+  local target_file
+  target_file=$(find_ticket_by_code "$tickets_dir" "$ticket_code")
+  if [[ -z "$target_file" ]]; then
+    echo "Error: no ticket found for code '$ticket_code'" >&2
+    exit 1
+  fi
+
+  local target_rank
+  target_rank=$(get_ticket_rank "$target_file")
+
+  if [[ "$target_rank" -eq 1 ]]; then
+    echo "Ticket $ticket_code is already at the highest priority."
+    return 0
+  fi
+
+  local new_rank=$((target_rank - 1))
+  local other_file=""
+  for f in "$tickets_dir"/*.md; do
+    [[ "$f" == "$tickets_dir/.gitkeep" ]] && continue
+    [[ -f "$f" ]] || continue
+    local r
+    r=$(get_ticket_rank "$f")
+    [[ "$r" -eq "$new_rank" ]] && { other_file="$f"; break; }
+  done
+
+  if [[ -z "$other_file" ]]; then
+    echo "Error: could not find ticket at rank $new_rank" >&2
+    exit 1
+  fi
+
+  set_ticket_rank "$target_file" "$new_rank"
+  set_ticket_rank "$other_file" "$target_rank"
+  echo "Promoted $ticket_code to rank $new_rank."
+}
+
+cmd_rank_down() {
+  local tickets_dir="_tickets"
+  local ticket_code=""
+
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      -t|--ticket)
+        [[ -z "${2:-}" ]] && { echo "Error: --ticket requires a ticket code" >&2; exit 1; }
+        ticket_code="$2"
+        shift
+        ;;
+      -d|--tickets-dir)
+        [[ -z "${2:-}" ]] && { echo "Error: --tickets-dir requires a path argument" >&2; exit 1; }
+        tickets_dir="$2"
+        shift
+        ;;
+      -h|--help)
+        rank_down_usage
+        return 0
+        ;;
+      *)
+        echo "Unknown option: $1" >&2
+        rank_down_usage
+        exit 1
+        ;;
+    esac
+    shift
+  done
+
+  if [[ -z "$ticket_code" ]]; then
+    echo "Error: --ticket is required" >&2
+    rank_down_usage
+    exit 1
+  fi
+
+  normalize_ranks "$tickets_dir"
+
+  local target_file
+  target_file=$(find_ticket_by_code "$tickets_dir" "$ticket_code")
+  if [[ -z "$target_file" ]]; then
+    echo "Error: no ticket found for code '$ticket_code'" >&2
+    exit 1
+  fi
+
+  local target_rank
+  target_rank=$(get_ticket_rank "$target_file")
+
+  local max_rank=0
+  for f in "$tickets_dir"/*.md; do
+    [[ "$f" == "$tickets_dir/.gitkeep" ]] && continue
+    [[ -f "$f" ]] || continue
+    local r
+    r=$(get_ticket_rank "$f")
+    [[ "$r" =~ ^[0-9]+$ && "$r" -gt "$max_rank" ]] && max_rank="$r"
+  done
+
+  if [[ "$target_rank" -eq "$max_rank" ]]; then
+    echo "Ticket $ticket_code is already at the lowest priority."
+    return 0
+  fi
+
+  local new_rank=$((target_rank + 1))
+  local other_file=""
+  for f in "$tickets_dir"/*.md; do
+    [[ "$f" == "$tickets_dir/.gitkeep" ]] && continue
+    [[ -f "$f" ]] || continue
+    local r
+    r=$(get_ticket_rank "$f")
+    [[ "$r" -eq "$new_rank" ]] && { other_file="$f"; break; }
+  done
+
+  if [[ -z "$other_file" ]]; then
+    echo "Error: could not find ticket at rank $new_rank" >&2
+    exit 1
+  fi
+
+  set_ticket_rank "$target_file" "$new_rank"
+  set_ticket_rank "$other_file" "$target_rank"
+  echo "Demoted $ticket_code to rank $new_rank."
+}
+
+cmd_rank_first() {
+  local tickets_dir="_tickets"
+  local ticket_code=""
+
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      -t|--ticket)
+        [[ -z "${2:-}" ]] && { echo "Error: --ticket requires a ticket code" >&2; exit 1; }
+        ticket_code="$2"
+        shift
+        ;;
+      -d|--tickets-dir)
+        [[ -z "${2:-}" ]] && { echo "Error: --tickets-dir requires a path argument" >&2; exit 1; }
+        tickets_dir="$2"
+        shift
+        ;;
+      -h|--help)
+        rank_first_usage
+        return 0
+        ;;
+      *)
+        echo "Unknown option: $1" >&2
+        rank_first_usage
+        exit 1
+        ;;
+    esac
+    shift
+  done
+
+  if [[ -z "$ticket_code" ]]; then
+    echo "Error: --ticket is required" >&2
+    rank_first_usage
+    exit 1
+  fi
+
+  normalize_ranks "$tickets_dir"
+
+  local target_file
+  target_file=$(find_ticket_by_code "$tickets_dir" "$ticket_code")
+  if [[ -z "$target_file" ]]; then
+    echo "Error: no ticket found for code '$ticket_code'" >&2
+    exit 1
+  fi
+
+  local target_rank
+  target_rank=$(get_ticket_rank "$target_file")
+
+  if [[ "$target_rank" -eq 1 ]]; then
+    echo "Ticket $ticket_code is already at the highest priority."
+    return 0
+  fi
+
+  for f in "$tickets_dir"/*.md; do
+    [[ "$f" == "$tickets_dir/.gitkeep" ]] && continue
+    [[ -f "$f" ]] || continue
+    local r
+    r=$(get_ticket_rank "$f")
+    if [[ "$r" =~ ^[0-9]+$ && "$r" -ge 1 && "$r" -lt "$target_rank" ]]; then
+      set_ticket_rank "$f" $((r + 1))
+    fi
+  done
+
+  set_ticket_rank "$target_file" 1
+  echo "Moved $ticket_code to rank 1."
+}
+
+cmd_rank_last() {
+  local tickets_dir="_tickets"
+  local ticket_code=""
+
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      -t|--ticket)
+        [[ -z "${2:-}" ]] && { echo "Error: --ticket requires a ticket code" >&2; exit 1; }
+        ticket_code="$2"
+        shift
+        ;;
+      -d|--tickets-dir)
+        [[ -z "${2:-}" ]] && { echo "Error: --tickets-dir requires a path argument" >&2; exit 1; }
+        tickets_dir="$2"
+        shift
+        ;;
+      -h|--help)
+        rank_last_usage
+        return 0
+        ;;
+      *)
+        echo "Unknown option: $1" >&2
+        rank_last_usage
+        exit 1
+        ;;
+    esac
+    shift
+  done
+
+  if [[ -z "$ticket_code" ]]; then
+    echo "Error: --ticket is required" >&2
+    rank_last_usage
+    exit 1
+  fi
+
+  normalize_ranks "$tickets_dir"
+
+  local target_file
+  target_file=$(find_ticket_by_code "$tickets_dir" "$ticket_code")
+  if [[ -z "$target_file" ]]; then
+    echo "Error: no ticket found for code '$ticket_code'" >&2
+    exit 1
+  fi
+
+  local target_rank
+  target_rank=$(get_ticket_rank "$target_file")
+
+  local max_rank=0
+  for f in "$tickets_dir"/*.md; do
+    [[ "$f" == "$tickets_dir/.gitkeep" ]] && continue
+    [[ -f "$f" ]] || continue
+    local r
+    r=$(get_ticket_rank "$f")
+    [[ "$r" =~ ^[0-9]+$ && "$r" -gt "$max_rank" ]] && max_rank="$r"
+  done
+
+  if [[ "$target_rank" -eq "$max_rank" ]]; then
+    echo "Ticket $ticket_code is already at the lowest priority."
+    return 0
+  fi
+
+  for f in "$tickets_dir"/*.md; do
+    [[ "$f" == "$tickets_dir/.gitkeep" ]] && continue
+    [[ -f "$f" ]] || continue
+    local r
+    r=$(get_ticket_rank "$f")
+    if [[ "$r" =~ ^[0-9]+$ && "$r" -gt "$target_rank" ]]; then
+      set_ticket_rank "$f" $((r - 1))
+    fi
+  done
+
+  set_ticket_rank "$target_file" "$max_rank"
+  echo "Moved $ticket_code to rank $max_rank."
+}
+
+cmd_rank() {
+  local tickets_dir="_tickets"
+
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      -d|--tickets-dir)
+        [[ -z "${2:-}" ]] && { echo "Error: --tickets-dir requires a path argument" >&2; exit 1; }
+        tickets_dir="$2"
+        shift
+        ;;
+      -h|--help)
+        rank_usage
+        return 0
+        ;;
+      *)
+        echo "Unknown option: $1" >&2
+        echo "Run 'tickets rank --help' for usage." >&2
+        exit 1
+        ;;
+    esac
+    shift
+  done
+
+  normalize_ranks "$tickets_dir"
 }
 
 cmd_list() {
@@ -134,8 +577,8 @@ cmd_list() {
     shift
   done
 
-  printf "%-8s %-50s %-12s\n" "Code" "Subject" "Status"
-  printf "%-8s %-50s %-12s\n" "----" "-------" "------"
+  local tmpfile
+  tmpfile=$(mktemp)
 
   for ticket in "$tickets_dir"/*.md; do
     [[ "$ticket" == "$tickets_dir/.gitkeep" ]] && continue
@@ -160,8 +603,27 @@ cmd_list() {
         ;;
     esac
 
-    printf "%-8s %-50s %-12s\n" "$number" "$subject" "$status"
+    local rank_val
+    rank_val=$(echo "$frontmatter" | grep '^ticket_rank:' | sed 's/^ticket_rank: *//')
+    if [[ ! "$rank_val" =~ ^[0-9]+$ ]]; then
+      rank_val=999999
+    fi
+
+    printf '%s\t%s\t%s\t%s\n' "$rank_val" "$number" "$subject" "$status" >> "$tmpfile"
   done
+
+  printf "%-8s %-47s %6s %-12s\n" "Code" "Subject" "Rank" "Status"
+  printf "%-8s %-47s %6s %-12s\n" "----" "-------" "----" "------"
+
+  sort -t$'\t' -k1 -n "$tmpfile" | while IFS=$'\t' read -r rank_val number subject status; do
+    local display_rank="$rank_val"
+    case "$status" in
+      Complete|Duplicate|"Won't Fix") display_rank="-" ;;
+    esac
+    printf "%-8s %-47s %6s %-12s\n" "$number" "$subject" "$display_rank" "$status"
+  done
+
+  rm -f "$tmpfile"
 }
 
 cmd_create() {
@@ -249,6 +711,15 @@ cmd_create() {
     fi
   done
 
+  local max_rank=0
+  for ticket_file in "$resolved_dir"/*.md; do
+    [[ -f "$ticket_file" ]] || continue
+    local r
+    r=$(sed -n '/^---$/,/^---$/p' "$ticket_file" | grep '^ticket_rank:' | sed 's/^ticket_rank: *//')
+    [[ "$r" =~ ^[0-9]+$ && "$r" -gt "$max_rank" ]] && max_rank="$r"
+  done
+  local next_rank=$((max_rank + 1))
+
   local next_num=$((max_num + 1))
   local next_code
   next_code=$(printf "%s%03d" "$code_prefix" "$next_num")
@@ -275,6 +746,7 @@ cmd_create() {
     printf '%s\n' "name: $ticket_name"
     printf '%s\n' 'ticket_status: "[[Backlog]]"'
     printf '%s\n' "ticket_priority: Medium"
+    printf '%s\n' "ticket_rank: $next_rank"
     printf '%s\n' "---"
     printf '%s' "$template_body"
   } > "$output_file"
@@ -535,6 +1007,24 @@ val=$(yq eval --front-matter extract '.code // ""' "$ticket_file" 2>/dev/null ||
     errors=$((errors + 1))
   fi
 
+  # ticket_rank must be present and hold an integer value, unless done
+  val=$(yq eval --front-matter extract '.ticket_rank // ""' "$ticket_file" 2>/dev/null || true)
+  local status_val
+  status_val=$(yq eval --front-matter extract '.ticket_status // ""' "$ticket_file" 2>/dev/null || true)
+  local is_done=0
+  case "$status_val" in
+    "[[Complete]]"|"[[Duplicate]]"|"[[Won't Fix]]") is_done=1 ;;
+  esac
+  if [[ -z "$val" ]]; then
+    if [[ $is_done -eq 0 ]]; then
+      echo "- Invalid value for ticket_rank: must be present and hold an integer" >&2
+      errors=$((errors + 1))
+    fi
+  elif [[ ! "$val" =~ ^[0-9]+$ ]]; then
+    echo "- Invalid value for ticket_rank: expected an integer, got '$val'" >&2
+    errors=$((errors + 1))
+  fi
+
   return $errors
 }
 
@@ -558,6 +1048,29 @@ case "$subcommand" in
     ;;
   create)
     cmd_create "$@"
+    ;;
+  rank)
+    case "${1:-}" in
+      up)
+        shift
+        cmd_rank_up "$@"
+        ;;
+      down)
+        shift
+        cmd_rank_down "$@"
+        ;;
+      first)
+        shift
+        cmd_rank_first "$@"
+        ;;
+      last)
+        shift
+        cmd_rank_last "$@"
+        ;;
+      *)
+        cmd_rank "$@"
+        ;;
+    esac
     ;;
   *)
     echo "Unknown subcommand: $subcommand" >&2

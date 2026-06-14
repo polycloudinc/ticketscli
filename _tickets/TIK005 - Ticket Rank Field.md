@@ -9,7 +9,7 @@ aliases:
 name: Ticket Rank Field
 ticket_status: "[[Backlog]]"
 ticket_priority: Medium
-ticket_rank: 5
+ticket_rank: 2
 ---
 # Introduction
 
@@ -37,38 +37,38 @@ Add `ticket_rank:` to the ticket template in both locations: `als-tickets-templa
 
 ## Phase 1: Template & Ticket Updates
 
-- [ ] Add `ticket_rank:` field to both ticket template locations (`als-tickets-template/als-tickets-template-main/Ticket.md` and `_templates/Ticket.md`).
-- [ ] Add `ticket_rank:` field to all existing ticket files with sequential integer values.
+- [x] Add `ticket_rank:` field to both ticket template locations (`als-tickets-template/als-tickets-template-main/Ticket.md` and `_templates/Ticket.md`).
+- [x] Add `ticket_rank:` field to all existing ticket files with sequential integer values.
 
 ## Phase 2: Normalization & List Sorting
 
-- [ ] Implement `normalize_ranks` shared function that rewrites ticket files with contiguous ranks 1..N in current rank-sorted order (unranked tickets tiebreak by filename).
-- [ ] Implement `cmd_rank` subcommand that calls `normalize_ranks` and reports counts.
-- [ ] Wire `cmd_rank` into the top-level subcommand dispatch and usage output.
-- [ ] Update `cmd_list` to extract `ticket_rank` from frontmatter and sort tickets ascending by rank before rendering (unranked/non-integer sort last).
-- [ ] Verify `tickets rank` assigns contiguous ranks 1..N to all tickets in `_tickets/`.
-- [ ] Verify `tickets list` output is sorted by rank.
+- [x] Implement `normalize_ranks` shared function that rewrites ticket files with contiguous ranks 1..N in current rank-sorted order (unranked tickets tiebreak by filename).
+- [x] Implement `cmd_rank` subcommand that calls `normalize_ranks` and reports counts.
+- [x] Wire `cmd_rank` into the top-level subcommand dispatch and usage output.
+- [x] Update `cmd_list` to extract `ticket_rank` from frontmatter and sort tickets ascending by rank before rendering (unranked/non-integer sort last).
+- [x] Verify `tickets rank` assigns contiguous ranks 1..N to all tickets in `_tickets/`.
+- [x] Verify `tickets list` output is sorted by rank.
 
 ## Phase 3: Rank Mutation Subcommands
 
-- [ ] Implement `cmd_rank_up` subcommand — parse `--ticket` / `-t`, call `normalize_ranks`, then swap the target ticket's rank with the ticket at `rank - 1`.
-- [ ] Implement `cmd_rank_down` subcommand — parse `--ticket` / `-t`, call `normalize_ranks`, then swap the target ticket's rank with the ticket at `rank + 1`.
-- [ ] Implement `cmd_rank_first` subcommand — parse `--ticket` / `-t`, call `normalize_ranks`, then set target to rank 1 and increment ranks 1 through `old_rank - 1` by 1.
-- [ ] Implement `cmd_rank_last` subcommand — parse `--ticket` / `-t`, call `normalize_ranks`, then set target to rank N and decrement ranks `old_rank + 1` through N by 1.
-- [ ] Wire `cmd_rank_up`, `cmd_rank_down`, `cmd_rank_first`, and `cmd_rank_last` into the top-level subcommand dispatch and usage output.
-- [ ] Verify `tickets rank up --ticket TIK003` normalizes then decrements TIK003's rank and increments the displaced ticket's rank.
-- [ ] Verify `tickets rank up --ticket TIK001` (already rank 1) prints message and exits without changes.
-- [ ] Verify `tickets rank down --ticket TIK003` normalizes then increments TIK003's rank and decrements the displaced ticket's rank.
-- [ ] Verify `tickets rank down --ticket TIK005` (already highest rank number) prints message and exits without changes.
-- [ ] Verify `tickets rank first --ticket TIK004` normalizes then sets TIK004 to rank 1 and shifts intermediate tickets down.
-- [ ] Verify `tickets rank first --ticket TIK001` (already rank 1) prints message and exits without changes.
-- [ ] Verify `tickets rank last --ticket TIK002` normalizes then sets TIK002 to the lowest rank and shifts intermediate tickets up.
-- [ ] Verify `tickets rank last --ticket TIK005` (already lowest rank) prints message and exits without changes.
-- [ ] Verify no gaps remain in ranks after any `rank up`, `rank down`, `rank first`, or `rank last` command.
+- [x] Implement `cmd_rank_up` subcommand — parse `--ticket` / `-t`, call `normalize_ranks`, then swap the target ticket's rank with the ticket at `rank - 1`.
+- [x] Implement `cmd_rank_down` subcommand — parse `--ticket` / `-t`, call `normalize_ranks`, then swap the target ticket's rank with the ticket at `rank + 1`.
+- [x] Implement `cmd_rank_first` subcommand — parse `--ticket` / `-t`, call `normalize_ranks`, then set target to rank 1 and increment ranks 1 through `old_rank - 1` by 1.
+- [x] Implement `cmd_rank_last` subcommand — parse `--ticket` / `-t`, call `normalize_ranks`, then set target to rank N and decrement ranks `old_rank + 1` through N by 1.
+- [x] Wire `cmd_rank_up`, `cmd_rank_down`, `cmd_rank_first`, and `cmd_rank_last` into the top-level subcommand dispatch and usage output.
+- [x] Verify `tickets rank up --ticket TIK003` normalizes then decrements TIK003's rank and increments the displaced ticket's rank.
+- [x] Verify `tickets rank up --ticket TIK001` (already rank 1) prints message and exits without changes.
+- [x] Verify `tickets rank down --ticket TIK003` normalizes then increments TIK003's rank and decrements the displaced ticket's rank.
+- [x] Verify `tickets rank down --ticket TIK005` (already highest rank number) prints message and exits without changes.
+- [x] Verify `tickets rank first --ticket TIK004` normalizes then sets TIK004 to rank 1 and shifts intermediate tickets down.
+- [x] Verify `tickets rank first --ticket TIK001` (already rank 1) prints message and exits without changes.
+- [x] Verify `tickets rank last --ticket TIK002` normalizes then sets TIK002 to the lowest rank and shifts intermediate tickets up.
+- [x] Verify `tickets rank last --ticket TIK005` (already lowest rank) prints message and exits without changes.
+- [x] Verify no gaps remain in ranks after any `rank up`, `rank down`, `rank first`, or `rank last` command.
 
 ## Phase 4: Create & Validate Integration
 
-- [ ] Update `cmd_create` to emit `ticket_rank` as `max_existing_rank + 1` in generated frontmatter (or 1 if no tickets exist).
-- [ ] Update `cmd_validate` to check that `ticket_rank` is present and holds an integer value.
-- [ ] Verify `tickets create --name "New Feature"` assigns rank `max_existing_rank + 1` to the new ticket.
-- [ ] Verify `tickets validate` reports errors for tickets missing `ticket_rank` or with a non-integer rank value.
+- [x] Update `cmd_create` to emit `ticket_rank` as `max_existing_rank + 1` in generated frontmatter (or 1 if no tickets exist).
+- [x] Update `cmd_validate` to check that `ticket_rank` is present and holds an integer value.
+- [x] Verify `tickets create --name "New Feature"` assigns rank `max_existing_rank + 1` to the new ticket.
+- [x] Verify `tickets validate` reports errors for tickets missing `ticket_rank` or with a non-integer rank value.
