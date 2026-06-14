@@ -9,7 +9,7 @@ aliases:
 name: Last Updated Timestamp in Front Matter
 ticket_status: "[[Backlog]]"
 ticket_priority: Medium
-ticket_rank: 4
+ticket_rank: 2
 ticket_created: 2026-06-13T07:20:45Z
 ---
 # Introduction

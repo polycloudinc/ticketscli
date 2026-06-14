@@ -7,9 +7,9 @@ code: TIK010
 aliases:
   - TIK010
 name: Created Timestamp in Front Matter
-ticket_status: "[[Backlog]]"
+ticket_status: "[[Complete]]"
 ticket_priority: Medium
-ticket_rank: 3
+ticket_rank: 
 ticket_created: 2026-06-13T07:20:45Z
 ---
 # Introduction

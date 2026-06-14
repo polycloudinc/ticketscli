@@ -7,9 +7,9 @@ code: TIK005
 aliases:
   - TIK005
 name: Ticket Rank Field
-ticket_status: "[[Backlog]]"
+ticket_status: "[[Complete]]"
 ticket_priority: Medium
-ticket_rank: 2
+ticket_rank: 
 ticket_created: 2026-06-09T06:11:51Z
 ---
 # Introduction
