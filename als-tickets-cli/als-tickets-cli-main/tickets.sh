@@ -141,6 +141,7 @@ normalize_ranks() {
     case "$status" in
       "Complete"|"Duplicate"|"Won't Fix")
         sed -i "/^ticket_rank:/ s/:.*/: /" "$ticket"
+        touch_ticket_updated "$ticket"
         continue
         ;;
     esac
@@ -159,6 +160,7 @@ normalize_ranks() {
   local count=0
   while IFS=$'\t' read -r _ ticket_file; do
     sed -i "/^ticket_rank:/ s/: .*/: $new_rank/" "$ticket_file"
+    touch_ticket_updated "$ticket_file"
     new_rank=$((new_rank + 1))
     count=$((count + 1))
   done < <(sort -t$'\t' -k1 -n -k2 "$tmpfile")
@@ -185,6 +187,15 @@ set_ticket_rank() {
   local ticket_file="$1"
   local new_rank="$2"
   sed -i "/^ticket_rank:/ s/: .*/: $new_rank/" "$ticket_file"
+  touch_ticket_updated "$ticket_file"
+}
+
+touch_ticket_updated() {
+  local ticket_file="$1"
+  local ts
+  ts=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+  sed -i '/^ticket_updated:/d' "$ticket_file"
+  sed -i "/^ticket_created:/a ticket_updated: $ts" "$ticket_file"
 }
 
 cmd_rank_up() {
@@ -772,6 +783,7 @@ cmd_create() {
     local created_ts
     created_ts=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
     printf '%s\n' "ticket_created: $created_ts"
+    printf '%s\n' "ticket_updated: $created_ts"
     printf '%s\n' "---"
     printf '%s' "$template_body"
   } > "$output_file"
@@ -940,6 +952,8 @@ validate_one() {
   # Missing fields (in template but not in ticket)
   while IFS= read -r tkey; do
     [[ -z "$tkey" ]] && continue
+    # ticket_updated is optional — existing tickets may not have it yet
+    [[ "$tkey" == "ticket_updated" ]] && continue
     if ! echo "$ticket_keys" | grep -Fxq "$tkey"; then
       echo "- Missing required field: $tkey" >&2
       errors=$((errors + 1))
@@ -1054,6 +1068,13 @@ val=$(yq eval --front-matter extract '.code // ""' "$ticket_file" 2>/dev/null ||
   val=$(yq eval --front-matter extract '.ticket_created // ""' "$ticket_file" 2>/dev/null || true)
   if [[ -n "$val" ]] && ! [[ "$val" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$ ]]; then
     echo "- Invalid value for ticket_created: expected ISO 8601 UTC (e.g. 2026-06-13T14:30:00Z), got '$val'" >&2
+    errors=$((errors + 1))
+  fi
+
+  # ticket_updated: if present must be ISO 8601 UTC (Z suffix)
+  val=$(yq eval --front-matter extract '.ticket_updated // ""' "$ticket_file" 2>/dev/null || true)
+  if [[ -n "$val" ]] && ! [[ "$val" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$ ]]; then
+    echo "- Invalid value for ticket_updated: expected ISO 8601 UTC (e.g. 2026-06-13T14:30:00Z), got '$val'" >&2
     errors=$((errors + 1))
   fi
 
@@ -1190,6 +1211,8 @@ cmd_transition() {
       normalize_ranks "$tickets_dir" >/dev/null
       ;;
   esac
+
+  touch_ticket_updated "$ticket_file"
 
   echo "Transitioned $ticket_code to '$target_canonical'."
 }

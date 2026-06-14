@@ -10,6 +10,7 @@ ticket_status:
 ticket_priority:
 ticket_rank:
 ticket_created:
+ticket_updated:
 ---
 # Introduction
 
