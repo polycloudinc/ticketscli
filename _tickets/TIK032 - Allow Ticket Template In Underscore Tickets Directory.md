@@ -9,9 +9,9 @@ aliases:
 name: Allow Ticket Template In Underscore Tickets Directory
 ticket_status: "[[Backlog]]"
 ticket_priority: Medium
-ticket_rank: 6
+ticket_rank: 9
 ticket_created: 2026-06-14T07:22:09Z
-ticket_updated: 2026-06-14T07:54:21Z
+ticket_updated: 2026-06-14T08:18:43Z
 ticket_completed:
 ---
 # Introduction

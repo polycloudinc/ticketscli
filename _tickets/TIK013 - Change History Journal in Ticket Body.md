@@ -9,9 +9,9 @@ aliases:
 name: Change History Journal in Ticket Body
 ticket_status: "[[Backlog]]"
 ticket_priority: Medium
-ticket_rank: 2
+ticket_rank: 6
 ticket_created: 2026-06-13T07:20:45Z
-ticket_updated: 2026-06-14T07:54:21Z
+ticket_updated: 2026-06-14T08:18:43Z
 ticket_completed:
 ---
 # Introduction

@@ -7,12 +7,12 @@ code: TIK035
 aliases:
   - TIK035
 name: Add Tickets Stats Subcommand With Time Series Recording
-ticket_status: "[[Backlog]]"
+ticket_status: "[[Ready]]"
 ticket_priority: Medium
-ticket_rank: 9
+ticket_rank: 1
 ticket_created: 2026-06-14T07:25:22Z
-ticket_updated: 2026-06-14T07:54:21Z
-ticket_completed:
+ticket_updated: 2026-06-14T08:18:43Z
+ticket_completed: 
 ---
 # Introduction
 

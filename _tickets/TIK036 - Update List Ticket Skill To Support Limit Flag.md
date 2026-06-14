@@ -7,12 +7,12 @@ code: TIK036
 aliases:
   - TIK036
 name: Update List Ticket Skill To Support Limit Flag
-ticket_status: "[[Backlog]]"
+ticket_status: "[[Ready]]"
 ticket_priority: Medium
-ticket_rank: 10
+ticket_rank: 4
 ticket_created: 2026-06-14T07:26:31Z
-ticket_updated: 2026-06-14T07:54:21Z
-ticket_completed:
+ticket_updated: 2026-06-14T08:18:43Z
+ticket_completed: 
 ---
 # Introduction
 
