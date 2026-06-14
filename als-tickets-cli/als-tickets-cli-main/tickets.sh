@@ -610,6 +610,16 @@ cmd_list() {
     shift
   done
 
+  local cols
+  cols=$(tput cols 2>/dev/null) || cols="${COLUMNS:-80}"
+
+  local code_width=8
+  local rank_width=5
+  local status_width=12
+  local num_columns=4
+  local subject_width=$(( cols - code_width - rank_width - status_width - (num_columns - 1) ))
+  [[ $subject_width -lt 10 ]] && subject_width=10
+
   local tmpfile
   tmpfile=$(mktemp)
 
@@ -622,7 +632,7 @@ cmd_list() {
 
     frontmatter=$(sed -n '/^---$/,/^---$/p' "$ticket")
     subject=$(echo "$frontmatter" | grep '^name:' | sed 's/^name: //')
-    [[ ${#subject} -gt 41 ]] && subject="${subject:0:38}..."
+    [[ ${#subject} -gt $subject_width ]] && subject="${subject:0:$((subject_width - 3))}..."
     status=$(echo "$frontmatter" | grep '^ticket_status:' | sed 's/^ticket_status: //' | tr -d '"' | sed 's/^\[\[//; s/\]\]$//')
 
     case "$filter" in
@@ -646,15 +656,22 @@ cmd_list() {
     printf '%s\t%s\t%s\t%s\n' "$rank_val" "$number" "$subject" "$status" >> "$tmpfile"
   done
 
-  printf "%-8s %-41s %6s %-12s\n" "Code" "Subject" "Rank" "Status"
-  printf "%-8s %-41s %6s %-12s\n" "----" "-------" "----" "------"
+  printf "%-${code_width}s %-${subject_width}s %${rank_width}s %-${status_width}s\n" "Code" "Subject" "Rank" "Status"
+
+  local code_dashes subject_dashes rank_dashes status_dashes
+  code_dashes=$(printf '%*s' "$code_width" '' | tr ' ' '-')
+  subject_dashes=$(printf '%*s' "$subject_width" '' | tr ' ' '-')
+  rank_dashes=$(printf '%*s' "$rank_width" '' | tr ' ' '-')
+  status_dashes=$(printf '%*s' "$status_width" '' | tr ' ' '-')
+  printf "%-${code_width}s %-${subject_width}s %${rank_width}s %-${status_width}s\n" \
+    "$code_dashes" "$subject_dashes" "$rank_dashes" "$status_dashes"
 
   sort -t$'\t' -k1 -n "$tmpfile" | head -n "${limit:-999999}" | while IFS=$'\t' read -r rank_val number subject status; do
     local display_rank="$rank_val"
     case "$status" in
       Complete|Duplicate|"Won't Fix") display_rank="-" ;;
     esac
-    printf "%-8s %-41s %6s %-12s\n" "$number" "$subject" "$display_rank" "$status"
+    printf "%-${code_width}s %-${subject_width}s %${rank_width}s %-${status_width}s\n" "$number" "$subject" "$display_rank" "$status"
   done
 
   rm -f "$tmpfile"

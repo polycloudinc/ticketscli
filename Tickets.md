@@ -74,6 +74,25 @@ The `--group todo` filter returns tickets from both `--group backlog` and `--gro
 
 Only one filter (`--group` or `--status`) may be specified at a time. `--limit` is not a filter and may be combined with `--group` or `--status`.
 
+### List Table Output
+
+The `list` subcommand renders tickets as a four-column table: **Code**, **Subject**, **Rank**, and **Status**.
+
+Output adapts to the available terminal width (detected via `tput cols` with a fallback to `$COLUMNS`/`80`). Column widths are computed as follows:
+
+| Column   | Width                                              |
+|----------|----------------------------------------------------|
+| Code     | Fixed at 8                                         |
+| Rank     | Fixed at 5                                         |
+| Status   | Fixed at 12                                        |
+| Subject  | `terminal_width - 8 - 5 - 12 - 3` (3 accounts for inter-column spaces), clamped to a minimum of 10 |
+
+The Subject column absorbs all remaining space. When a subject exceeds the computed Subject width, it is truncated at `subject_width - 3` characters and `...` is appended.
+
+On extremely narrow terminals (below ~40 columns), column minimums are enforced and line overflow is tolerated rather than breaking table structure.
+
+Completed, duplicate, and won't-fix tickets display `-` in the Rank column. All other tickets display their numeric rank.
+
 ### Fuzzy Matching
 
 Both `--group` and `--status` accept case-insensitive input and distinguishing substrings (a substring that uniquely identifies one of the valid values).
