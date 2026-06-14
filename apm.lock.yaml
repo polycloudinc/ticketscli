@@ -12,8 +12,9 @@ dependencies:
   content_hash: sha256:38deb95157250ade3033e1a7aa756daf655fcd53d2ada02b7ebb65e09ba02ffb
   is_dev: true
 local_deployed_files:
-- .agents/skills/create-ticket
-- .agents/skills/execution-plan
-- .agents/skills/list-tickets
-- .agents/skills/review-ticket
-- .agents/skills/transition-ticket
+- .agents/skills/tickets-create
+- .agents/skills/tickets-execution-plan
+- .agents/skills/tickets-list
+- .agents/skills/tickets-rank
+- .agents/skills/tickets-review
+- .agents/skills/tickets-transition
