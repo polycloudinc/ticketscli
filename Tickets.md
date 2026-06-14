@@ -236,7 +236,7 @@ The following agent skills are available to assist with ticket workflows:
 | Skill              | Description                                                                 | Invoked When                                                                   |
 |--------------------|-----------------------------------------------------------------------------|--------------------------------------------------------------------------------|
 | `list-tickets`     | Lists tickets from `_tickets/` with optional filtering by group or status.  | User asks to list or show tickets.                                             |
-| `review-ticket`    | Reviews a ticket against the current state of the codebase for issues.      | User asks to review a ticket.                                                  |
+| `review-ticket`    | Reviews a ticket against the current state of the codebase for issues. Also accepts "review next ticket" to automatically locate and review the highest-ranked upcoming ticket.   | User asks to review a ticket or says "review next ticket".                     |
 | `execution-plan`   | Creates and manages checkbox-based execution plans with optional phasing.   | User asks to create, update, or check off execution plan items in a ticket.    |
 
 ### Execution Plan Phasing

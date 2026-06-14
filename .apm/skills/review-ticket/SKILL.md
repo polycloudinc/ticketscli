@@ -1,6 +1,6 @@
 ---
 name: review-ticket
-description: Use when the user asks to review a ticket against the current state of the codebase. Do not use for creating, ranking, kanban, or updating ticket status.
+description: Use when the user asks to review a ticket against the current state of the codebase, or says "review next ticket" to review the highest-ranked upcoming ticket. The skill handles reviewing a specific ticket by name/code, reviewing the current ticket, and reviewing the next highest-ranked ticket. Do not use for creating, ranking, kanban, or updating ticket status.
 ---
 
 # About Tickets System
@@ -32,3 +32,11 @@ If no issues are identified, output:
 **Readiness**
 
 A one-liner stating whether the ticket appears ready to be worked or not.
+
+## Review Next Ticket
+
+When the user says "review next ticket" and no specific ticket code or name is provided:
+
+1. Run `bash tickets.sh list --group backlog` to get tickets sorted ascending by `ticket_rank`.
+2. Take the first ticket from the output (the one with the lowest `ticket_rank` value).
+3. Read that ticket file and review it using the standard procedure above.

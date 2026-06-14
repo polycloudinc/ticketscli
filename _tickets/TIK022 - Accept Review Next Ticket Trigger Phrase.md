@@ -7,9 +7,9 @@ code: TIK022
 aliases:
   - TIK022
 name: Accept Review Next Ticket Trigger Phrase
-ticket_status: "[[Backlog]]"
+ticket_status: "[[Complete]]"
 ticket_priority: Medium
-ticket_rank: 7
+ticket_rank: 
 ticket_created: 2026-06-14T04:07:47Z
 ---
 # Introduction
@@ -41,4 +41,5 @@ Future enhancement (not required for this ticket): a `--limit` flag on the list 
 
 # Execution Plan
 
-TODO 
+- [x] Update the `description` field in `.agents/skills/review-ticket/SKILL.md` frontmatter
+- [x] Add `## Review Next Ticket` section to the skill with the three-step flow 
