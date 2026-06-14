@@ -7,9 +7,9 @@ code: TIK025
 aliases:
   - TIK025
 name: Add Todo Group To List Subcommand
-ticket_status: "[[Backlog]]"
+ticket_status: "[[Complete]]"
 ticket_priority: Medium
-ticket_rank: 7
+ticket_rank: 
 ticket_created: 2026-06-14T04:54:29Z
 ---
 # Introduction
