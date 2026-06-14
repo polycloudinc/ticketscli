@@ -1,5 +1,5 @@
 lockfile_version: '1'
-generated_at: '2026-06-14T04:46:34.161102+00:00'
+generated_at: '2026-06-14T05:07:23.505592+00:00'
 apm_version: 0.18.0
 dependencies:
 - repo_url: aleisium/als_sys_app_modver
@@ -16,3 +16,4 @@ local_deployed_files:
 - .agents/skills/execution-plan
 - .agents/skills/list-tickets
 - .agents/skills/review-ticket
+- .agents/skills/transition-ticket
