@@ -9,9 +9,9 @@ aliases:
 name: Kanban Subcommand
 ticket_status: "[[Backlog]]"
 ticket_priority: Medium
-ticket_rank: 4
+ticket_rank: 2
 ticket_created: 2026-06-09T06:11:51Z
-ticket_updated: 2026-06-14T08:32:03Z
+ticket_updated: 2026-06-14T08:52:28Z
 ticket_completed:
 ---
 # Introduction

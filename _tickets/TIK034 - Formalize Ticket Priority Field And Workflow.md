@@ -9,9 +9,9 @@ aliases:
 name: Formalize Ticket Priority Field And Workflow
 ticket_status: "[[Backlog]]"
 ticket_priority: Medium
-ticket_rank: 9
+ticket_rank: 7
 ticket_created: 2026-06-14T07:24:21Z
-ticket_updated: 2026-06-14T08:32:03Z
+ticket_updated: 2026-06-14T08:52:28Z
 ticket_completed:
 ---
 # Introduction

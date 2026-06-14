@@ -7,12 +7,12 @@ code: TIK033
 aliases:
   - TIK033
 name: Update Skills About MD With Full CLI Subcommand List
-ticket_status: "[[Ready]]"
+ticket_status: "[[Won't Fix]]"
 ticket_priority: Medium
-ticket_rank: 2
+ticket_rank: 
 ticket_created: 2026-06-14T07:23:09Z
-ticket_updated: 2026-06-14T08:32:03Z
-ticket_completed: 
+ticket_updated: 2026-06-14T08:44:22Z
+ticket_completed: 2026-06-14T08:44:21Z
 ---
 # Introduction
 
