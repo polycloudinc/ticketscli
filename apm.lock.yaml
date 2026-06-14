@@ -1,5 +1,5 @@
 lockfile_version: '1'
-generated_at: '2026-06-14T05:07:23.505592+00:00'
+generated_at: '2026-06-14T14:48:32.214105+00:00'
 apm_version: 0.18.0
 dependencies:
 - repo_url: aleisium/als_sys_app_modver

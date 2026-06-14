@@ -6,89 +6,116 @@ tags:
 code: TIK035
 aliases:
   - TIK035
-name: Add Tickets Stats Subcommand With Time Series Recording
-ticket_status: "[[Ready]]"
+name: Add Tickets Statistics Snapshot Subcommand
+ticket_status: "[[Complete]]"
 ticket_priority: Medium
-ticket_rank: 1
+ticket_rank: 
 ticket_created: 2026-06-14T07:25:22Z
-ticket_updated: 2026-06-14T08:18:43Z
-ticket_completed: 
+ticket_updated: 2026-06-14T14:47:01Z
+ticket_completed: 2026-06-14T14:47:01Z
 ---
 # Introduction
 
-Add a `tickets stats` subcommand that computes live metrics from the current ticket corpus and appends the results as a timestamped record to a `_tickets/statistics.yaml` time-series file, enabling trend analysis and project health tracking over time.
+Add a `tickets statistics snapshot` subcommand that computes metrics from the current ticket corpus and appends the results as a timestamped record to a `_tickets/statistics.yaml` time-series file, enabling trend analysis and project health tracking over time.
 
 # Requirements
 
-### Live Metrics Output
-Running `tickets stats` (with no recording) prints a summary to stdout:
+### Metrics Computed
+
+Running `tickets statistics snapshot` computes the following metrics from the current ticket corpus:
 
 - **Total tickets** — count of all `.md` files in `_tickets/` (excluding settings.yaml and statistics.yaml).
-- **Count by status** — breakdown for each of the six statuses: Backlog, Ready, In Progress, Complete, Duplicate, Won't Fix.
-- **Count by priority** — breakdown for Critical, High, Medium, Low.
-- **Active tickets** — count of non-done tickets (Backlog + Ready + In Progress).
-- **Completion ratio** — done count / total count as a percentage.
-- **Oldest active ticket** — code and name of the active ticket with the earliest `ticket_created` date.
-- **Average rank gap** — average difference between consecutive ranks (detects rank fragmentation).
+- **Count by status** — breakdown for each status: Backlog, Ready, In Progress, Complete, Duplicate, Won't Fix.
+- **Todo count** — tickets in Backlog, Ready, or In Progress.
+- **Done count** — tickets in Complete, Duplicate, or Won't Fix.
 
-### Time Series Recording
-`tickets stats --record` (or `-r`) appends a snapshot record to `_tickets/statistics.yaml`:
+The computed metrics are both printed to stdout and appended as a timestamped record to `_tickets/statistics.yaml`.
 
-```yaml
-- timestamp: 2026-06-14T07:30:00Z
-  total: 34
+If the tickets directory is empty (no `.md` files), all counts are zero — a snapshot is still recorded.
+
+### Stdout Format
+
+Metrics are printed to stdout as key-value pairs:
+
+```
+ts: 2026-06-14T07:30:00Z
+total: 34
+status:
   backlog: 12
   ready: 5
-  in_progress: 1
+  inprogress: 1
   complete: 14
   duplicate: 1
   wontfix: 1
-  critical: 0
-  high: 3
-  medium: 28
-  low: 3
-  active: 18
-  completion_pct: 47.1
-  avg_active_age_days: 4.2
+groups:
+  todo: 18
+  done: 16
 ```
 
-### History Viewing
-`tickets stats --history` (or `-H`) reads `statistics.yaml` and prints a table of recorded snapshots with key columns:
+### Snapshot Recording
 
-```
-Timestamp            Total  Backlog  Ready  InProg  Complete  Dup  Wontfix  Active  Done%
-2026-06-10T12:00:00Z    28       10      3       1        12    1        1      14   50.0
-2026-06-12T12:00:00Z    30       11      4       1        12    1        1      16   46.7
-2026-06-14T07:30:00Z    34       12      5       1        14    1        1      18   47.1
+Each invocation appends a snapshot record to `_tickets/statistics.yaml`:
+
+```yaml
+statistics:
+  - ts: 2026-06-14T07:30:00Z
+    total: 34
+    status:
+      backlog: 12
+      ready: 5
+      inprogress: 1
+      complete: 14
+      duplicate: 1
+      wontfix: 1
+    groups:
+      todo: 18
+      done: 16
 ```
 
 ### CLI Interface
+
 ```
-Usage: tickets stats [options]
+Usage: tickets statistics snapshot [options]
 
 Options:
-  -r, --record         Compute stats and append to _tickets/statistics.yaml
-  -H, --history        Display all recorded statistics snapshots as a table
-  -d, --tickets-dir    Path to tickets directory (default: _tickets)
-  -h, --help           Show this help message
+  -d, --tickets-dir <path>  Path to tickets directory (default: _tickets)
+  -h, --help                Show this help message
 ```
 
-- With no flags, prints the live summary only (no recording).
-- `--record` prints the summary AND appends to the file.
-- `--history` reads and displays existing records (no new recording).
-- `--record` and `--history` are mutually exclusive.
+- `statistics` is the subcommand; `snapshot` is its only sub-subcommand (two-level structure allows future expansion).
+- Running `tickets statistics` without a sub-subcommand prints the statistics usage and exits.
+- The file is append-only; existing records are never modified.
+- If `_tickets/statistics.yaml` does not exist, it is created.
 
 ### File Conventions
-- The statistics file is `_tickets/statistics.yaml`, a YAML list of snapshot objects.
-- Each snapshot is keyed by a `timestamp` field in ISO 8601 UTC format.
-- The file is append-only; existing records are never modified.
+
+- The statistics file is `_tickets/statistics.yaml`, containing a root `statistics` key whose value is a list of snapshot objects.
+- Each snapshot is keyed by a `ts` field in ISO 8601 UTC format.
 - The `list` and `validate` subcommands ignore this file (it does not match the ticket filename convention).
-- If the file does not exist, `--record` creates it; `--history` reports no records.
 
 # Technical Solution
 
-TODO
+Add a `cmd_statistics_snapshot()` function to `tickets.sh` following the patterns of existing subcommand functions (see `cmd_list` at line 532, `cmd_create` at line 709).
+
+### Changes to `tickets.sh`
+
+1. **Help text** — Add `statistics_usage()` function with the CLI usage defined above.
+2. **Function** — Implement `cmd_statistics_snapshot()`:
+   - Parse `-d`/`--tickets-dir` and `-h`/`--help` flags.
+   - Glob all `.md` files in the tickets directory, excluding `settings.yaml` and `statistics.yaml`.
+   - For each ticket file, extract the YAML frontmatter between `---` delimiters with `sed`, then parse `ticket_status` with `yq eval '.ticket_status' -` (same pattern used by `cmd_validate`).
+   - Tally counts: total, one per status, todo (backlog + ready + inprogress), done (complete + duplicate + wontfix).
+   - Generate current UTC timestamp with `date -u +"%Y-%m-%dT%H:%M:%SZ"`.
+   - Print metrics to stdout as `key: value` pairs (with `ts` for the timestamp field).
+   - If `statistics.yaml` does not exist, create it with a `statistics:` root key containing an empty list, then append the snapshot object to that list.
+   - If `statistics.yaml` exists, append the snapshot object to the existing `statistics` list using `yq`.
+   - If no `.md` files are found in the tickets directory, output all-zero counts and record the snapshot.
+3. **Dispatch** — Add a `statistics` case in the top-level `case` statement (after `rank` at line 1323) with an inner `case` dispatching `snapshot` to `cmd_statistics_snapshot`.
+4. **Usage** — Add `statistics snapshot` to the main `usage()` help text.
 
 # Execution Plan
 
-TODO 
+- [ ] Add `statistics_usage()` help text function
+- [ ] Implement `cmd_statistics_snapshot()` function
+- [ ] Add `statistics` dispatch case with `snapshot` sub-subcommand
+- [ ] Update `usage()` to list `statistics snapshot` 

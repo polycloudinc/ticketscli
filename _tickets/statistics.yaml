@@ -1,0 +1,14 @@
+statistics:
+  - ts: "2026-06-14T14:45:18Z"
+    total: 38
+    status:
+      backlog: 7
+      ready: 1
+      inprogress: 0
+      complete: 27
+      duplicate: 0
+      wontfix: 3
+    groups:
+      todo: 8
+      done: 30
+

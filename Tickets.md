@@ -258,6 +258,72 @@ Any transition from any status to any status is allowed. If the ticket is alread
 - If the ticket was previously in a done status and the `ticket_rank` field is empty, it is set to `max_existing_rank + 1`, placing the reactivated ticket at the end of the active ranked set.
 - No normalization is triggered on reactivation.
 
+## Statistics Subcommand
+
+`tickets statistics snapshot` computes metrics from the current ticket corpus and appends the results as a timestamped record to `_tickets/statistics.yaml`, enabling trend analysis over time.
+
+### CLI Interface
+
+```
+Usage: tickets statistics snapshot [options]
+
+Options:
+  -d, --tickets-dir <path>  Path to tickets directory (default: _tickets)
+  -h, --help                Show this help message
+```
+
+Running `tickets statistics` without `snapshot` prints usage and exits.
+
+### Metrics Computed
+
+- **Total tickets** — count of all `.md` files in `_tickets/`.
+- **Count by status** — breakdown for each status: Backlog, Ready, In Progress, Complete, Duplicate, Won't Fix.
+- **Todo count** — tickets in Backlog, Ready, or In Progress.
+- **Done count** — tickets in Complete, Duplicate, or Won't Fix.
+
+If the tickets directory is empty (no `.md` files), all counts are zero and a snapshot is still recorded.
+
+### Stdout Format
+
+Metrics are printed to stdout as key-value pairs:
+
+```
+ts: 2026-06-14T07:30:00Z
+total: 34
+status:
+  backlog: 12
+  ready: 5
+  inprogress: 1
+  complete: 14
+  duplicate: 1
+  wontfix: 1
+groups:
+  todo: 18
+  done: 16
+```
+
+### Snapshot Recording
+
+Each invocation appends a snapshot record to `_tickets/statistics.yaml`:
+
+```yaml
+statistics:
+  - ts: 2026-06-14T07:30:00Z
+    total: 34
+    status:
+      backlog: 12
+      ready: 5
+      inprogress: 1
+      complete: 14
+      duplicate: 1
+      wontfix: 1
+    groups:
+      todo: 18
+      done: 16
+```
+
+The file is append-only; existing records are never modified. If `_tickets/statistics.yaml` does not exist, it is created. The `list` and `validate` subcommands ignore `statistics.yaml` (it does not match the ticket filename convention).
+
 ## Agent Skills
 
 The following agent skills are available to assist with ticket workflows:

@@ -15,6 +15,7 @@ Subcommands:
   rank down         Demote a ticket's priority
   rank first        Move a ticket to rank 1
   rank last         Move a ticket to the lowest rank
+  statistics snapshot  Record a statistics snapshot to _tickets/statistics.yaml
 
 Options:
   -h, --help  Show this help message
@@ -123,6 +124,16 @@ Options:
   -T, --target <status>      Target status (backlog, ready, inprogress, complete, duplicate, wontfix; case-insensitive, fuzzy-matched)
   -d, --tickets-dir <path>   Path to tickets directory (default: _tickets)
   -h, --help                  Show this help message
+EOF
+}
+
+statistics_usage() {
+  cat <<EOF
+Usage: tickets statistics snapshot [options]
+
+Options:
+  -d, --tickets-dir <path>  Path to tickets directory (default: _tickets)
+  -h, --help                Show this help message
 EOF
 }
 
@@ -1275,6 +1286,91 @@ cmd_transition() {
   echo "Transitioned $ticket_code to '$target_canonical'."
 }
 
+cmd_statistics_snapshot() {
+  local tickets_dir="_tickets"
+
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      -d|--tickets-dir)
+        [[ -z "${2:-}" ]] && { echo "Error: --tickets-dir requires a path argument" >&2; exit 1; }
+        tickets_dir="$2"
+        shift
+        ;;
+      -h|--help)
+        statistics_usage
+        return 0
+        ;;
+      *)
+        echo "Unknown option: $1" >&2
+        echo "Run 'tickets statistics snapshot --help' for usage." >&2
+        exit 1
+        ;;
+    esac
+    shift
+  done
+
+  if [[ ! -d "$tickets_dir" ]]; then
+    echo "Error: tickets directory '$tickets_dir' does not exist" >&2
+    exit 1
+  fi
+
+  local stats_file="$tickets_dir/statistics.yaml"
+
+  local total=0
+  local backlog=0
+  local ready=0
+  local inprogress=0
+  local complete=0
+  local duplicate=0
+  local wontfix=0
+
+  for ticket in "$tickets_dir"/*.md; do
+    [[ "$ticket" == "$tickets_dir/*.md" ]] && break
+    [[ -f "$ticket" ]] || continue
+    [[ "$(basename "$ticket")" == ".gitkeep" ]] && continue
+
+    total=$((total + 1))
+
+    local status
+    status=$(yq eval --front-matter extract '.ticket_status' "$ticket" 2>/dev/null || echo "")
+    status=$(echo "$status" | tr -d '"' | sed 's/^\[\[//; s/\]\]$//')
+
+    case "$status" in
+      Backlog)     backlog=$((backlog + 1)) ;;
+      Ready)       ready=$((ready + 1)) ;;
+      "In Progress") inprogress=$((inprogress + 1)) ;;
+      Complete)    complete=$((complete + 1)) ;;
+      Duplicate)   duplicate=$((duplicate + 1)) ;;
+      "Won't Fix") wontfix=$((wontfix + 1)) ;;
+    esac
+  done
+
+  local todo=$((backlog + ready + inprogress))
+  local done=$((complete + duplicate + wontfix))
+
+  local ts
+  ts=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+
+  echo "ts: $ts"
+  echo "total: $total"
+  echo "status:"
+  echo "  backlog: $backlog"
+  echo "  ready: $ready"
+  echo "  inprogress: $inprogress"
+  echo "  complete: $complete"
+  echo "  duplicate: $duplicate"
+  echo "  wontfix: $wontfix"
+  echo "groups:"
+  echo "  todo: $todo"
+  echo "  done: $done"
+
+  if [[ ! -f "$stats_file" ]]; then
+    echo "statistics: []" > "$stats_file"
+  fi
+
+  yq eval -i ".statistics += [{\"ts\": \"$ts\", \"total\": $total, \"status\": {\"backlog\": $backlog, \"ready\": $ready, \"inprogress\": $inprogress, \"complete\": $complete, \"duplicate\": $duplicate, \"wontfix\": $wontfix}, \"groups\": {\"todo\": $todo, \"done\": $done}}]" "$stats_file"
+}
+
 if [[ $# -eq 0 ]]; then
   usage
   exit 0
@@ -1319,6 +1415,17 @@ case "$subcommand" in
         ;;
       *)
         cmd_rank "$@"
+        ;;
+    esac
+    ;;
+  statistics)
+    case "${1:-}" in
+      snapshot)
+        shift
+        cmd_statistics_snapshot "$@"
+        ;;
+      *)
+        statistics_usage
         ;;
     esac
     ;;
