@@ -7,14 +7,16 @@ code: TIK020
 aliases:
   - TIK020
 name: Rank Normalization Subcommand
-ticket_status: "[[Backlog]]"
+ticket_status: "[[Won't Fix]]"
 ticket_priority: Medium
-ticket_rank: 7
+ticket_rank:
 ticket_created: 2026-06-14T03:35:08Z
 ---
 # Introduction
 
 Provide an on-demand rank normalization subcommand that reassigns contiguous 1..N rank integers across all tickets while preserving relative ordering and clearing ranks of done tickets.
+
+> **Won't Fix**: This ticket was already effectively complete by the original implementation. `cmd_rank()` (tickets.sh:470) and `normalize_ranks()` (tickets.sh:115) fully satisfy all requirements.
 
 # Requirements
 
