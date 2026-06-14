@@ -11,6 +11,7 @@ ticket_priority:
 ticket_rank:
 ticket_created:
 ticket_updated:
+ticket_completed:
 ---
 # Introduction
 

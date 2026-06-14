@@ -1185,6 +1185,16 @@ cmd_transition() {
   case "$target_canonical" in
     complete|duplicate|wontfix)
       sed -i "/^ticket_rank:/ s/:.*/: /" "$ticket_file"
+      local ts
+      ts=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+      if grep -q '^ticket_completed:' "$ticket_file"; then
+        sed -i "/^ticket_completed:/ s/:.*/: $ts/" "$ticket_file"
+      else
+        sed -i "/^ticket_updated:/a ticket_completed: $ts" "$ticket_file"
+      fi
+      ;;
+    backlog|ready|inprogress)
+      sed -i "/^ticket_completed:/ s/:.*/: /" "$ticket_file"
       ;;
   esac
 

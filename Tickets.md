@@ -41,6 +41,8 @@ ticket_status: "[[Backlog]]"
 ticket_priority: Medium
 ticket_rank: 32
 ticket_created: 2026-06-14T03:02:32Z
+ticket_updated: 2026-06-14T03:02:32Z
+ticket_completed:
 ---
 ```
 
@@ -93,7 +95,7 @@ tickets validate -t ./_tickets TIK001   # specify tickets directory
 
 ### Schema Source
 
-The mandatory field set is derived from the ticket template at `_templates/Ticket.md`. Every field in the template must be present in each ticket.
+The mandatory field set is derived from the ticket template at `_templates/Ticket.md`. Every field in the template must be present in each ticket, with the exception of `ticket_updated` which is optional.
 
 The project code prefix is read from `_tickets/settings.yaml`:
 
@@ -120,6 +122,8 @@ The command checks three categories of deviations:
 | `ticket_priority` | One of: `Low`, `Medium`, `High`, `Critical`                      |
 | `ticket_rank`     | Must be present and hold an integer value                      |
 | `ticket_created`  | Must be ISO 8601 UTC (e.g. `2026-06-13T14:30:00Z`)             |
+| `ticket_updated`  | Optional; if present, must be ISO 8601 UTC                      |
+| `ticket_completed`| Must be ISO 8601 UTC or empty (set automatically by `tickets transition`) |
 | `tags`            | No value constraint                                              |
 
 Deviations are printed to stderr as bullet points. Exit code 0 if valid, 1 if deviations found.
@@ -226,11 +230,13 @@ Any transition from any status to any status is allowed. If the ticket is alread
 **Transitioning to a done status** (`complete`, `duplicate`, `wontfix`):
 
 - The `ticket_rank` field is cleared.
+- The `ticket_completed` field is set to the current UTC ISO 8601 timestamp (e.g. `2026-06-14T03:02:32Z`). If the field does not yet exist, it is created after `ticket_updated`.
 - Rank normalization is triggered (reusing the same logic as `tickets rank`), closing gaps across all tickets.
 
-**Transitioning from a done status to an active status** (`backlog`, `ready`, `inprogress`):
+**Transitioning to an active status** (`backlog`, `ready`, `inprogress`):
 
-- If the `ticket_rank` field is empty, it is set to `max_existing_rank + 1`, placing the reactivated ticket at the end of the active ranked set.
+- The `ticket_completed` field is cleared (set to empty).
+- If the ticket was previously in a done status and the `ticket_rank` field is empty, it is set to `max_existing_rank + 1`, placing the reactivated ticket at the end of the active ranked set.
 - No normalization is triggered on reactivation.
 
 ## Agent Skills
