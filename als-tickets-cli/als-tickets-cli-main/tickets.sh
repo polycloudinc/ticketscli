@@ -630,12 +630,18 @@ cmd_list() {
   local subject_width=$(( cols - code_width - rank_width - status_width - (num_columns - 1) ))
   [[ $subject_width -lt 10 ]] && subject_width=10
 
+  local total=0
+  local all_total=0
   local tmpfile
   tmpfile=$(mktemp)
+  local shown_tmpfile
+  shown_tmpfile=$(mktemp)
 
   for ticket in "$tickets_dir"/*.md; do
     [[ "$ticket" == "$tickets_dir/.gitkeep" ]] && continue
     [[ -f "$ticket" ]] || continue
+
+    all_total=$((all_total + 1))
 
     filename=$(basename "$ticket")
     number="${filename%% *}"
@@ -657,6 +663,8 @@ cmd_list() {
         ;;
     esac
 
+    total=$((total + 1))
+
     local rank_val
     rank_val=$(echo "$frontmatter" | grep '^ticket_rank:' | sed 's/^ticket_rank: *//')
     if [[ ! "$rank_val" =~ ^[0-9]+$ ]]; then
@@ -676,7 +684,7 @@ cmd_list() {
   printf "%-${code_width}s %-${subject_width}s %${rank_width}s %-${status_width}s\n" \
     "$code_dashes" "$subject_dashes" "$rank_dashes" "$status_dashes"
 
-  sort -t$'\t' -k1 -n "$tmpfile" | head -n "${limit:-999999}" | while IFS=$'\t' read -r rank_val number subject status; do
+  sort -t$'\t' -k1 -n "$tmpfile" | head -n "${limit:-999999}" | tee "$shown_tmpfile" | while IFS=$'\t' read -r rank_val number subject status; do
     local display_rank="$rank_val"
     case "$status" in
       Complete|Duplicate|"Won't Fix") display_rank="-" ;;
@@ -684,7 +692,18 @@ cmd_list() {
     printf "%-${code_width}s %-${subject_width}s %${rank_width}s %-${status_width}s\n" "$number" "$subject" "$display_rank" "$status"
   done
 
-  rm -f "$tmpfile"
+  printf "%-${code_width}s %-${subject_width}s %${rank_width}s %-${status_width}s\n" \
+    "$code_dashes" "$subject_dashes" "$rank_dashes" "$status_dashes"
+
+  local shown
+  shown=$(wc -l < "$shown_tmpfile")
+  local limit_note=""
+  if [[ -n "$limit" && "$total" -gt "$limit" ]]; then
+    limit_note=" (limited to $limit)"
+  fi
+  echo "$total matching from $all_total total tickets$limit_note"
+
+  rm -f "$tmpfile" "$shown_tmpfile"
 }
 
 cmd_create() {
