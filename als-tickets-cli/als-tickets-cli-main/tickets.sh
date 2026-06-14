@@ -140,8 +140,12 @@ normalize_ranks() {
 
     case "$status" in
       "Complete"|"Duplicate"|"Won't Fix")
+        local old_rank
+        old_rank=$(get_ticket_rank "$ticket")
         sed -i "/^ticket_rank:/ s/:.*/: /" "$ticket"
-        touch_ticket_updated "$ticket"
+        if [[ -n "$old_rank" ]]; then
+          touch_ticket_updated "$ticket"
+        fi
         continue
         ;;
     esac
@@ -159,9 +163,11 @@ normalize_ranks() {
   local new_rank=1
   local count=0
   local ticket_file
-  while IFS=$'\t' read -r _ ticket_file; do
+  while IFS=$'\t' read -r old_rank ticket_file; do
     sed -i "/^ticket_rank:/ s/: .*/: $new_rank/" "$ticket_file"
-    touch_ticket_updated "$ticket_file"
+    if [[ "$old_rank" != "$new_rank" ]]; then
+      touch_ticket_updated "$ticket_file"
+    fi
     new_rank=$((new_rank + 1))
     count=$((count + 1))
   done < <(sort -t$'\t' -k1 -n -k2 "$tmpfile")
@@ -187,8 +193,12 @@ get_ticket_rank() {
 set_ticket_rank() {
   local ticket_file="$1"
   local new_rank="$2"
+  local old_rank
+  old_rank=$(get_ticket_rank "$ticket_file")
   sed -i "/^ticket_rank:/ s/: .*/: $new_rank/" "$ticket_file"
-  touch_ticket_updated "$ticket_file"
+  if [[ "$old_rank" != "$new_rank" ]]; then
+    touch_ticket_updated "$ticket_file"
+  fi
 }
 
 touch_ticket_updated() {
