@@ -9,7 +9,7 @@ aliases:
 name: Kanban Subcommand
 ticket_status: "[[Backlog]]"
 ticket_priority: Medium
-ticket_rank: 6
+ticket_rank: 5
 ticket_created: 2026-06-09T06:11:51Z
 ---
 # Introduction
