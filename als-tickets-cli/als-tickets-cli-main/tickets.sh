@@ -812,6 +812,7 @@ cmd_create() {
     created_ts=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
     printf '%s\n' "ticket_created: $created_ts"
     printf '%s\n' "ticket_updated: $created_ts"
+    printf '%s\n' "ticket_completed:"
     printf '%s\n' "---"
     printf '%s' "$template_body"
   } > "$output_file"

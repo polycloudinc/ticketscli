@@ -21,7 +21,9 @@ When the user asks to create a ticket:
 
 3. Invoke the tickets CLI with `create -n "<title-cased name>"`. The CLI auto-assigns the next ticket code, sets `ticket_status` to `[[Backlog]]`, and sets `ticket_priority` to `Medium`.
 
-4. Edit the newly created ticket file to populate the template sections, replacing the generated TODO placeholders:
+4. Verify the new ticket's front matter contains every field present in the template (`_templates/Ticket.md`). If any field is missing (e.g., `ticket_completed`), add it in the same position it appears in the template as an empty field. Do not remove any template fields, even if they have no value.
+
+5. Edit the newly created ticket file to populate the template sections, replacing the generated TODO placeholders:
 
    - **Introduction**: Replace the TODO line with a 1-2 sentence explanation of the ticket's purpose, informed by the user's create prompt and relevant context from the project.
 
@@ -31,5 +33,5 @@ When the user asks to create a ticket:
 
    - **Execution Plan**: Replace the entire TODO placeholder line (the long description that starts with `TODO:`) with just the bare word `TODO`.
 
-5. Report the created ticket code and filename to the user.
+6. Report the created ticket code and filename to the user.
 
