@@ -12,6 +12,7 @@ ticket_priority: Medium
 ticket_rank: 4
 ticket_created: 2026-06-14T07:13:21Z
 ticket_updated: 2026-06-14T07:13:21Z
+ticket_completed:
 ---
 # Introduction
 
