@@ -1,0 +1,31 @@
+---
+template: "[[Ticket]]"
+kind: ticket
+tags:
+  - ticket
+code: TIK023
+aliases:
+  - TIK023
+name: Backlog Group Should Include Ready And In Progress Tickets
+ticket_status: "[[Backlog]]"
+ticket_priority: Medium
+ticket_rank: 8
+ticket_created: 2026-06-14T04:20:19Z
+---
+# Introduction
+
+The `--group backlog` switch on the `tickets list` command currently only returns tickets with `[[Backlog]]` status. It should return all non-terminal tickets: `[[Backlog]]`, `[[Ready]]`, and `[[In Progress]]`.
+
+# Requirements
+
+- `tickets list --group backlog` must return tickets with status `[[Backlog]]`, `[[Ready]]`, and `[[In Progress]]`
+- Tickets with terminal statuses (`[[Complete]]`, `[[Duplicate]]`, `[[Won't Fix]]`) must still be excluded from the backlog group
+- Existing behavior of the `--group active` and `--group done` switches must remain unchanged
+
+# Technical Solution
+
+TODO
+
+# Execution Plan
+
+TODO 
