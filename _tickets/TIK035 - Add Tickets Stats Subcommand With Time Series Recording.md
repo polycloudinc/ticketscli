@@ -9,9 +9,9 @@ aliases:
 name: Add Tickets Stats Subcommand With Time Series Recording
 ticket_status: "[[Backlog]]"
 ticket_priority: Medium
-ticket_rank: 10
+ticket_rank: 9
 ticket_created: 2026-06-14T07:25:22Z
-ticket_updated: 2026-06-14T07:46:34Z
+ticket_updated: 2026-06-14T07:54:21Z
 ticket_completed:
 ---
 # Introduction
