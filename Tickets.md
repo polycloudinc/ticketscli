@@ -17,6 +17,47 @@ yq --version  # Should show: yq (https://github.com/mikefarah/yq/) version v4.x.
 
 The dev container Dockerfile installs `yq` automatically.
 
+## Architecture
+
+`tickets.sh` is a bash script that uses **mikefarah/yq** (Go) for all YAML front matter manipulation in ticket files.
+
+### Reads
+
+Front matter fields are read with `yq eval --front-matter extract`:
+
+```bash
+yq eval --front-matter extract '.ticket_rank // ""' "$ticket_file"
+```
+
+### Writes
+
+Front matter fields are written with `yq eval -i --front-matter process`:
+
+```bash
+yq eval -i --front-matter process '.ticket_rank = 5' "$ticket_file"
+```
+
+The `--front-matter process` flag is required for in-place writes; using `--front-matter extract` with `-i` would strip the Markdown body content.
+
+### Value Formatting
+
+Timestamps are passed via `env()` to avoid YAML quoting, preserving the unquoted format produced by `printf` in `cmd_create`:
+
+```bash
+TS="2026-06-14T15:00:00Z" yq eval -i --front-matter process '.ticket_updated = env(TS)' "$ticket_file"
+```
+
+Done tickets have their `ticket_rank` cleared by setting it to `null` in yq, then post-processing with sed to produce a bare `ticket_rank:` line with no value:
+
+```bash
+yq eval -i --front-matter process '.ticket_rank = null' "$ticket"
+sed -i 's/^ticket_rank: null$/ticket_rank:/' "$ticket"
+```
+
+### Creating New Front Matter
+
+Writing front matter from scratch (e.g. in `cmd_create`) uses `printf`, not yq, since there is no existing YAML to manipulate.
+
 ## Filename Convention
 
 ```

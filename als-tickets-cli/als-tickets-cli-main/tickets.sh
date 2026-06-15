@@ -147,13 +147,14 @@ normalize_ranks() {
     [[ -f "$ticket" ]] || continue
 
     local status
-    status=$(sed -n '/^---$/,/^---$/p' "$ticket" | grep '^ticket_status:' | sed 's/^ticket_status: *//' | tr -d '"' | sed 's/^\[\[//; s/\]\]$//')
+    status=$(yq eval --front-matter extract '.ticket_status // ""' "$ticket" | tr -d '"' | sed 's/^\[\[//; s/\]\]$//')
 
     case "$status" in
       "Complete"|"Duplicate"|"Won't Fix")
         local old_rank
         old_rank=$(get_ticket_rank "$ticket")
-        sed -i "/^ticket_rank:/ s/:.*/: /" "$ticket"
+        yq eval -i --front-matter process '.ticket_rank = null' "$ticket"
+        sed -i 's/^ticket_rank: null$/ticket_rank:/' "$ticket"
         if [[ -n "$old_rank" ]]; then
           touch_ticket_updated "$ticket"
         fi
@@ -162,7 +163,7 @@ normalize_ranks() {
     esac
 
     local rank_val
-    rank_val=$(sed -n '/^---$/,/^---$/p' "$ticket" | grep '^ticket_rank:' | sed 's/^ticket_rank: *//')
+    rank_val=$(get_ticket_rank "$ticket")
 
     if [[ "$rank_val" =~ ^[0-9]+$ ]]; then
       printf '%d\t%s\n' "$rank_val" "$ticket" >> "$tmpfile"
@@ -175,10 +176,7 @@ normalize_ranks() {
   local count=0
   local ticket_file
   while IFS=$'\t' read -r old_rank ticket_file; do
-    sed -i "/^ticket_rank:/ s/: .*/: $new_rank/" "$ticket_file"
-    if [[ "$old_rank" != "$new_rank" ]]; then
-      touch_ticket_updated "$ticket_file"
-    fi
+    set_ticket_rank "$ticket_file" "$new_rank"
     new_rank=$((new_rank + 1))
     count=$((count + 1))
   done < <(sort -t$'\t' -k1 -n -k2 "$tmpfile")
@@ -198,7 +196,7 @@ find_ticket_by_code() {
 
 get_ticket_rank() {
   local ticket_file="$1"
-  sed -n '/^---$/,/^---$/p' "$ticket_file" | grep '^ticket_rank:' | sed 's/^ticket_rank: *//'
+  yq eval --front-matter extract '.ticket_rank // ""' "$ticket_file"
 }
 
 set_ticket_rank() {
@@ -206,7 +204,7 @@ set_ticket_rank() {
   local new_rank="$2"
   local old_rank
   old_rank=$(get_ticket_rank "$ticket_file")
-  sed -i "/^ticket_rank:/ s/: .*/: $new_rank/" "$ticket_file"
+  yq eval -i --front-matter process ".ticket_rank = $new_rank" "$ticket_file"
   if [[ "$old_rank" != "$new_rank" ]]; then
     touch_ticket_updated "$ticket_file"
   fi
@@ -216,8 +214,7 @@ touch_ticket_updated() {
   local ticket_file="$1"
   local ts
   ts=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
-  sed -i '/^ticket_updated:/d' "$ticket_file"
-  sed -i "/^ticket_created:/a ticket_updated: $ts" "$ticket_file"
+  TS="$ts" yq eval -i --front-matter process '.ticket_updated = env(TS)' "$ticket_file"
 }
 
 cmd_rank_up() {
@@ -657,10 +654,9 @@ cmd_list() {
     filename=$(basename "$ticket")
     number="${filename%% *}"
 
-    frontmatter=$(sed -n '/^---$/,/^---$/p' "$ticket")
-    subject=$(echo "$frontmatter" | grep '^name:' | sed 's/^name: //')
+    subject=$(yq eval --front-matter extract '.name // ""' "$ticket")
     [[ ${#subject} -gt $subject_width ]] && subject="${subject:0:$((subject_width - 3))}..."
-    status=$(echo "$frontmatter" | grep '^ticket_status:' | sed 's/^ticket_status: //' | tr -d '"' | sed 's/^\[\[//; s/\]\]$//')
+    status=$(yq eval --front-matter extract '.ticket_status // ""' "$ticket" | tr -d '"' | sed 's/^\[\[//; s/\]\]$//')
 
     case "$filter" in
       backlog) [[ "$status" != "Backlog" ]] && continue ;;
@@ -677,7 +673,7 @@ cmd_list() {
     total=$((total + 1))
 
     local rank_val
-    rank_val=$(echo "$frontmatter" | grep '^ticket_rank:' | sed 's/^ticket_rank: *//')
+    rank_val=$(get_ticket_rank "$ticket")
     if [[ ! "$rank_val" =~ ^[0-9]+$ ]]; then
       rank_val=999999
     fi
@@ -779,7 +775,7 @@ cmd_create() {
   local settings_file="$resolved_dir/settings.yaml"
   local code_prefix
   if [[ -f "$settings_file" ]]; then
-    code_prefix=$(sed -n 's/^code_prefix: *//p' "$settings_file")
+    code_prefix=$(yq eval '.code_prefix // ""' "$settings_file")
   else
     echo "Error: $resolved_dir/settings.yaml not found" >&2
     exit 1
@@ -806,7 +802,7 @@ cmd_create() {
   for ticket_file in "$resolved_dir"/*.md; do
     [[ -f "$ticket_file" ]] || continue
     local r
-    r=$(sed -n '/^---$/,/^---$/p' "$ticket_file" | grep '^ticket_rank:' | sed 's/^ticket_rank: *//')
+    r=$(get_ticket_rank "$ticket_file")
     [[ "$r" =~ ^[0-9]+$ && "$r" -gt "$max_rank" ]] && max_rank="$r"
   done
   local next_rank=$((max_rank + 1))
@@ -1221,7 +1217,7 @@ cmd_transition() {
   fi
 
   local current_status
-  current_status=$(sed -n '/^---$/,/^---$/p' "$ticket_file" | grep '^ticket_status:' | sed 's/^ticket_status: //' | tr -d '"' | sed 's/^\[\[//; s/\]\]$//')
+  current_status=$(yq eval --front-matter extract '.ticket_status // ""' "$ticket_file" | tr -d '"' | sed 's/^\[\[//; s/\]\]$//')
   local current_lower
   current_lower=$(echo "$current_status" | tr '[:upper:]' '[:lower:]' | tr -d ' ')
 
@@ -1242,17 +1238,14 @@ cmd_transition() {
 
   case "$target_canonical" in
     complete|duplicate|wontfix)
-      sed -i "/^ticket_rank:/ s/:.*/: /" "$ticket_file"
+      yq eval -i --front-matter process '.ticket_rank = null' "$ticket_file"
+      sed -i 's/^ticket_rank: null$/ticket_rank:/' "$ticket_file"
       local ts
       ts=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
-      if grep -q '^ticket_completed:' "$ticket_file"; then
-        sed -i "/^ticket_completed:/ s/:.*/: $ts/" "$ticket_file"
-      else
-        sed -i "/^ticket_updated:/a ticket_completed: $ts" "$ticket_file"
-      fi
+      TS="$ts" yq eval -i --front-matter process '.ticket_completed = env(TS)' "$ticket_file"
       ;;
     backlog|ready|inprogress)
-      sed -i "/^ticket_completed:/ s/:.*/: /" "$ticket_file"
+      yq eval -i --front-matter process 'del(.ticket_completed)' "$ticket_file"
       ;;
   esac
 
@@ -1268,12 +1261,12 @@ cmd_transition() {
           r=$(get_ticket_rank "$f")
           [[ "$r" =~ ^[0-9]+$ && "$r" -gt "$max_rank" ]] && max_rank="$r"
         done
-        sed -i "/^ticket_rank:/ s/:.*/: $((max_rank + 1))/" "$ticket_file"
+        set_ticket_rank "$ticket_file" $((max_rank + 1))
       fi
       ;;
   esac
 
-  sed -i "/^ticket_status:/ s/: .*/: \"$status_label\"/" "$ticket_file"
+  yq eval -i --front-matter process ".ticket_status = \"$status_label\"" "$ticket_file"
 
   case "$target_canonical" in
     complete|duplicate|wontfix)
