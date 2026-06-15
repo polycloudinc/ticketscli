@@ -27,6 +27,5 @@ When the user asks to initialize a tickets system, bootstrap tickets, or set up 
 
 3. The command creates the following in the current directory:
    - `_tickets/` directory containing `settings.yaml` (with the code prefix) and `statistics.yaml`
-   - `_templates/` directory containing `Ticket.md` (the ticket template)
 
 4. Report the result to the user.

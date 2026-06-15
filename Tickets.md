@@ -155,7 +155,7 @@ tickets validate -t ./_tickets TIK001   # specify tickets directory
 
 ### Schema Source
 
-The mandatory field set is derived from the ticket template at `_templates/Ticket.md`. Every field in the template must be present in each ticket, with the exception of `ticket_updated` which is optional.
+The mandatory field set is derived from the ticket template at `Ticket.md` alongside `tickets.sh`. Every field in the template must be present in each ticket, with the exception of `ticket_updated` which is optional.
 
 The project code prefix is read from `_tickets/settings.yaml`:
 
@@ -206,7 +206,7 @@ tickets create -n "Custom" -d /other/dir   # create in a custom directory
 
 ### Behavior
 
-The command locates the project root by walking up from the current directory to find `_templates/Ticket.md` (same approach as `cmd_validate`). It reads the `code_prefix` from `<tickets-dir>/settings.yaml` and scans existing ticket filenames to find the highest numeric suffix, then generates the next code as `<Prefix><NNN>` (zero-padded to 3 digits, starting at 001 if no tickets exist).
+The command locates the template from the directory where `tickets.sh` resides. It reads the `code_prefix` from `<tickets-dir>/settings.yaml` and scans existing ticket filenames to find the highest numeric suffix, then generates the next code as `<Prefix><NNN>` (zero-padded to 3 digits, starting at 001 if no tickets exist).
 
 The template body (everything after the frontmatter) is copied into the new file. The frontmatter is populated with:
 
@@ -243,8 +243,6 @@ tickets init --code-prefix TKT -d custom_path   # custom tickets directory
 The command creates the following structure relative to the current directory:
 
 ```
-_templates/
-  Ticket.md            # copied from the built-in template
 _tickets/
   settings.yaml        # contains code_prefix
   statistics.yaml      # initialized with statistics: []
@@ -262,7 +260,7 @@ The code prefix is used by `tickets create` when generating ticket codes (e.g. `
 
 ### Template Resolution
 
-The ticket template is located by reading the `tickets.templateModule` reference from the CLI module's `package.json`, which points to `als-tickets-template/als-tickets-template-main/Ticket.md`. If the template cannot be found via `package.json` (e.g. when running from the repo root), the command falls back to walking up the directory tree from the current working directory to find `_templates/Ticket.md`, the same approach used by `tickets create` and `tickets validate`.
+The ticket template is always resolved from the directory where `tickets.sh` resides (`$(dirname "$(readlink -f "$0")")/Ticket.md`). Both `tickets create` and `tickets validate` locate the template alongside the script itself. The `tickets init` subcommand no longer copies the template into the project directory.
 
 ## Rank Subcommand
 

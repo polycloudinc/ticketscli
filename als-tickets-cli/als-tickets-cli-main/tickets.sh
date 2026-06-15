@@ -765,15 +765,11 @@ cmd_create() {
     exit 1
   fi
 
-  local repo_root
-  repo_root="$(pwd)"
-  while [[ ! -f "$repo_root/_templates/Ticket.md" && "$repo_root" != "/" ]]; do
-    repo_root="$(dirname "$repo_root")"
-  done
-
-  local template_file="$repo_root/_templates/Ticket.md"
+  local script_dir
+  script_dir=$(cd "$(dirname "$(readlink -f "$0")")" && pwd)
+  local template_file="$script_dir/Ticket.md"
   if [[ ! -f "$template_file" ]]; then
-    echo "Error: template not found. Expected _templates/Ticket.md relative to the project root." >&2
+    echo "Error: template not found alongside tickets.sh ($template_file)" >&2
     exit 1
   fi
 
@@ -781,7 +777,7 @@ cmd_create() {
   if [[ "$tickets_dir" == /* ]]; then
     resolved_dir="$tickets_dir"
   else
-    resolved_dir="$repo_root/$tickets_dir"
+    resolved_dir="$(pwd)/$tickets_dir"
   fi
 
   local settings_file="$resolved_dir/settings.yaml"
@@ -928,25 +924,6 @@ cmd_init() {
     echo "Created: $stats_file"
   fi
 
-  mkdir -p "_templates"
-  echo "Created: _templates/"
-
-  local template_target="_templates/Ticket.md"
-  if [[ -f "$template_target" ]]; then
-    echo "Skipped: $template_target (already exists)"
-  else
-    local script_dir
-    script_dir=$(cd "$(dirname "$(readlink -f "$0")")" && pwd)
-    local template_source="$script_dir/Ticket.md"
-
-    if [[ ! -f "$template_source" ]]; then
-      echo "Error: ticket template not found alongside tickets.sh ($template_source)" >&2
-      exit 1
-    fi
-
-    cp "$template_source" "$template_target"
-    echo "Created: $template_target"
-  fi
 }
 
 cmd_validate() {
@@ -1015,20 +992,15 @@ cmd_validate() {
     exit 1
   fi
 
-  # Find repo root
-  local repo_root
-  repo_root="$(pwd)"
-  while [[ ! -f "$repo_root/_templates/Ticket.md" && "$repo_root" != "/" ]]; do
-    repo_root="$(dirname "$repo_root")"
-  done
-
-  local template_file="$repo_root/_templates/Ticket.md"
+  local script_dir
+  script_dir=$(cd "$(dirname "$(readlink -f "$0")")" && pwd)
+  local template_file="$script_dir/Ticket.md"
   if [[ ! -f "$template_file" ]]; then
-    echo "Error: template not found. Expected _templates/Ticket.md relative to the project root." >&2
+    echo "Error: template not found alongside tickets.sh ($template_file)" >&2
     exit 1
   fi
 
-  local settings_file="$repo_root/$tickets_dir/settings.yaml"
+  local settings_file="$tickets_dir/settings.yaml"
   local code_prefix
   if [[ -f "$settings_file" ]]; then
     code_prefix=$(yq eval '.code_prefix // "TIK"' "$settings_file" 2>/dev/null) || code_prefix="TIK"
