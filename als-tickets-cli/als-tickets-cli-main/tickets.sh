@@ -935,35 +935,12 @@ cmd_init() {
   if [[ -f "$template_target" ]]; then
     echo "Skipped: $template_target (already exists)"
   else
-    local template_source=""
     local script_dir
     script_dir=$(cd "$(dirname "$(readlink -f "$0")")" && pwd)
-    local pkg_json="$script_dir/package.json"
+    local template_source="$script_dir/Ticket.md"
 
-    if [[ -f "$pkg_json" ]]; then
-      local tmpl_ref
-      tmpl_ref=$(yq eval '.tickets.templateModule // ""' "$pkg_json" | tr -d '"')
-      if [[ -n "$tmpl_ref" ]]; then
-        local resolved="$script_dir/$tmpl_ref"
-        if [[ -f "$resolved" ]]; then
-          template_source="$resolved"
-        fi
-      fi
-    fi
-
-    if [[ -z "$template_source" ]]; then
-      local repo_root
-      repo_root="$(pwd)"
-      while [[ ! -f "$repo_root/_templates/Ticket.md" && "$repo_root" != "/" ]]; do
-        repo_root="$(dirname "$repo_root")"
-      done
-      if [[ -f "$repo_root/_templates/Ticket.md" ]]; then
-        template_source="$repo_root/_templates/Ticket.md"
-      fi
-    fi
-
-    if [[ -z "$template_source" ]]; then
-      echo "Error: could not locate ticket template" >&2
+    if [[ ! -f "$template_source" ]]; then
+      echo "Error: ticket template not found alongside tickets.sh ($template_source)" >&2
       exit 1
     fi
 

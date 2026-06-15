@@ -6,7 +6,8 @@
     "tickets": "tickets.sh"
   },
   "files": [
-    "tickets.sh"
+    "tickets.sh",
+    "Ticket.md"
   ],
   "repository": {
     "type": "git",
