@@ -413,6 +413,7 @@ The following agent skills are available to assist with ticket workflows:
 
 | Skill              | Description                                                                 | Invoked When                                                                   |
 |--------------------|-----------------------------------------------------------------------------|--------------------------------------------------------------------------------|
+| `tickets-init`          | Initializes the tickets system in a new project using the `tickets init` CLI subcommand. Supports `--code-prefix` flag or interactive prompt. | User asks to initialize a tickets system, bootstrap tickets, or set up the ticket directory structure. |
 | `tickets-create`        | Creates a new ticket from the template with auto-assigned code. Extracts a name from the user's message and uses the `tickets create` subcommand. | User asks to create a new ticket.                                               |
 | `tickets-list`          | Lists tickets from `_tickets/` with optional filtering by group, status, or a numeric limit (e.g., "top 5", "first 10").  | User asks to list or show tickets.                                             |
 | `tickets-review`        | Reviews a ticket against the current state of the codebase for issues. Also accepts "review next ticket" to automatically locate and review the highest-ranked upcoming ticket.   | User asks to review a ticket or says "review next ticket".                     |
