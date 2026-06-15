@@ -222,6 +222,48 @@ The template body (everything after the frontmatter) is copied into the new file
 
 If `settings.yaml` is missing or `code_prefix` is not set, the command exits with an error. If a ticket with the generated code already exists, the command exits with an error.
 
+## Init Subcommand
+
+`tickets init` bootstraps a new project with the required directory structure, settings, and ticket template.
+
+| Flag                  | Short | Required | Description                                                   |
+|-----------------------|-------|----------|---------------------------------------------------------------|
+| `--code-prefix`       |       | no       | Ticket code prefix (3-4 alpha characters); if omitted, prompted interactively |
+| `--tickets-dir`       | `-d`  | no       | Path to tickets directory (default: `_tickets`)                |
+| `--help`              | `-h`  | no       | Show usage text                                                |
+
+```
+tickets init                                    # interactive prompt for code prefix
+tickets init --code-prefix TKT                  # specify prefix on command line
+tickets init --code-prefix TKT -d custom_path   # custom tickets directory
+```
+
+### Behavior
+
+The command creates the following structure relative to the current directory:
+
+```
+_templates/
+  Ticket.md            # copied from the built-in template
+_tickets/
+  settings.yaml        # contains code_prefix
+  statistics.yaml      # initialized with statistics: []
+```
+
+If `settings.yaml` already exists in the target tickets directory, the command halts with an error to prevent overwriting a previously initialized project.
+
+### Code Prefix
+
+The code prefix is used by `tickets create` when generating ticket codes (e.g. `TKT001`). When `--code-prefix` is not supplied, the command interactively prompts for a value. In both cases, the input is validated:
+
+- Must be 3 or 4 alphabetic characters (A-Z, a-z)
+- Lowercase input is automatically uppercased for storage
+- Invalid input from the prompt causes a re-prompt; invalid input from the flag causes an error
+
+### Template Resolution
+
+The ticket template is located by reading the `tickets.templateModule` reference from the CLI module's `package.json`, which points to `als-tickets-template/als-tickets-template-main/Ticket.md`. If the template cannot be found via `package.json` (e.g. when running from the repo root), the command falls back to walking up the directory tree from the current working directory to find `_templates/Ticket.md`, the same approach used by `tickets create` and `tickets validate`.
+
 ## Rank Subcommand
 
 `tickets rank` normalizes ranks across all tickets, closing gaps by reassigning contiguous 1..N integers while preserving the existing relative ordering.

@@ -16,5 +16,8 @@
   "publishConfig": {
     "registry": "https://forgejo.aleisium.com/api/packages/aleisium/npm/"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "tickets": {
+    "templateModule": "../../als-tickets-template/als-tickets-template-main/Ticket.md"
+  }
 }

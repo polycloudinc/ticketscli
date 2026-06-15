@@ -6,6 +6,7 @@ usage() {
 Usage: tickets <subcommand> [options]
 
 Subcommands:
+  init              Initialize the tickets directory structure
   list              List tickets from the tickets directory
   validate          Validate a ticket's front matter against the schema
   create            Create a new ticket file
@@ -134,6 +135,17 @@ Usage: tickets statistics snapshot [options]
 Options:
   -d, --tickets-dir <path>  Path to tickets directory (default: _tickets)
   -h, --help                Show this help message
+EOF
+}
+
+init_usage() {
+  cat <<EOF
+Usage: tickets init [options]
+
+Options:
+  -d, --tickets-dir <path>   Path to tickets directory (default: _tickets)
+  --code-prefix <prefix>      Ticket code prefix (3-4 alpha characters)
+  -h, --help                  Show this help message
 EOF
 }
 
@@ -846,6 +858,120 @@ cmd_create() {
   echo "Created: $output_file"
 }
 
+cmd_init() {
+  local tickets_dir="_tickets"
+  local code_prefix=""
+
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      -d|--tickets-dir)
+        [[ -z "${2:-}" ]] && { echo "Error: --tickets-dir requires a path argument" >&2; exit 1; }
+        tickets_dir="$2"
+        shift
+        ;;
+      --code-prefix)
+        [[ -z "${2:-}" ]] && { echo "Error: --code-prefix requires a value" >&2; exit 1; }
+        code_prefix="$2"
+        shift
+        ;;
+      -h|--help)
+        init_usage
+        return 0
+        ;;
+      -*)
+        echo "Unknown option: $1" >&2
+        echo "Run 'tickets init --help' for usage." >&2
+        exit 1
+        ;;
+      *)
+        echo "Error: unexpected argument '$1'" >&2
+        init_usage
+        exit 1
+        ;;
+    esac
+    shift
+  done
+
+  local settings_file="$tickets_dir/settings.yaml"
+  if [[ -f "$settings_file" ]]; then
+    echo "Error: tickets directory has already been initialized ($settings_file exists)" >&2
+    exit 1
+  fi
+
+  if [[ -n "$code_prefix" ]]; then
+    if [[ ! "$code_prefix" =~ ^[A-Za-z]{3,4}$ ]]; then
+      echo "Error: --code-prefix must be 3 or 4 alphabetic characters" >&2
+      exit 1
+    fi
+    code_prefix=$(echo "$code_prefix" | tr '[:lower:]' '[:upper:]')
+  else
+    while true; do
+      printf "Enter ticket code prefix (3-4 alphabetic characters): "
+      read -r code_prefix
+      if [[ "$code_prefix" =~ ^[A-Za-z]{3,4}$ ]]; then
+        code_prefix=$(echo "$code_prefix" | tr '[:lower:]' '[:upper:]')
+        break
+      fi
+      echo "Invalid prefix. Must be 3 or 4 alphabetic characters." >&2
+    done
+  fi
+
+  mkdir -p "$tickets_dir"
+  echo "Created: $tickets_dir/"
+
+  echo "code_prefix: $code_prefix" > "$settings_file"
+  echo "Created: $settings_file"
+
+  local stats_file="$tickets_dir/statistics.yaml"
+  if [[ ! -f "$stats_file" ]]; then
+    echo "statistics: []" > "$stats_file"
+    echo "Created: $stats_file"
+  fi
+
+  mkdir -p "_templates"
+  echo "Created: _templates/"
+
+  local template_target="_templates/Ticket.md"
+  if [[ -f "$template_target" ]]; then
+    echo "Skipped: $template_target (already exists)"
+  else
+    local template_source=""
+    local script_dir
+    script_dir=$(cd "$(dirname "$(readlink -f "$0")")" && pwd)
+    local pkg_json="$script_dir/package.json"
+
+    if [[ -f "$pkg_json" ]]; then
+      local tmpl_ref
+      tmpl_ref=$(yq eval '.tickets.templateModule // ""' "$pkg_json" | tr -d '"')
+      if [[ -n "$tmpl_ref" ]]; then
+        local resolved="$script_dir/$tmpl_ref"
+        if [[ -f "$resolved" ]]; then
+          template_source="$resolved"
+        fi
+      fi
+    fi
+
+    if [[ -z "$template_source" ]]; then
+      local repo_root
+      repo_root="$(pwd)"
+      while [[ ! -f "$repo_root/_templates/Ticket.md" && "$repo_root" != "/" ]]; do
+        repo_root="$(dirname "$repo_root")"
+      done
+      if [[ -f "$repo_root/_templates/Ticket.md" ]]; then
+        template_source="$repo_root/_templates/Ticket.md"
+      fi
+    fi
+
+    if [[ -z "$template_source" ]]; then
+      echo "Error: could not locate ticket template" >&2
+      exit 1
+    fi
+
+    cp "$template_source" "$template_target"
+    echo "Created: $template_target"
+  fi
+}
+
 cmd_validate() {
   local tickets_dir="_tickets"
   local mode=""       # "all" or "single"
@@ -1421,6 +1547,9 @@ case "$subcommand" in
         statistics_usage
         ;;
     esac
+    ;;
+  init)
+    cmd_init "$@"
     ;;
   *)
     echo "Unknown subcommand: $subcommand" >&2

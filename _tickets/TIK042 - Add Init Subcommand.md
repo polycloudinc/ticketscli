@@ -44,21 +44,21 @@ Add an `init` subcommand to the tickets CLI that bootstraps a new project with t
 
 ## Phase 1 — Add template reference to CLI package.json
 
-- [ ] Add a field to `als-tickets-cli/als-tickets-cli-main/package.json` referencing the path to `als-tickets-template/als-tickets-template-main/Ticket.md`
-- [ ] Verify `cmd_init` can read the reference from `package.json` to locate the template
+- [x] Add a field to `als-tickets-cli/als-tickets-cli-main/package.json` referencing the path to `als-tickets-template/als-tickets-template-main/Ticket.md`
+- [x] Verify `cmd_init` can read the reference from `package.json` to locate the template
 
 ## Phase 2 — Implement `cmd_init` in tickets.sh
 
-- [ ] Add `init_usage()` function alongside the other `*_usage` functions
-- [ ] Implement `cmd_init()` with: argument parsing (`-d`, `--code-prefix`, `-h`), halt-if-initialized check, code prefix resolution (flag or interactive prompt with validation), directory creation, template copy, `settings.yaml` and `statistics.yaml` creation, and output reporting
-- [ ] Add `init)` case to the main dispatch `case` block
-- [ ] Add `init` entry to the top-level `usage()` listing
-- [ ] Sync changes to `als-tickets-cli/als-tickets-cli-main/tickets.sh`
-- [ ] Verify: run `bash tickets.sh init` in a temp directory and confirm all files and directories are created
+- [x] Add `init_usage()` function alongside the other `*_usage` functions
+- [x] Implement `cmd_init()` with: argument parsing (`-d`, `--code-prefix`, `-h`), halt-if-initialized check, code prefix resolution (flag or interactive prompt with validation), directory creation, template copy, `settings.yaml` and `statistics.yaml` creation, and output reporting
+- [x] Add `init)` case to the main dispatch `case` block
+- [x] Add `init` entry to the top-level `usage()` listing
+- [x] Sync changes to `als-tickets-cli/als-tickets-cli-main/tickets.sh`
+- [x] Verify: run `bash tickets.sh init` in a temp directory and confirm all files and directories are created
 
 ## Phase 3 — Integration verification
 
-- [ ] Verify `bash tickets.sh init --code-prefix FOO` works without interactive prompt
-- [ ] Verify interactive prompt accepts valid input and rejects invalid input
-- [ ] Verify `bash tickets.sh init` halts when `_tickets/settings.yaml` already exists
-- [ ] Verify `bash tickets.sh init -d custom` creates everything under `custom/`
+- [x] Verify `bash tickets.sh init --code-prefix FOO` works without interactive prompt
+- [x] Verify interactive prompt accepts valid input and rejects invalid input
+- [x] Verify `bash tickets.sh init` halts when `_tickets/settings.yaml` already exists
+- [x] Verify `bash tickets.sh init -d custom` creates everything under `custom/`
