@@ -9,7 +9,7 @@ aliases:
 name: Fix Rank Touching Updated Timestamp Unnecessarily
 ticket_status: "[[Complete]]"
 ticket_priority: Medium
-ticket_rank: 
+ticket_rank:
 ticket_created: 2026-06-14T06:36:31Z
 ticket_updated: 2026-06-14T07:10:31Z
 ticket_completed: 2026-06-14T07:10:31Z

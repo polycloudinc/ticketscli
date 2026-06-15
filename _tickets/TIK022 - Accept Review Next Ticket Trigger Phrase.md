@@ -9,7 +9,7 @@ aliases:
 name: Accept Review Next Ticket Trigger Phrase
 ticket_status: "[[Complete]]"
 ticket_priority: Medium
-ticket_rank: 
+ticket_rank:
 ticket_created: 2026-06-14T04:07:47Z
 ticket_updated: 2026-06-14T05:45:20Z
 ticket_completed: 2026-06-14T05:45:20Z

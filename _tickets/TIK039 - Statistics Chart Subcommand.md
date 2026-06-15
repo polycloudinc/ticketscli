@@ -9,9 +9,9 @@ aliases:
 name: Statistics Chart Subcommand
 ticket_status: "[[Backlog]]"
 ticket_priority: Medium
-ticket_rank: 8
+ticket_rank: 7
 ticket_created: 2026-06-14T14:55:07Z
-ticket_updated: 2026-06-14T14:55:07Z
+ticket_updated: 2026-06-14T15:52:54Z
 ticket_completed:
 ---
 # Introduction

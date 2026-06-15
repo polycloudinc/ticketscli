@@ -9,7 +9,7 @@ aliases:
 name: Standardized About Section in Skills
 ticket_status: "[[Complete]]"
 ticket_priority: Medium
-ticket_rank: 
+ticket_rank:
 ticket_created: 2026-06-13T07:19:59Z
 ticket_updated: 2026-06-14T05:45:20Z
 ticket_completed: 2026-06-14T05:45:20Z
