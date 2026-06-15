@@ -27,20 +27,38 @@ Add an `init` subcommand to the tickets CLI that bootstraps a new project with t
 - Create `_tickets/settings.yaml` with the resolved code prefix if it does not already exist
 - Create `_tickets/statistics.yaml` with `statistics: []` if it does not already exist
 - Create the `_templates/` directory if it does not exist
-- Copy the built-in ticket template to `_templates/Ticket.md` if it does not already exist; locate the template relative to the script (from the npm package when running via npx, or from the repo root `_templates/Ticket.md` when running via `bash tickets.sh`)
-- Bundle `_templates/Ticket.md` in the npm package by updating `als-tickets-cli/als-tickets-cli-main/package.json` `files` field
+- Copy the built-in ticket template to `_templates/Ticket.md` if it does not already exist; locate the template from `als-tickets-template/als-tickets-template-main/Ticket.md` via a reference in the CLI module's `package.json`
+- Keep `als-tickets-template` and `als-tickets-cli` as separate modules; add a reference to the template module's `Ticket.md` in the CLI module's `package.json`
 - Support a `-d` / `--tickets-dir` flag to specify an alternate tickets directory (defaults to `_tickets`)
 - Report each item created or skipped to stdout
 
 # Technical Solution
 
-TODO
+- Add a `cmd_init` function to `tickets.sh` following the existing subcommand pattern: argument parsing loop with `-d`/`--tickets-dir`, `--code-prefix`, and `-h`/`--help`, then directory and file creation logic
+- Resolve the ticket template by reading a template path reference from the CLI module's `package.json`, falling back to repo-root search for `_templates/Ticket.md` (as `cmd_create` does)
+- Resolve the `--code-prefix` value: use the flag value if provided (after validation), otherwise read from stdin with a prompt; validate it matches `^[A-Za-z]{3,4}$` and uppercase it
+- Add `init` dispatch case to the main `case` block and add `init_usage` function
+- Add `init` to the top-level `usage()` listing
 
 # Execution Plan
 
-- Add a `cmd_init` function to `tickets.sh` following the existing subcommand pattern: argument parsing loop with `-d`/`--tickets-dir`, `--code-prefix`, and `-h`/`--help`, then directory and file creation logic
-- Resolve the ticket template by checking `$script_dir/_templates/Ticket.md` first (bundled in npm package), falling back to repo-root search (as `cmd_create` does)
-- Resolve the `--code-prefix` value: use the flag value if provided (after validation), otherwise read from stdin with a prompt; validate it matches `^[A-Za-z]{3,4}$` and uppercase it
-- Add `_templates/Ticket.md` to the npm package `files` array in `package.json` and copy it into `als-tickets-cli/als-tickets-cli-main/_templates/`
-- Add `init` dispatch case to the main `case` block and add `init_usage` function
-- Add `init` to the top-level `usage()` listing
+## Phase 1 — Add template reference to CLI package.json
+
+- [ ] Add a field to `als-tickets-cli/als-tickets-cli-main/package.json` referencing the path to `als-tickets-template/als-tickets-template-main/Ticket.md`
+- [ ] Verify `cmd_init` can read the reference from `package.json` to locate the template
+
+## Phase 2 — Implement `cmd_init` in tickets.sh
+
+- [ ] Add `init_usage()` function alongside the other `*_usage` functions
+- [ ] Implement `cmd_init()` with: argument parsing (`-d`, `--code-prefix`, `-h`), halt-if-initialized check, code prefix resolution (flag or interactive prompt with validation), directory creation, template copy, `settings.yaml` and `statistics.yaml` creation, and output reporting
+- [ ] Add `init)` case to the main dispatch `case` block
+- [ ] Add `init` entry to the top-level `usage()` listing
+- [ ] Sync changes to `als-tickets-cli/als-tickets-cli-main/tickets.sh`
+- [ ] Verify: run `bash tickets.sh init` in a temp directory and confirm all files and directories are created
+
+## Phase 3 — Integration verification
+
+- [ ] Verify `bash tickets.sh init --code-prefix FOO` works without interactive prompt
+- [ ] Verify interactive prompt accepts valid input and rejects invalid input
+- [ ] Verify `bash tickets.sh init` halts when `_tickets/settings.yaml` already exists
+- [ ] Verify `bash tickets.sh init -d custom` creates everything under `custom/`
