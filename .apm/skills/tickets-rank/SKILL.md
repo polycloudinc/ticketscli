@@ -7,9 +7,7 @@ description: Use when the user asks to promote, demote, reorder, or change the r
 
 The tickets system manages work items as Markdown files in the `_tickets/` directory, each with YAML frontmatter containing fields such as `code`, `name`, `ticket_status`, `ticket_priority`, and `ticket_rank`. Tickets progress through statuses: `[[Backlog]]` (unscheduled), `[[Ready]]` (scheduled), `[[In Progress]]` (active work), `[[Complete]]` (done), `[[Duplicate]]`, and `[[Won't Fix]]`. A `tickets` CLI provides `init`, `list`, `validate`, `create`, `transition`, `rank`, and `statistics` subcommands for managing tickets.
 
-The `tickets` CLI is published as `@aleisium/tickets`. Before running any `tickets` command, determine the correct invocation:
-- If `tickets.sh` exists at the repository root, use `bash tickets.sh`.
-- Otherwise, use `npx @aleisium/tickets`.
+The `tickets` CLI is published as `@aleisium/tickets`. Always invoke it using `npx @aleisium/tickets@latest`.
 
 # Rank Ticket
 
@@ -19,7 +17,7 @@ When the user asks to promote, demote, reorder, or change the rank of a ticket:
 
 2. Determine the direction from the user's phrasing. Map natural language to the correct `rank` subcommand using the table below.
 
-3. Run `bash tickets.sh rank <subcommand> -t <code>` using the extracted ticket code and the mapped subcommand.
+3. Run `npx @aleisium/tickets@latest rank <subcommand> -t <code>` using the extracted ticket code and the mapped subcommand.
 
 4. Report the result to the user verbatim. The CLI handles normalization and boundary messages internally (e.g., "Promoted TIK005 to rank 3" or "TIK001 is already at the highest priority").
 
