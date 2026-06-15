@@ -11,4 +11,15 @@ statistics:
     groups:
       todo: 8
       done: 30
-
+  - ts: "2026-06-14T15:42:53Z"
+    total: 41
+    status:
+      backlog: 9
+      ready: 0
+      inprogress: 0
+      complete: 29
+      duplicate: 0
+      wontfix: 3
+    groups:
+      todo: 9
+      done: 32
