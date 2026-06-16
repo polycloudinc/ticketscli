@@ -17,5 +17,5 @@
   "publishConfig": {
     "registry": "https://forgejo.aleisium.com/api/packages/aleisium/npm/"
   },
-  "license": "MIT"
+  "license": "GPL-3.0"
 }
