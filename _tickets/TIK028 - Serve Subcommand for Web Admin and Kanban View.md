@@ -9,9 +9,9 @@ aliases:
 name: Serve Subcommand for Web Admin and Kanban View
 ticket_status: "[[Backlog]]"
 ticket_priority: Medium
-ticket_rank: 3
+ticket_rank: 4
 ticket_created: 2026-06-14T07:13:21Z
-ticket_updated: 2026-06-14T14:47:01Z
+ticket_updated: 2026-06-16T02:29:58Z
 ticket_completed:
 ---
 # Introduction
