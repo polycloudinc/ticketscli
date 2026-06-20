@@ -1,18 +1,18 @@
 ---
-template: "[[Ticket]]"
+template: '[[Ticket]]'
 kind: ticket
 tags:
-  - ticket
+- ticket
 code: TIK040
 aliases:
-  - TIK040
+- TIK040
 name: Consolidate All Front Matter YAML Manipulation To YQ
-ticket_status: "[[Complete]]"
+ticket_status: '[[Complete]]'
 ticket_priority: Medium
 ticket_rank:
-ticket_created: 2026-06-14T15:04:35Z
-ticket_updated: 2026-06-15T05:24:25Z
-ticket_completed: 2026-06-15T05:24:24Z
+ticket_created: '2026-06-14T15:04:35Z'
+ticket_updated: '2026-06-15T05:24:25Z'
+ticket_completed: '2026-06-15T05:24:24Z'
 ---
 # Introduction
 

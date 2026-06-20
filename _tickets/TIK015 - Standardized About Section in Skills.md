@@ -1,20 +1,19 @@
 ---
-template: "[[Ticket]]"
+template: '[[Ticket]]'
 kind: ticket
 tags:
-  - ticket
+- ticket
 code: TIK015
 aliases:
-  - TIK015
+- TIK015
 name: Standardized About Section in Skills
-ticket_status: "[[Complete]]"
+ticket_status: '[[Complete]]'
 ticket_priority: Medium
 ticket_rank:
-ticket_created: 2026-06-13T07:19:59Z
-ticket_updated: 2026-06-14T05:45:20Z
-ticket_completed: 2026-06-14T05:45:20Z
+ticket_created: '2026-06-13T07:19:59Z'
+ticket_updated: '2026-06-14T05:45:20Z'
+ticket_completed: '2026-06-14T05:45:20Z'
 ---
-
 # Introduction
 
 Define and enforce a standardized **About** section that every agent skill (`SKILL.md`) must include. The section provides a consistent, scannable summary of the skill's purpose, invocation scope, and what it does and does not cover.

@@ -1,18 +1,18 @@
 ---
-template: "[[Ticket]]"
+template: '[[Ticket]]'
 kind: ticket
 tags:
-  - ticket
+- ticket
 code: TIK013
 aliases:
-  - TIK013
+- TIK013
 name: Change History Journal in Ticket Body
-ticket_status: "[[Backlog]]"
+ticket_status: '[[Backlog]]'
 ticket_priority: Medium
 ticket_rank: 3
-ticket_created: 2026-06-13T07:20:45Z
-ticket_updated: 2026-06-16T02:29:58Z
-ticket_completed:
+ticket_created: '2026-06-13T07:20:45Z'
+ticket_updated: '2026-06-16T02:29:58Z'
+ticket_completed: null
 ---
 # Introduction
 

@@ -1,18 +1,18 @@
 ---
-template: "[[Ticket]]"
+template: '[[Ticket]]'
 kind: ticket
 tags:
-  - ticket
+- ticket
 code: TIK006
 aliases:
-  - TIK006
+- TIK006
 name: Create Subcommand
-ticket_status: "[[Complete]]"
+ticket_status: '[[Complete]]'
 ticket_priority: Medium
 ticket_rank:
-ticket_created: 2026-06-09T06:11:51Z
-ticket_updated: 2026-06-14T05:45:20Z
-ticket_completed: 2026-06-14T05:45:20Z
+ticket_created: '2026-06-09T06:11:51Z'
+ticket_updated: '2026-06-14T05:45:20Z'
+ticket_completed: '2026-06-14T05:45:20Z'
 ---
 # Introduction
 

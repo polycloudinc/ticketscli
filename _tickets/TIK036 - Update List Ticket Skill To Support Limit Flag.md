@@ -1,18 +1,18 @@
 ---
-template: "[[Ticket]]"
+template: '[[Ticket]]'
 kind: ticket
 tags:
-  - ticket
+- ticket
 code: TIK036
 aliases:
-  - TIK036
+- TIK036
 name: Update List Ticket Skill To Support Limit Flag
-ticket_status: "[[Complete]]"
+ticket_status: '[[Complete]]'
 ticket_priority: Medium
 ticket_rank:
-ticket_created: 2026-06-14T07:26:31Z
-ticket_updated: 2026-06-14T08:52:28Z
-ticket_completed: 2026-06-14T08:52:27Z
+ticket_created: '2026-06-14T07:26:31Z'
+ticket_updated: '2026-06-14T08:52:28Z'
+ticket_completed: '2026-06-14T08:52:27Z'
 ---
 # Introduction
 

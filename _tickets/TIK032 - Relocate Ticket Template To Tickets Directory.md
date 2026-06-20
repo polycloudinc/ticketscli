@@ -1,18 +1,18 @@
 ---
-template: "[[Ticket]]"
+template: '[[Ticket]]'
 kind: ticket
 tags:
-  - ticket
+- ticket
 code: TIK032
 aliases:
-  - TIK032
+- TIK032
 name: Relocate Ticket Template To Tickets Directory
-ticket_status: "[[Backlog]]"
+ticket_status: '[[Backlog]]'
 ticket_priority: Medium
 ticket_rank: 5
-ticket_created: 2026-06-14T07:22:09Z
-ticket_updated: 2026-06-15T14:53:50Z
-ticket_completed:
+ticket_created: '2026-06-14T07:22:09Z'
+ticket_updated: '2026-06-15T14:53:50Z'
+ticket_completed: null
 ---
 # Introduction
 

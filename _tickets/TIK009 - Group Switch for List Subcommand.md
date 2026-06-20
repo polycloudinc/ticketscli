@@ -1,20 +1,19 @@
 ---
-template: "[[Ticket]]"
+template: '[[Ticket]]'
 kind: ticket
 tags:
-  - ticket
+- ticket
 code: TIK009
 aliases:
-  - TIK009
+- TIK009
 name: Group Switch for List Subcommand
-ticket_status: "[[Complete]]"
+ticket_status: '[[Complete]]'
 ticket_priority: Medium
 ticket_rank:
-ticket_created: 2026-06-13T04:37:23Z
-ticket_updated: 2026-06-14T05:45:20Z
-ticket_completed: 2026-06-14T05:45:20Z
+ticket_created: '2026-06-13T04:37:23Z'
+ticket_updated: '2026-06-14T05:45:20Z'
+ticket_completed: '2026-06-14T05:45:20Z'
 ---
-
 # Introduction
 
 Add a `--group` switch to the `tickets list` subcommand that accepts `backlog`, `active`, or `done` as a value. Replace the existing standalone `-b`/`--backlog`, `-a`/`--active`, and `-d`/`--done` switches with this unified `--group` option.

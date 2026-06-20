@@ -1,18 +1,18 @@
 ---
-template: "[[Ticket]]"
+template: '[[Ticket]]'
 kind: ticket
 tags:
-  - ticket
+- ticket
 code: TIK034
 aliases:
-  - TIK034
+- TIK034
 name: Formalize Ticket Priority Field And Workflow
-ticket_status: "[[Backlog]]"
+ticket_status: '[[Backlog]]'
 ticket_priority: Medium
 ticket_rank: 6
-ticket_created: 2026-06-14T07:24:21Z
-ticket_updated: 2026-06-14T14:47:01Z
-ticket_completed:
+ticket_created: '2026-06-14T07:24:21Z'
+ticket_updated: '2026-06-14T14:47:01Z'
+ticket_completed: null
 ---
 # Introduction
 

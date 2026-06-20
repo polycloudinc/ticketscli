@@ -1,18 +1,18 @@
 ---
-template: "[[Ticket]]"
+template: '[[Ticket]]'
 kind: ticket
 tags:
-  - ticket
+- ticket
 code: TIK033
 aliases:
-  - TIK033
+- TIK033
 name: Update Skills About MD With Full CLI Subcommand List
-ticket_status: "[[Won't Fix]]"
+ticket_status: '[[Won''t Fix]]'
 ticket_priority: Medium
 ticket_rank:
-ticket_created: 2026-06-14T07:23:09Z
-ticket_updated: 2026-06-14T15:52:45Z
-ticket_completed: 2026-06-14T15:52:44Z
+ticket_created: '2026-06-14T07:23:09Z'
+ticket_updated: '2026-06-14T15:52:45Z'
+ticket_completed: '2026-06-14T15:52:44Z'
 ---
 # Introduction
 

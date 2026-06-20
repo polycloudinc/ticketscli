@@ -1,20 +1,19 @@
 ---
-template: "[[Ticket]]"
+template: '[[Ticket]]'
 kind: ticket
 tags:
-  - ticket
+- ticket
 code: TIK014
 aliases:
-  - TIK014
+- TIK014
 name: Review Ticket Agent Skill
-ticket_status: "[[Complete]]"
+ticket_status: '[[Complete]]'
 ticket_priority: Medium
 ticket_rank:
-ticket_created: 2026-06-13T06:26:38Z
-ticket_updated: 2026-06-14T05:45:20Z
-ticket_completed: 2026-06-14T05:45:20Z
+ticket_created: '2026-06-13T06:26:38Z'
+ticket_updated: '2026-06-14T05:45:20Z'
+ticket_completed: '2026-06-14T05:45:20Z'
 ---
-
 # Introduction
 
 Create an agent skill that provides a short prompt instructing agents to review a ticket against the current state of the codebase and identify any open questions or ambiguities.

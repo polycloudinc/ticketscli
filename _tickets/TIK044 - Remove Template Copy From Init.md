@@ -1,18 +1,18 @@
 ---
-template: "[[Ticket]]"
+template: '[[Ticket]]'
 kind: ticket
 tags:
-  - ticket
+- ticket
 code: TIK044
 aliases:
-  - TIK044
+- TIK044
 name: Remove Template Copy From Init
-ticket_status: "[[Complete]]"
+ticket_status: '[[Complete]]'
 ticket_priority: Medium
 ticket_rank:
-ticket_created: 2026-06-15T14:59:12Z
-ticket_updated: 2026-06-15T15:13:39Z
-ticket_completed: 2026-06-15T15:13:38Z
+ticket_created: '2026-06-15T14:59:12Z'
+ticket_updated: '2026-06-15T15:13:39Z'
+ticket_completed: '2026-06-15T15:13:38Z'
 ---
 # Introduction
 

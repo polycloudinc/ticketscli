@@ -1,20 +1,19 @@
 ---
-template: "[[Ticket]]"
+template: '[[Ticket]]'
 kind: ticket
 tags:
-  - ticket
+- ticket
 code: TIK016
 aliases:
-  - TIK016
+- TIK016
 name: Execution Plan Agent Skill
-ticket_status: "[[Complete]]"
+ticket_status: '[[Complete]]'
 ticket_priority: Medium
 ticket_rank:
-ticket_created: 2026-06-13T08:13:50Z
-ticket_updated: 2026-06-14T05:45:20Z
-ticket_completed: 2026-06-14T05:45:20Z
+ticket_created: '2026-06-13T08:13:50Z'
+ticket_updated: '2026-06-14T05:45:20Z'
+ticket_completed: '2026-06-14T05:45:20Z'
 ---
-
 # Introduction
 
 Create a simple agent skill that instructs agents to build an execution plan as a checkbox list of tasks for each ticket. The skill must be created under `.apm/skills/execution-plan/` so it is packaged and published via APM (`includes: auto`).

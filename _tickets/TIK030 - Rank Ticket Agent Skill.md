@@ -1,18 +1,18 @@
 ---
-template: "[[Ticket]]"
+template: '[[Ticket]]'
 kind: ticket
 tags:
-  - ticket
+- ticket
 code: TIK030
 aliases:
-  - TIK030
+- TIK030
 name: Rank Ticket Agent Skill
-ticket_status: "[[Complete]]"
+ticket_status: '[[Complete]]'
 ticket_priority: Medium
 ticket_rank:
-ticket_created: 2026-06-14T07:20:15Z
-ticket_updated: 2026-06-14T08:13:51Z
-ticket_completed: 2026-06-14T08:13:51Z
+ticket_created: '2026-06-14T07:20:15Z'
+ticket_updated: '2026-06-14T08:13:51Z'
+ticket_completed: '2026-06-14T08:13:51Z'
 ---
 # Introduction
 

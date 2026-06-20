@@ -1,18 +1,18 @@
 ---
-template: "[[Ticket]]"
+template: '[[Ticket]]'
 kind: ticket
 tags:
-  - ticket
+- ticket
 code: TIK045
 aliases:
-  - TIK045
+- TIK045
 name: Add Roadmap Subcommand
-ticket_status: "[[Backlog]]"
+ticket_status: '[[Backlog]]'
 ticket_priority: Medium
 ticket_rank: 9
-ticket_created: 2026-06-16T16:09:43Z
-ticket_updated: 2026-06-16T16:09:43Z
-ticket_completed:
+ticket_created: '2026-06-16T16:09:43Z'
+ticket_updated: '2026-06-20T05:59:43Z'
+ticket_completed: null
 ---
 # Introduction
 

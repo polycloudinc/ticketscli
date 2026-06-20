@@ -1,18 +1,18 @@
 ---
-template: "[[Ticket]]"
+template: '[[Ticket]]'
 kind: ticket
 tags:
-  - ticket
+- ticket
 code: TIK004
 aliases:
-  - TIK004
+- TIK004
 name: Kanban Subcommand
-ticket_status: "[[Backlog]]"
+ticket_status: '[[Backlog]]'
 ticket_priority: Medium
 ticket_rank: 2
-ticket_created: 2026-06-09T06:11:51Z
-ticket_updated: 2026-06-16T02:29:58Z
-ticket_completed:
+ticket_created: '2026-06-09T06:11:51Z'
+ticket_updated: '2026-06-16T02:29:58Z'
+ticket_completed: null
 ---
 # Introduction
 

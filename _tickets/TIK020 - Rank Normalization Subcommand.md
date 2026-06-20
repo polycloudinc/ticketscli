@@ -1,18 +1,18 @@
 ---
-template: "[[Ticket]]"
+template: '[[Ticket]]'
 kind: ticket
 tags:
-  - ticket
+- ticket
 code: TIK020
 aliases:
-  - TIK020
+- TIK020
 name: Rank Normalization Subcommand
-ticket_status: "[[Won't Fix]]"
+ticket_status: '[[Won''t Fix]]'
 ticket_priority: Medium
 ticket_rank:
-ticket_created: 2026-06-14T03:35:08Z
-ticket_updated: 2026-06-14T05:45:20Z
-ticket_completed: 2026-06-14T05:45:20Z
+ticket_created: '2026-06-14T03:35:08Z'
+ticket_updated: '2026-06-14T05:45:20Z'
+ticket_completed: '2026-06-14T05:45:20Z'
 ---
 # Introduction
 

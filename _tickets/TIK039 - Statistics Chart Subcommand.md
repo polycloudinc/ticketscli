@@ -1,18 +1,18 @@
 ---
-template: "[[Ticket]]"
+template: '[[Ticket]]'
 kind: ticket
 tags:
-  - ticket
+- ticket
 code: TIK039
 aliases:
-  - TIK039
+- TIK039
 name: Statistics Chart Subcommand
-ticket_status: "[[Backlog]]"
+ticket_status: '[[Backlog]]'
 ticket_priority: Medium
 ticket_rank: 7
-ticket_created: 2026-06-14T14:55:07Z
-ticket_updated: 2026-06-14T15:52:54Z
-ticket_completed:
+ticket_created: '2026-06-14T14:55:07Z'
+ticket_updated: '2026-06-14T15:52:54Z'
+ticket_completed: null
 ---
 # Introduction
 

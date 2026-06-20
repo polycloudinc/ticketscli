@@ -1,17 +1,17 @@
 ---
-template: "[[Ticket]]"
+template: '[[Ticket]]'
 kind: ticket
 tags:
-  - ticket
+- ticket
 code: TIK029
 aliases:
-  - TIK029
+- TIK029
 name: Publish Project As Open Source
-ticket_status: "[[Ready]]"
+ticket_status: '[[Ready]]'
 ticket_priority: Medium
 ticket_rank: 1
-ticket_created: 2026-06-14T07:19:17Z
-ticket_updated: 2026-06-16T02:29:58Z
+ticket_created: '2026-06-14T07:19:17Z'
+ticket_updated: '2026-06-16T02:29:58Z'
 ---
 # Introduction
 

@@ -1,20 +1,19 @@
 ---
-template: "[[Ticket]]"
+template: '[[Ticket]]'
 kind: ticket
 tags:
-  - ticket
+- ticket
 code: TIK017
 aliases:
-  - TIK017
+- TIK017
 name: Validate Subcommand with Schema Validation
-ticket_status: "[[Complete]]"
+ticket_status: '[[Complete]]'
 ticket_priority: Medium
 ticket_rank:
-ticket_created: 2026-06-13T09:59:21Z
-ticket_updated: 2026-06-14T05:45:20Z
-ticket_completed: 2026-06-14T05:45:20Z
+ticket_created: '2026-06-13T09:59:21Z'
+ticket_updated: '2026-06-14T05:45:20Z'
+ticket_completed: '2026-06-14T05:45:20Z'
 ---
-
 # Introduction
 
 Add a `validate` subcommand to `tickets.sh` that validates a ticket's YAML front matter against the standard ticket schema, reporting any deviations.

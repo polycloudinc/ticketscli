@@ -1,18 +1,18 @@
 ---
-template: "[[Ticket]]"
+template: '[[Ticket]]'
 kind: ticket
 tags:
-  - ticket
+- ticket
 code: TIK031
 aliases:
-  - TIK031
+- TIK031
 name: Update List Ticket Skill To Support Todo Group
-ticket_status: "[[Complete]]"
+ticket_status: '[[Complete]]'
 ticket_priority: Medium
 ticket_rank:
-ticket_created: 2026-06-14T07:20:52Z
-ticket_updated: 2026-06-14T07:54:21Z
-ticket_completed: 2026-06-14T07:54:21Z
+ticket_created: '2026-06-14T07:20:52Z'
+ticket_updated: '2026-06-14T07:54:21Z'
+ticket_completed: '2026-06-14T07:54:21Z'
 ---
 # Introduction
 

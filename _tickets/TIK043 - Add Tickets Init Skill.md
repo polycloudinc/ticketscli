@@ -1,18 +1,18 @@
 ---
-template: "[[Ticket]]"
+template: '[[Ticket]]'
 kind: ticket
 tags:
-  - ticket
+- ticket
 code: TIK043
 aliases:
-  - TIK043
+- TIK043
 name: Add Tickets Init Skill
-ticket_status: "[[Complete]]"
+ticket_status: '[[Complete]]'
 ticket_priority: Medium
 ticket_rank:
-ticket_created: 2026-06-15T13:35:22Z
-ticket_updated: 2026-06-15T14:42:42Z
-ticket_completed: 2026-06-15T14:42:41Z
+ticket_created: '2026-06-15T13:35:22Z'
+ticket_updated: '2026-06-15T14:42:42Z'
+ticket_completed: '2026-06-15T14:42:41Z'
 ---
 # Introduction
 

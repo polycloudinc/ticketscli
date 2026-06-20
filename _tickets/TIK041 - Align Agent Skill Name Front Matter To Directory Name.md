@@ -1,18 +1,18 @@
 ---
-template: "[[Ticket]]"
+template: '[[Ticket]]'
 kind: ticket
 tags:
-  - ticket
+- ticket
 code: TIK041
 aliases:
-  - TIK041
+- TIK041
 name: Align Agent Skill Name Front Matter To Directory Name
-ticket_status: "[[Complete]]"
+ticket_status: '[[Complete]]'
 ticket_priority: Medium
 ticket_rank:
-ticket_created: 2026-06-14T15:06:39Z
-ticket_updated: 2026-06-14T15:28:19Z
-ticket_completed: 2026-06-14T15:28:19Z
+ticket_created: '2026-06-14T15:06:39Z'
+ticket_updated: '2026-06-14T15:28:19Z'
+ticket_completed: '2026-06-14T15:28:19Z'
 ---
 # Introduction
 

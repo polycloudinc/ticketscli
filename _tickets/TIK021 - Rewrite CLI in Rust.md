@@ -1,18 +1,18 @@
 ---
-template: "[[Ticket]]"
+template: '[[Ticket]]'
 kind: ticket
 tags:
-  - ticket
+- ticket
 code: TIK021
 aliases:
-  - TIK021
+- TIK021
 name: Rewrite CLI in Rust
-ticket_status: "[[Backlog]]"
+ticket_status: '[[Backlog]]'
 ticket_priority: Medium
 ticket_rank: 8
-ticket_created: 2026-06-14T03:36:05Z
-ticket_updated: 2026-06-15T05:24:25Z
-ticket_completed:
+ticket_created: '2026-06-14T03:36:05Z'
+ticket_updated: '2026-06-20T05:59:43Z'
+ticket_completed: null
 ---
 # Introduction
 

@@ -1,18 +1,18 @@
 ---
-template: "[[Ticket]]"
+template: '[[Ticket]]'
 kind: ticket
 tags:
-  - ticket
+- ticket
 code: TIK035
 aliases:
-  - TIK035
+- TIK035
 name: Add Tickets Statistics Snapshot Subcommand
-ticket_status: "[[Complete]]"
+ticket_status: '[[Complete]]'
 ticket_priority: Medium
 ticket_rank:
-ticket_created: 2026-06-14T07:25:22Z
-ticket_updated: 2026-06-14T14:47:01Z
-ticket_completed: 2026-06-14T14:47:01Z
+ticket_created: '2026-06-14T07:25:22Z'
+ticket_updated: '2026-06-14T14:47:01Z'
+ticket_completed: '2026-06-14T14:47:01Z'
 ---
 # Introduction
 
