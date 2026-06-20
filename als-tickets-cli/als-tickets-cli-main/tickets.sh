@@ -1,6 +1,25 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+SCRIPT_DIR=$(cd "$(dirname "$(readlink -f "$0")")" && pwd)
+
+check_dependencies() {
+  if ! command -v python3 &>/dev/null; then
+    echo "Error: python3 is required but not installed." >&2
+    echo "Install it with your system package manager (e.g., apt install python3)." >&2
+    exit 1
+  fi
+  if ! python3 -c "import yaml" &>/dev/null; then
+    echo "Error: PyYAML is required but not installed." >&2
+    echo "Install it with: pip install pyyaml" >&2
+    exit 1
+  fi
+  if [[ ! -f "$SCRIPT_DIR/yz.py" ]]; then
+    echo "Error: yz.py not found alongside tickets.sh ($SCRIPT_DIR/yz.py)" >&2
+    exit 1
+  fi
+}
+
 usage() {
   cat <<EOF
 Usage: tickets <subcommand> [options]
@@ -159,13 +178,13 @@ normalize_ranks() {
     [[ -f "$ticket" ]] || continue
 
     local status
-    status=$(yq eval --front-matter extract '.ticket_status // ""' "$ticket" | tr -d '"' | sed 's/^\[\[//; s/\]\]$//')
+    status=$(python3 "$SCRIPT_DIR/yz.py" extract "$ticket" .ticket_status | tr -d '"' | sed 's/^\[\[//; s/\]\]$//')
 
     case "$status" in
       "Complete"|"Duplicate"|"Won't Fix")
         local old_rank
         old_rank=$(get_ticket_rank "$ticket")
-        yq eval -i --front-matter process '.ticket_rank = null' "$ticket"
+        python3 "$SCRIPT_DIR/yz.py" update "$ticket" .ticket_rank null
         sed -i 's/^ticket_rank: null$/ticket_rank:/' "$ticket"
         if [[ -n "$old_rank" ]]; then
           touch_ticket_updated "$ticket"
@@ -208,7 +227,7 @@ find_ticket_by_code() {
 
 get_ticket_rank() {
   local ticket_file="$1"
-  yq eval --front-matter extract '.ticket_rank // ""' "$ticket_file"
+  python3 "$SCRIPT_DIR/yz.py" extract "$ticket_file" .ticket_rank
 }
 
 set_ticket_rank() {
@@ -216,7 +235,7 @@ set_ticket_rank() {
   local new_rank="$2"
   local old_rank
   old_rank=$(get_ticket_rank "$ticket_file")
-  yq eval -i --front-matter process ".ticket_rank = $new_rank" "$ticket_file"
+  python3 "$SCRIPT_DIR/yz.py" update "$ticket_file" .ticket_rank "$new_rank"
   if [[ "$old_rank" != "$new_rank" ]]; then
     touch_ticket_updated "$ticket_file"
   fi
@@ -226,10 +245,11 @@ touch_ticket_updated() {
   local ticket_file="$1"
   local ts
   ts=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
-  TS="$ts" yq eval -i --front-matter process '.ticket_updated = env(TS)' "$ticket_file"
+  TS="$ts" python3 "$SCRIPT_DIR/yz.py" set-env "$ticket_file" .ticket_updated TS
 }
 
 cmd_rank_up() {
+  check_dependencies
   local tickets_dir="_tickets"
   local ticket_code=""
 
@@ -302,6 +322,7 @@ cmd_rank_up() {
 }
 
 cmd_rank_down() {
+  check_dependencies
   local tickets_dir="_tickets"
   local ticket_code=""
 
@@ -383,6 +404,7 @@ cmd_rank_down() {
 }
 
 cmd_rank_first() {
+  check_dependencies
   local tickets_dir="_tickets"
   local ticket_code=""
 
@@ -449,6 +471,7 @@ cmd_rank_first() {
 }
 
 cmd_rank_last() {
+  check_dependencies
   local tickets_dir="_tickets"
   local ticket_code=""
 
@@ -524,6 +547,7 @@ cmd_rank_last() {
 }
 
 cmd_rank() {
+  check_dependencies
   local tickets_dir="_tickets"
 
   while [[ $# -gt 0 ]]; do
@@ -550,6 +574,7 @@ cmd_rank() {
 }
 
 cmd_list() {
+  check_dependencies
   local tickets_dir="_tickets"
   local filter=""
   local limit=""
@@ -666,9 +691,9 @@ cmd_list() {
     filename=$(basename "$ticket")
     number="${filename%% *}"
 
-    subject=$(yq eval --front-matter extract '.name // ""' "$ticket")
+    subject=$(python3 "$SCRIPT_DIR/yz.py" extract "$ticket" .name)
     [[ ${#subject} -gt $subject_width ]] && subject="${subject:0:$((subject_width - 3))}..."
-    status=$(yq eval --front-matter extract '.ticket_status // ""' "$ticket" | tr -d '"' | sed 's/^\[\[//; s/\]\]$//')
+    status=$(python3 "$SCRIPT_DIR/yz.py" extract "$ticket" .ticket_status | tr -d '"' | sed 's/^\[\[//; s/\]\]$//')
 
     case "$filter" in
       backlog) [[ "$status" != "Backlog" ]] && continue ;;
@@ -726,6 +751,7 @@ cmd_list() {
 }
 
 cmd_create() {
+  check_dependencies
   local tickets_dir="_tickets"
   local ticket_name=""
 
@@ -765,9 +791,7 @@ cmd_create() {
     exit 1
   fi
 
-  local script_dir
-  script_dir=$(cd "$(dirname "$(readlink -f "$0")")" && pwd)
-  local template_file="$script_dir/Ticket.md"
+  local template_file="$SCRIPT_DIR/Ticket.md"
   if [[ ! -f "$template_file" ]]; then
     echo "Error: template not found alongside tickets.sh ($template_file)" >&2
     exit 1
@@ -783,7 +807,7 @@ cmd_create() {
   local settings_file="$resolved_dir/settings.yaml"
   local code_prefix
   if [[ -f "$settings_file" ]]; then
-    code_prefix=$(yq eval '.code_prefix // ""' "$settings_file")
+    code_prefix=$(python3 "$SCRIPT_DIR/yz.py" read "$settings_file" .code_prefix)
   else
     echo "Error: $resolved_dir/settings.yaml not found" >&2
     exit 1
@@ -979,22 +1003,10 @@ cmd_validate() {
     exit 1
   fi
 
-  # Check yq early
-  if ! command -v yq &>/dev/null; then
-    echo "Error: yq is required but not installed. Install it from https://github.com/mikefarah/yq" >&2
-    exit 1
-  fi
+  # Check dependencies (python3 + pyyaml)
+  check_dependencies
 
-  local yq_version
-  yq_version=$(yq --version 2>/dev/null || true)
-  if [[ "$yq_version" != *mikefarah* ]]; then
-    echo "Error: mikefarah/yq (Go) is required. Found: ${yq_version:-unknown}" >&2
-    exit 1
-  fi
-
-  local script_dir
-  script_dir=$(cd "$(dirname "$(readlink -f "$0")")" && pwd)
-  local template_file="$script_dir/Ticket.md"
+  local template_file="$SCRIPT_DIR/Ticket.md"
   if [[ ! -f "$template_file" ]]; then
     echo "Error: template not found alongside tickets.sh ($template_file)" >&2
     exit 1
@@ -1003,7 +1015,7 @@ cmd_validate() {
   local settings_file="$tickets_dir/settings.yaml"
   local code_prefix
   if [[ -f "$settings_file" ]]; then
-    code_prefix=$(yq eval '.code_prefix // "TIK"' "$settings_file" 2>/dev/null) || code_prefix="TIK"
+    code_prefix=$(python3 "$SCRIPT_DIR/yz.py" read "$settings_file" .code_prefix TIK 2>/dev/null) || code_prefix="TIK"
   else
     code_prefix="TIK"
   fi
@@ -1073,11 +1085,11 @@ validate_one() {
 
   # Extract template keys
   local template_keys
-  template_keys=$(yq eval --front-matter extract 'keys | .[]' "$template_file" 2>/dev/null || true)
+  template_keys=$(python3 "$SCRIPT_DIR/yz.py" keys "$template_file" 2>/dev/null || true)
 
   # Extract ticket keys
   local ticket_keys
-  ticket_keys=$(yq eval --front-matter extract 'keys | .[]' "$ticket_file" 2>/dev/null || true)
+  ticket_keys=$(python3 "$SCRIPT_DIR/yz.py" keys "$ticket_file" 2>/dev/null || true)
 
   # Missing fields (in template but not in ticket)
   while IFS= read -r tkey; do
@@ -1103,28 +1115,28 @@ validate_one() {
   local val
 
   # template must be [[Ticket]]
-  val=$(yq eval --front-matter extract '.template // ""' "$ticket_file" 2>/dev/null || true)
+  val=$(python3 "$SCRIPT_DIR/yz.py" extract "$ticket_file" .template 2>/dev/null || true)
   if [[ "$val" != "[[Ticket]]" ]]; then
     echo "- Invalid value for template: expected '[[Ticket]]', got '$val'" >&2
     errors=$((errors + 1))
   fi
 
   # kind must be ticket
-  val=$(yq eval --front-matter extract '.kind // ""' "$ticket_file" 2>/dev/null || true)
+  val=$(python3 "$SCRIPT_DIR/yz.py" extract "$ticket_file" .kind 2>/dev/null || true)
   if [[ "$val" != "ticket" ]]; then
     echo "- Invalid value for kind: expected 'ticket', got '$val'" >&2
     errors=$((errors + 1))
   fi
 
   # code must match <prefix>\d{3}
-val=$(yq eval --front-matter extract '.code // ""' "$ticket_file" 2>/dev/null || true)
+  val=$(python3 "$SCRIPT_DIR/yz.py" extract "$ticket_file" .code 2>/dev/null || true)
   if ! [[ "$val" =~ ^${code_prefix}[0-9]{3}$ ]]; then
     echo "- Invalid value for code: expected pattern '${code_prefix}\\d{3}', got '$val'" >&2
     errors=$((errors + 1))
   fi
 
   # name must be non-empty
-  val=$(yq eval --front-matter extract '.name // ""' "$ticket_file" 2>/dev/null || true)
+  val=$(python3 "$SCRIPT_DIR/yz.py" extract "$ticket_file" .name 2>/dev/null || true)
   if [[ -z "$val" ]]; then
     echo "- Invalid value for name: must be non-empty" >&2
     errors=$((errors + 1))
@@ -1132,14 +1144,14 @@ val=$(yq eval --front-matter extract '.code // ""' "$ticket_file" 2>/dev/null ||
 
   # aliases must contain exactly one entry matching code
   local ticket_code_val
-  ticket_code_val=$(yq eval --front-matter extract '.code // ""' "$ticket_file" 2>/dev/null || true)
+  ticket_code_val=$(python3 "$SCRIPT_DIR/yz.py" extract "$ticket_file" .code 2>/dev/null || true)
   local alias_count
-  alias_count=$(yq eval --front-matter extract '.aliases | length' "$ticket_file" 2>/dev/null || true)
+  alias_count=$(python3 "$SCRIPT_DIR/yz.py" len "$ticket_file" .aliases 2>/dev/null || true)
   if [[ "$alias_count" != "1" ]]; then
     echo "- Invalid value for aliases: expected exactly 1 entry, got $alias_count" >&2
     errors=$((errors + 1))
   else
-    val=$(yq eval --front-matter extract '.aliases[0] // ""' "$ticket_file" 2>/dev/null || true)
+    val=$(python3 "$SCRIPT_DIR/yz.py" extract "$ticket_file" .aliases[0] 2>/dev/null || true)
     if [[ "$val" != "$ticket_code_val" ]]; then
       echo "- Invalid value for aliases: expected '$ticket_code_val', got '$val'" >&2
       errors=$((errors + 1))
@@ -1147,7 +1159,7 @@ val=$(yq eval --front-matter extract '.code // ""' "$ticket_file" 2>/dev/null ||
   fi
 
   # ticket_status must be one of the six known statuses
-  val=$(yq eval --front-matter extract '.ticket_status // ""' "$ticket_file" 2>/dev/null || true)
+  val=$(python3 "$SCRIPT_DIR/yz.py" extract "$ticket_file" .ticket_status 2>/dev/null || true)
   local valid_statuses=("[[Backlog]]" "[[Ready]]" "[[In Progress]]" "[[Complete]]" "[[Duplicate]]" "[[Won't Fix]]")
   local status_ok=0
   for s in "${valid_statuses[@]}"; do
@@ -1162,7 +1174,7 @@ val=$(yq eval --front-matter extract '.code // ""' "$ticket_file" 2>/dev/null ||
   fi
 
   # ticket_priority must be one of Low, Medium, High, Critical
-  val=$(yq eval --front-matter extract '.ticket_priority // ""' "$ticket_file" 2>/dev/null || true)
+  val=$(python3 "$SCRIPT_DIR/yz.py" extract "$ticket_file" .ticket_priority 2>/dev/null || true)
   local valid_priorities=("Low" "Medium" "High" "Critical")
   local pri_ok=0
   for p in "${valid_priorities[@]}"; do
@@ -1177,9 +1189,9 @@ val=$(yq eval --front-matter extract '.code // ""' "$ticket_file" 2>/dev/null ||
   fi
 
   # ticket_rank must be present and hold an integer value, unless done
-  val=$(yq eval --front-matter extract '.ticket_rank // ""' "$ticket_file" 2>/dev/null || true)
+  val=$(python3 "$SCRIPT_DIR/yz.py" extract "$ticket_file" .ticket_rank 2>/dev/null || true)
   local status_val
-  status_val=$(yq eval --front-matter extract '.ticket_status // ""' "$ticket_file" 2>/dev/null || true)
+  status_val=$(python3 "$SCRIPT_DIR/yz.py" extract "$ticket_file" .ticket_status 2>/dev/null || true)
   local is_done=0
   case "$status_val" in
     "[[Complete]]"|"[[Duplicate]]"|"[[Won't Fix]]") is_done=1 ;;
@@ -1195,14 +1207,14 @@ val=$(yq eval --front-matter extract '.code // ""' "$ticket_file" 2>/dev/null ||
   fi
 
   # ticket_created: if present must be ISO 8601 UTC (Z suffix)
-  val=$(yq eval --front-matter extract '.ticket_created // ""' "$ticket_file" 2>/dev/null || true)
+  val=$(python3 "$SCRIPT_DIR/yz.py" extract "$ticket_file" .ticket_created 2>/dev/null || true)
   if [[ -n "$val" ]] && ! [[ "$val" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$ ]]; then
     echo "- Invalid value for ticket_created: expected ISO 8601 UTC (e.g. 2026-06-13T14:30:00Z), got '$val'" >&2
     errors=$((errors + 1))
   fi
 
   # ticket_updated: if present must be ISO 8601 UTC (Z suffix)
-  val=$(yq eval --front-matter extract '.ticket_updated // ""' "$ticket_file" 2>/dev/null || true)
+  val=$(python3 "$SCRIPT_DIR/yz.py" extract "$ticket_file" .ticket_updated 2>/dev/null || true)
   if [[ -n "$val" ]] && ! [[ "$val" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$ ]]; then
     echo "- Invalid value for ticket_updated: expected ISO 8601 UTC (e.g. 2026-06-13T14:30:00Z), got '$val'" >&2
     errors=$((errors + 1))
@@ -1212,6 +1224,7 @@ val=$(yq eval --front-matter extract '.code // ""' "$ticket_file" 2>/dev/null ||
 }
 
 cmd_transition() {
+  check_dependencies
   local tickets_dir="_tickets"
   local ticket_code=""
   local target_status=""
@@ -1292,7 +1305,7 @@ cmd_transition() {
   fi
 
   local current_status
-  current_status=$(yq eval --front-matter extract '.ticket_status // ""' "$ticket_file" | tr -d '"' | sed 's/^\[\[//; s/\]\]$//')
+  current_status=$(python3 "$SCRIPT_DIR/yz.py" extract "$ticket_file" .ticket_status | tr -d '"' | sed 's/^\[\[//; s/\]\]$//')
   local current_lower
   current_lower=$(echo "$current_status" | tr '[:upper:]' '[:lower:]' | tr -d ' ')
 
@@ -1313,14 +1326,14 @@ cmd_transition() {
 
   case "$target_canonical" in
     complete|duplicate|wontfix)
-      yq eval -i --front-matter process '.ticket_rank = null' "$ticket_file"
+      python3 "$SCRIPT_DIR/yz.py" update "$ticket_file" .ticket_rank null
       sed -i 's/^ticket_rank: null$/ticket_rank:/' "$ticket_file"
       local ts
       ts=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
-      TS="$ts" yq eval -i --front-matter process '.ticket_completed = env(TS)' "$ticket_file"
+      TS="$ts" python3 "$SCRIPT_DIR/yz.py" set-env "$ticket_file" .ticket_completed TS
       ;;
     backlog|ready|inprogress)
-      yq eval -i --front-matter process 'del(.ticket_completed)' "$ticket_file"
+      python3 "$SCRIPT_DIR/yz.py" delete "$ticket_file" .ticket_completed
       ;;
   esac
 
@@ -1341,7 +1354,7 @@ cmd_transition() {
       ;;
   esac
 
-  yq eval -i --front-matter process ".ticket_status = \"$status_label\"" "$ticket_file"
+  python3 "$SCRIPT_DIR/yz.py" update "$ticket_file" .ticket_status "$status_label"
 
   case "$target_canonical" in
     complete|duplicate|wontfix)
@@ -1355,6 +1368,7 @@ cmd_transition() {
 }
 
 cmd_statistics_snapshot() {
+  check_dependencies
   local tickets_dir="_tickets"
 
   while [[ $# -gt 0 ]]; do
@@ -1400,7 +1414,7 @@ cmd_statistics_snapshot() {
     total=$((total + 1))
 
     local status
-    status=$(yq eval --front-matter extract '.ticket_status' "$ticket" 2>/dev/null || echo "")
+    status=$(python3 "$SCRIPT_DIR/yz.py" extract "$ticket" .ticket_status 2>/dev/null || echo "")
     status=$(echo "$status" | tr -d '"' | sed 's/^\[\[//; s/\]\]$//')
 
     case "$status" in
@@ -1436,7 +1450,10 @@ cmd_statistics_snapshot() {
     echo "statistics: []" > "$stats_file"
   fi
 
-  yq eval -i ".statistics += [{\"ts\": \"$ts\", \"total\": $total, \"status\": {\"backlog\": $backlog, \"ready\": $ready, \"inprogress\": $inprogress, \"complete\": $complete, \"duplicate\": $duplicate, \"wontfix\": $wontfix}, \"groups\": {\"todo\": $todo, \"done\": $done}}]" "$stats_file"
+  local snapshot_json
+  snapshot_json=$(printf '{"ts":"%s","total":%d,"status":{"backlog":%d,"ready":%d,"inprogress":%d,"complete":%d,"duplicate":%d,"wontfix":%d},"groups":{"todo":%d,"done":%d}}' \
+    "$ts" "$total" "$backlog" "$ready" "$inprogress" "$complete" "$duplicate" "$wontfix" "$todo" "$done")
+  python3 "$SCRIPT_DIR/yz.py" append "$stats_file" .statistics "$snapshot_json"
 }
 
 if [[ $# -eq 0 ]]; then

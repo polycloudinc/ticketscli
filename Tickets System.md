@@ -4,53 +4,51 @@ Tickets are Markdown files in the `_tickets/` directory with YAML frontmatter.
 
 ## Prerequisites
 
-The `validate` subcommand requires **mikefarah/yq** (the Go implementation). The Python `yq` (`kislyuk/yq`, available via `apt`) is not compatible.
+The CLI requires **Python 3** and the **PyYAML** library. YAML operations are handled by a bundled Python helper script (`yz.py`) instead of an external `yq` binary.
 
 ```bash
-# Install the correct yq (Go)
-sudo wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/local/bin/yq
-sudo chmod +x /usr/local/bin/yq
+# Install dependencies
+pip install pyyaml
 
 # Verify
-yq --version  # Should show: yq (https://github.com/mikefarah/yq/) version v4.x.x
+python3 -c "import yaml; print(yaml.__version__)"
+tickets validate --all   # should pass without errors
 ```
 
-The dev container Dockerfile installs `yq` automatically.
+The dev container Dockerfile installs Python 3 and PyYAML automatically.
 
 ## Architecture
 
-`tickets.sh` is a bash script that uses **mikefarah/yq** (Go) for all YAML front matter manipulation in ticket files.
+`tickets.sh` is a bash script that delegates all YAML operations to a bundled Python helper (`yz.py`) using PyYAML. The helper is located alongside `tickets.sh` in the npm package and handles both front matter manipulation in Markdown files and plain YAML file operations.
 
 ### Reads
 
-Front matter fields are read with `yq eval --front-matter extract`:
+Front matter fields are read with `yz.py extract`:
 
 ```bash
-yq eval --front-matter extract '.ticket_rank // ""' "$ticket_file"
+python3 "$SCRIPT_DIR/yz.py" extract "$ticket_file" .ticket_rank
 ```
 
 ### Writes
 
-Front matter fields are written with `yq eval -i --front-matter process`:
+Front matter fields are written with `yz.py update`:
 
 ```bash
-yq eval -i --front-matter process '.ticket_rank = 5' "$ticket_file"
+python3 "$SCRIPT_DIR/yz.py" update "$ticket_file" .ticket_rank 5
 ```
-
-The `--front-matter process` flag is required for in-place writes; using `--front-matter extract` with `-i` would strip the Markdown body content.
 
 ### Value Formatting
 
-Timestamps are passed via `env()` to avoid YAML quoting, preserving the unquoted format produced by `printf` in `cmd_create`:
+Timestamps are passed via environment variables using `yz.py set-env`:
 
 ```bash
-TS="2026-06-14T15:00:00Z" yq eval -i --front-matter process '.ticket_updated = env(TS)' "$ticket_file"
+TS="2026-06-14T15:00:00Z" python3 "$SCRIPT_DIR/yz.py" set-env "$ticket_file" .ticket_updated TS
 ```
 
-Done tickets have their `ticket_rank` cleared by setting it to `null` in yq, then post-processing with sed to produce a bare `ticket_rank:` line with no value:
+Done tickets have their `ticket_rank` cleared by setting it to `null` in yz.py, then post-processing with sed to produce a bare `ticket_rank:` line with no value:
 
 ```bash
-yq eval -i --front-matter process '.ticket_rank = null' "$ticket"
+python3 "$SCRIPT_DIR/yz.py" update "$ticket" .ticket_rank null
 sed -i 's/^ticket_rank: null$/ticket_rank:/' "$ticket"
 ```
 
