@@ -20,6 +20,33 @@ check_dependencies() {
   fi
 }
 
+resolve_tickets_dir() {
+  local flag_dir="$1"
+
+  if [[ -n "$flag_dir" ]]; then
+    echo "$flag_dir"
+    return 0
+  fi
+
+  local has_dot=0 has_under=0
+  [[ -d ".tickets" ]] && has_dot=1
+  [[ -d "_tickets" ]] && has_under=1
+
+  if [[ $has_dot -eq 1 && $has_under -eq 1 ]]; then
+    echo "Error: both .tickets and _tickets directories exist. Remove one or use --tickets-dir." >&2
+    exit 1
+  fi
+
+  if [[ $has_dot -eq 1 ]]; then
+    echo ".tickets"
+  elif [[ $has_under -eq 1 ]]; then
+    echo "Warning: _tickets is deprecated. Rename the directory to .tickets to migrate." >&2
+    echo "_tickets"
+  else
+    echo ".tickets"
+  fi
+}
+
 usage() {
   cat <<EOF
 Usage: tickets <subcommand> [options]
@@ -250,7 +277,7 @@ touch_ticket_updated() {
 
 cmd_rank_up() {
   check_dependencies
-  local tickets_dir="_tickets"
+  local tickets_dir=""
   local ticket_code=""
 
   while [[ $# -gt 0 ]]; do
@@ -277,6 +304,8 @@ cmd_rank_up() {
     esac
     shift
   done
+
+  tickets_dir=$(resolve_tickets_dir "$tickets_dir")
 
   if [[ -z "$ticket_code" ]]; then
     echo "Error: --ticket is required" >&2
@@ -323,7 +352,7 @@ cmd_rank_up() {
 
 cmd_rank_down() {
   check_dependencies
-  local tickets_dir="_tickets"
+  local tickets_dir=""
   local ticket_code=""
 
   while [[ $# -gt 0 ]]; do
@@ -350,6 +379,8 @@ cmd_rank_down() {
     esac
     shift
   done
+
+  tickets_dir=$(resolve_tickets_dir "$tickets_dir")
 
   if [[ -z "$ticket_code" ]]; then
     echo "Error: --ticket is required" >&2
@@ -405,7 +436,7 @@ cmd_rank_down() {
 
 cmd_rank_first() {
   check_dependencies
-  local tickets_dir="_tickets"
+  local tickets_dir=""
   local ticket_code=""
 
   while [[ $# -gt 0 ]]; do
@@ -432,6 +463,8 @@ cmd_rank_first() {
     esac
     shift
   done
+
+  tickets_dir=$(resolve_tickets_dir "$tickets_dir")
 
   if [[ -z "$ticket_code" ]]; then
     echo "Error: --ticket is required" >&2
@@ -472,7 +505,7 @@ cmd_rank_first() {
 
 cmd_rank_last() {
   check_dependencies
-  local tickets_dir="_tickets"
+  local tickets_dir=""
   local ticket_code=""
 
   while [[ $# -gt 0 ]]; do
@@ -499,6 +532,8 @@ cmd_rank_last() {
     esac
     shift
   done
+
+  tickets_dir=$(resolve_tickets_dir "$tickets_dir")
 
   if [[ -z "$ticket_code" ]]; then
     echo "Error: --ticket is required" >&2
@@ -548,7 +583,7 @@ cmd_rank_last() {
 
 cmd_rank() {
   check_dependencies
-  local tickets_dir="_tickets"
+  local tickets_dir=""
 
   while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -570,12 +605,14 @@ cmd_rank() {
     shift
   done
 
+  tickets_dir=$(resolve_tickets_dir "$tickets_dir")
+
   normalize_ranks "$tickets_dir"
 }
 
 cmd_list() {
   check_dependencies
-  local tickets_dir="_tickets"
+  local tickets_dir=""
   local filter=""
   local limit=""
 
@@ -665,6 +702,8 @@ cmd_list() {
     shift
   done
 
+  tickets_dir=$(resolve_tickets_dir "$tickets_dir")
+
   local cols
   cols=$(tput cols 2>/dev/null) || cols="${COLUMNS:-80}"
 
@@ -752,7 +791,7 @@ cmd_list() {
 
 cmd_create() {
   check_dependencies
-  local tickets_dir="_tickets"
+  local tickets_dir=""
   local ticket_name=""
 
   while [[ $# -gt 0 ]]; do
@@ -784,6 +823,8 @@ cmd_create() {
     esac
     shift
   done
+
+  tickets_dir=$(resolve_tickets_dir "$tickets_dir")
 
   if [[ -z "$ticket_name" ]]; then
     echo "Error: --name is required" >&2
@@ -879,7 +920,7 @@ cmd_create() {
 }
 
 cmd_init() {
-  local tickets_dir="_tickets"
+  local tickets_dir=""
   local code_prefix=""
 
   while [[ $# -gt 0 ]]; do
@@ -911,6 +952,8 @@ cmd_init() {
     esac
     shift
   done
+
+  tickets_dir=$(resolve_tickets_dir "$tickets_dir")
 
   local settings_file="$tickets_dir/settings.yaml"
   if [[ -f "$settings_file" ]]; then
@@ -951,7 +994,7 @@ cmd_init() {
 }
 
 cmd_validate() {
-  local tickets_dir="_tickets"
+  local tickets_dir=""
   local mode=""       # "all" or "single"
   local ticket_code=""
 
@@ -996,6 +1039,8 @@ cmd_validate() {
     esac
     shift
   done
+
+  tickets_dir=$(resolve_tickets_dir "$tickets_dir")
 
   if [[ -z "$mode" ]]; then
     echo "Error: --all or --ticket is required" >&2
@@ -1225,7 +1270,7 @@ validate_one() {
 
 cmd_transition() {
   check_dependencies
-  local tickets_dir="_tickets"
+  local tickets_dir=""
   local ticket_code=""
   local target_status=""
 
@@ -1258,6 +1303,8 @@ cmd_transition() {
     esac
     shift
   done
+
+  tickets_dir=$(resolve_tickets_dir "$tickets_dir")
 
   if [[ -z "$ticket_code" ]]; then
     echo "Error: --ticket is required" >&2
@@ -1369,7 +1416,7 @@ cmd_transition() {
 
 cmd_statistics_snapshot() {
   check_dependencies
-  local tickets_dir="_tickets"
+  local tickets_dir=""
 
   while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -1390,6 +1437,8 @@ cmd_statistics_snapshot() {
     esac
     shift
   done
+
+  tickets_dir=$(resolve_tickets_dir "$tickets_dir")
 
   if [[ ! -d "$tickets_dir" ]]; then
     echo "Error: tickets directory '$tickets_dir' does not exist" >&2
