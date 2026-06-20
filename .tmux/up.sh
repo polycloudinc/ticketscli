@@ -1,8 +1,13 @@
 #!/bin/bash
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 SESSION_NAME=$(cat "$SCRIPT_DIR/name")
-if [ -f "$SCRIPT_DIR/../product.yaml" ] && command -v yq >/dev/null 2>&1; then
-    SYMBOL=$(yq -r '.symbol // empty' "$SCRIPT_DIR/../product.yaml" 2>/dev/null)
+if [ -f "$SCRIPT_DIR/../product.yaml" ] && python3 -c "import yaml" 2>/dev/null; then
+    SYMBOL=$(python3 -c "
+import yaml
+with open('$SCRIPT_DIR/../product.yaml') as f:
+    d = yaml.safe_load(f)
+print(d.get('symbol', ''))
+" 2>/dev/null)
     if [ -n "$SYMBOL" ]; then
         SESSION_NAME="$SYMBOL"
     fi
