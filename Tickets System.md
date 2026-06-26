@@ -1,56 +1,68 @@
 # Introduction
 
-Tickets are Markdown files in the `_tickets/` directory with YAML frontmatter.
+Tickets are Markdown files in the `.tickets/` directory with YAML frontmatter.
 
 ## Prerequisites
 
-The `validate` subcommand requires **mikefarah/yq** (the Go implementation). The Python `yq` (`kislyuk/yq`, available via `apt`) is not compatible.
+The CLI requires **Python 3** and the **PyYAML** library. YAML operations are handled by a bundled Python helper script (`yz.py`) instead of an external `yq` binary.
 
 ```bash
-# Install the correct yq (Go)
-sudo wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/local/bin/yq
-sudo chmod +x /usr/local/bin/yq
+# Install dependencies
+pip install pyyaml
 
 # Verify
-yq --version  # Should show: yq (https://github.com/mikefarah/yq/) version v4.x.x
+python3 -c "import yaml; print(yaml.__version__)"
+tickets validate --all   # should pass without errors
 ```
 
-The dev container Dockerfile installs `yq` automatically.
+The dev container Dockerfile installs Python 3 and PyYAML automatically.
+
+## Directory Resolution
+
+The CLI resolves the tickets directory on every invocation:
+
+| Condition | Behavior |
+|---|---|
+| `--tickets-dir` / `-d` flag provided | Uses the given path (no resolution) |
+| `.tickets/` exists, `_tickets/` does not | Uses `.tickets/` (silent) |
+| `_tickets/` exists, `.tickets/` does not | Uses `_tickets/` and prints a deprecation warning to stderr: `Warning: _tickets is deprecated. Rename the directory to .tickets to migrate.` |
+| Both exist | Error: `Error: both .tickets and _tickets directories exist. Remove one or use --tickets-dir.` |
+| Neither exists | Defaults to `.tickets/` |
+
+Migration from the old `_tickets` naming to `.tickets` is a manual rename: `mv _tickets .tickets`.
 
 ## Architecture
 
-`tickets.sh` is a bash script that uses **mikefarah/yq** (Go) for all YAML front matter manipulation in ticket files.
+`tickets.sh` is a bash script that delegates all YAML operations to a bundled Python helper (`yz.py`) using PyYAML. The helper is located alongside `tickets.sh` in the npm package and handles both front matter manipulation in Markdown files and plain YAML file operations.
 
 ### Reads
 
-Front matter fields are read with `yq eval --front-matter extract`:
+Front matter fields are read with `yz.py extract`:
 
 ```bash
-yq eval --front-matter extract '.ticket_rank // ""' "$ticket_file"
+python3 "$SCRIPT_DIR/yz.py" extract "$ticket_file" .ticket_rank
 ```
 
 ### Writes
 
-Front matter fields are written with `yq eval -i --front-matter process`:
+Front matter fields are written with `yz.py update`:
 
 ```bash
-yq eval -i --front-matter process '.ticket_rank = 5' "$ticket_file"
+python3 "$SCRIPT_DIR/yz.py" update "$ticket_file" .ticket_rank 5
 ```
-
-The `--front-matter process` flag is required for in-place writes; using `--front-matter extract` with `-i` would strip the Markdown body content.
 
 ### Value Formatting
 
-Timestamps are passed via `env()` to avoid YAML quoting, preserving the unquoted format produced by `printf` in `cmd_create`:
+Timestamps are passed via environment variables using `yz.py set-env`:
 
 ```bash
-TS="2026-06-14T15:00:00Z" yq eval -i --front-matter process '.ticket_updated = env(TS)' "$ticket_file"
+TS="2026-06-14T15:00:00Z" python3 "$SCRIPT_DIR/yz.py" set-env "$ticket_file" .ticket_updated TS
 ```
 
-Done tickets have their `ticket_rank` cleared by setting it to `null` in yq, then post-processing with sed to produce a bare `ticket_rank:` line with no value:
+Done tickets have their `ticket_rank` cleared by setting it to `null` in yz.py, then post-processing with sed to produce a bare `ticket_rank:` line with no value:
 
 ```bash
-yq eval -i --front-matter process '.ticket_rank = null' "$ticket"
+python3 "$SCRIPT_DIR/yz.py" update "$ticket" .ticket_rank null
 sed -i 's/^ticket_rank: null$/ticket_rank:/' "$ticket"
 ```
 
@@ -150,14 +162,14 @@ Both `--group` and `--status` accept case-insensitive input and distinguishing s
 
 ```
 tickets validate TIK001                 # validate a single ticket
-tickets validate -t ./_tickets TIK001   # specify tickets directory
+tickets validate -t ./.tickets TIK001   # specify tickets directory
 ```
 
 ### Schema Source
 
 The mandatory field set is derived from the ticket template at `Ticket.md` alongside `tickets.sh`. Every field in the template must be present in each ticket, with the exception of `ticket_updated` which is optional.
 
-The project code prefix is read from `_tickets/settings.yaml`:
+The project code prefix is read from `.tickets/settings.yaml`:
 
 ```yaml
 code_prefix: TIK
@@ -195,7 +207,7 @@ Deviations are printed to stderr as bullet points. Exit code 0 if valid, 1 if de
 | Flag                | Short | Required | Description                                          |
 |---------------------|-------|----------|------------------------------------------------------|
 | `--name <subject>`  | `-n`  | yes      | Subject/name for the new ticket                      |
-| `--tickets-dir`     | `-d`  | no       | Path to tickets directory (default: `_tickets`)      |
+| `--tickets-dir`     | `-d`  | no       | Path to tickets directory (default: `.tickets`)      |
 | `--help`            | `-h`  | no       | Show usage text                                      |
 
 ```
@@ -229,7 +241,7 @@ If `settings.yaml` is missing or `code_prefix` is not set, the command exits wit
 | Flag                  | Short | Required | Description                                                   |
 |-----------------------|-------|----------|---------------------------------------------------------------|
 | `--code-prefix`       |       | no       | Ticket code prefix (3-4 alpha characters); if omitted, prompted interactively |
-| `--tickets-dir`       | `-d`  | no       | Path to tickets directory (default: `_tickets`)                |
+| `--tickets-dir`       | `-d`  | no       | Path to tickets directory (default: `.tickets`)                |
 | `--help`              | `-h`  | no       | Show usage text                                                |
 
 ```
@@ -243,7 +255,7 @@ tickets init --code-prefix TKT -d custom_path   # custom tickets directory
 The command creates the following structure relative to the current directory:
 
 ```
-_tickets/
+.tickets/
   settings.yaml        # contains code_prefix
   statistics.yaml      # initialized with statistics: []
 ```
@@ -301,7 +313,7 @@ The `tickets list` output is sorted ascending by `ticket_rank`. Tickets without 
 |---------------------|-------|----------|------------------------------------------------------|
 | `--ticket <code>`   | `-t`  | yes      | Ticket code to transition (e.g., `TIK001`)           |
 | `--target <status>` | `-T`  | yes      | Target status (case-insensitive, fuzzy-matched)      |
-| `--tickets-dir`     | `-d`  | no       | Path to tickets directory (default: `_tickets`)      |
+| `--tickets-dir`     | `-d`  | no       | Path to tickets directory (default: `.tickets`)      |
 | `--help`            | `-h`  | no       | Show usage text                                      |
 
 ```
@@ -341,7 +353,7 @@ Any transition from any status to any status is allowed. If the ticket is alread
 
 ## Statistics Subcommand
 
-`tickets statistics snapshot` computes metrics from the current ticket corpus and appends the results as a timestamped record to `_tickets/statistics.yaml`, enabling trend analysis over time.
+`tickets statistics snapshot` computes metrics from the current ticket corpus and appends the results as a timestamped record to `.tickets/statistics.yaml`, enabling trend analysis over time.
 
 ### CLI Interface
 
@@ -349,7 +361,7 @@ Any transition from any status to any status is allowed. If the ticket is alread
 Usage: tickets statistics snapshot [options]
 
 Options:
-  -d, --tickets-dir <path>  Path to tickets directory (default: _tickets)
+  -d, --tickets-dir <path>  Path to tickets directory (default: .tickets)
   -h, --help                Show this help message
 ```
 
@@ -357,7 +369,7 @@ Running `tickets statistics` without `snapshot` prints usage and exits.
 
 ### Metrics Computed
 
-- **Total tickets** — count of all `.md` files in `_tickets/`.
+- **Total tickets** — count of all `.md` files in `.tickets/`.
 - **Count by status** — breakdown for each status: Backlog, Ready, In Progress, Complete, Duplicate, Won't Fix.
 - **Todo count** — tickets in Backlog, Ready, or In Progress.
 - **Done count** — tickets in Complete, Duplicate, or Won't Fix.
@@ -385,7 +397,7 @@ groups:
 
 ### Snapshot Recording
 
-Each invocation appends a snapshot record to `_tickets/statistics.yaml`:
+Each invocation appends a snapshot record to `.tickets/statistics.yaml`:
 
 ```yaml
 statistics:
@@ -403,7 +415,7 @@ statistics:
       done: 16
 ```
 
-The file is append-only; existing records are never modified. If `_tickets/statistics.yaml` does not exist, it is created. The `list` and `validate` subcommands ignore `statistics.yaml` (it does not match the ticket filename convention).
+The file is append-only; existing records are never modified. If `.tickets/statistics.yaml` does not exist, it is created. The `list` and `validate` subcommands ignore `statistics.yaml` (it does not match the ticket filename convention).
 
 ## Agent Skills
 
@@ -413,7 +425,7 @@ The following agent skills are available to assist with ticket workflows:
 |--------------------|-----------------------------------------------------------------------------|--------------------------------------------------------------------------------|
 | `tickets-init`          | Initializes the tickets system in a new project using the `tickets init` CLI subcommand. Supports `--code-prefix` flag or interactive prompt. | User asks to initialize a tickets system, bootstrap tickets, or set up the ticket directory structure. |
 | `tickets-create`        | Creates a new ticket from the template with auto-assigned code. Extracts a name from the user's message and uses the `tickets create` subcommand. | User asks to create a new ticket.                                               |
-| `tickets-list`          | Lists tickets from `_tickets/` with optional filtering by group, status, or a numeric limit (e.g., "top 5", "first 10").  | User asks to list or show tickets.                                             |
+| `tickets-list`          | Lists tickets from `.tickets/` with optional filtering by group, status, or a numeric limit (e.g., "top 5", "first 10").  | User asks to list or show tickets.                                             |
 | `tickets-review`        | Reviews a ticket against the current state of the codebase for issues. Also accepts "review next ticket" to automatically locate and review the highest-ranked upcoming ticket.   | User asks to review a ticket or says "review next ticket".                     |
 | `tickets-execution-plan`| Creates and manages checkbox-based execution plans with optional phasing.   | User asks to create, update, or check off execution plan items in a ticket.    |
 | `tickets-transition`    | Transitions a ticket between statuses using the `tickets transition` CLI.  | User asks to transition, move, or change the status of a ticket.               |

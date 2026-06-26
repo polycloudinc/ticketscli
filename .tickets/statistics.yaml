@@ -1,0 +1,49 @@
+statistics:
+- ts: '2026-06-14T14:45:18Z'
+  total: 38
+  status:
+    backlog: 7
+    ready: 1
+    inprogress: 0
+    complete: 27
+    duplicate: 0
+    wontfix: 3
+  groups:
+    todo: 8
+    done: 30
+- ts: '2026-06-14T15:42:53Z'
+  total: 41
+  status:
+    backlog: 9
+    ready: 0
+    inprogress: 0
+    complete: 29
+    duplicate: 0
+    wontfix: 3
+  groups:
+    todo: 9
+    done: 32
+- ts: '2026-06-15T12:35:57Z'
+  total: 42
+  status:
+    backlog: 9
+    ready: 0
+    inprogress: 0
+    complete: 30
+    duplicate: 0
+    wontfix: 3
+  groups:
+    todo: 9
+    done: 33
+- ts: '2026-06-20T05:57:47Z'
+  total: 46
+  status:
+    backlog: 8
+    ready: 2
+    inprogress: 0
+    complete: 33
+    duplicate: 0
+    wontfix: 3
+  groups:
+    todo: 10
+    done: 36

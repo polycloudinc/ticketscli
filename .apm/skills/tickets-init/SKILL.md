@@ -5,7 +5,7 @@ description: Use when the user asks to initialize a tickets system, bootstrap ti
 
 # About Tickets System
 
-The tickets system manages work items as Markdown files in the `_tickets/` directory, each with YAML frontmatter containing fields such as `code`, `name`, `ticket_status`, `ticket_priority`, and `ticket_rank`. Tickets progress through statuses: `[[Backlog]]` (unscheduled), `[[Ready]]` (scheduled), `[[In Progress]]` (active work), `[[Complete]]` (done), `[[Duplicate]]`, and `[[Won't Fix]]`. A `tickets` CLI provides `init`, `list`, `validate`, `create`, `transition`, `rank`, and `statistics` subcommands for managing tickets.
+The tickets system manages work items as Markdown files in the `.tickets/` directory, each with YAML frontmatter containing fields such as `code`, `name`, `ticket_status`, `ticket_priority`, and `ticket_rank`. Tickets progress through statuses: `[[Backlog]]` (unscheduled), `[[Ready]]` (scheduled), `[[In Progress]]` (active work), `[[Complete]]` (done), `[[Duplicate]]`, and `[[Won't Fix]]`. A `tickets` CLI provides `init`, `list`, `validate`, `create`, `transition`, `rank`, and `statistics` subcommands for managing tickets.
 
 The `tickets` CLI is published as `@aleisium/tickets`. Always invoke it using `npx @aleisium/tickets@latest`.
 
@@ -22,6 +22,6 @@ When the user asks to initialize a tickets system, bootstrap tickets, or set up 
    ```
 
 2. The command creates the following in the current directory:
-   - `_tickets/` directory containing `settings.yaml` (with the code prefix) and `statistics.yaml`
+   - `.tickets/` directory containing `settings.yaml` (with the code prefix) and `statistics.yaml`
 
 3. Report the result to the user.
