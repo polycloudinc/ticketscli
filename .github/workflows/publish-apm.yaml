@@ -1,0 +1,50 @@
+name: Publish Agent Skill (APM)
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'apm.yml'
+      - '.apm/**'
+      - '.github/workflows/publish-apm.yaml'
+      - 'version'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  variables: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Increment Build Number
+        id: build
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          CURRENT=$(gh variable get VERSION_BUILD 2>/dev/null || echo "0")
+          NEXT=$((CURRENT + 1))
+          gh variable set VERSION_BUILD --body "$NEXT"
+          echo "current=$NEXT" >> "$GITHUB_OUTPUT"
+
+      - name: Tag and push
+        run: |
+          TAG="v$(npx @polycloudinc/modver show --style semver)"
+          echo "Tagging ${TAG}"
+          git config user.email "ci@polycloudinc.dev"
+          git config user.name "GitHub CI"
+          git tag -a "${TAG}" -m "Release ${TAG}"
+          git push origin "${TAG}"
+        env:
+          GH_TOKEN: ${{ github.token }}

@@ -1,5 +1,5 @@
 {
-  "name": "@aleisium/tickets",
+  "name": "@polycloudinc/ticketscli",
   "version": "0.0.0",
   "description": "CLI for the Markdown Tickets System",
   "bin": {
@@ -12,11 +12,8 @@
   ],
   "repository": {
     "type": "git",
-    "url": "ssh://git@forgejo.aleisium.com:222/aleisium/als_sys_app_tickets.git",
+    "url": "https://github.com/polycloudinc/ticketscli.git",
     "directory": "als-tickets-cli/als-tickets-cli-main"
-  },
-  "publishConfig": {
-    "registry": "https://forgejo.aleisium.com/api/packages/aleisium/npm/"
   },
   "license": "GPL-3.0"
 }

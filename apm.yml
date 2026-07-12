@@ -6,7 +6,6 @@ dependencies:
   apm:
   mcp: []
 devDependencies:
-  apm:
-    - ssh://git@forgejo.aleisium.com:222/aleisium/als_sys_app_modver.git
+  apm: []
 includes: auto
 scripts: {}

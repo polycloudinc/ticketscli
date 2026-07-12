@@ -417,6 +417,51 @@ statistics:
 
 The file is append-only; existing records are never modified. If `.tickets/statistics.yaml` does not exist, it is created. The `list` and `validate` subcommands ignore `statistics.yaml` (it does not match the ticket filename convention).
 
+## CI/CD
+
+The project uses GitHub Actions for continuous delivery. Two workflows live under `.github/workflows/`.
+
+### publish-npm.yml — npm Package
+
+Publishes `@polycloudinc/ticketscli` to npmjs.org when changes are pushed to `master` on paths `als-tickets-cli/**`, `.github/workflows/publish-npm.yml`, or `version`. Also supports manual dispatch via `workflow_dispatch`.
+
+| Setting | Value |
+|---|---|
+| Runner | `ubuntu-latest` |
+| Permissions | `contents: read`, `variables: write` |
+| Node version | 20 |
+| npm registry | `https://registry.npmjs.org` |
+| Modver package | `@polycloudinc/modver` |
+
+**Steps**: checkout → setup Node.js → npm auth (`NPM_TOKEN` secret) → increment `VERSION_BUILD` via `gh variable` → render version with modver → `npm publish`
+
+### publish-apm.yaml — APM Agent Skills
+
+Publishes the APM agent skills package and pushes a git tag when changes are pushed to `master` on paths `apm.yml`, `.apm/**`, `.github/workflows/publish-apm.yaml`, or `version`. Also supports `workflow_dispatch`.
+
+| Setting | Value |
+|---|---|
+| Runner | `ubuntu-latest` |
+| Permissions | `contents: write`, `variables: write` |
+| Node version | 22 |
+
+**Steps**: checkout → setup Node.js → increment `VERSION_BUILD` via `gh variable` → compute semver tag with modver → push tag
+
+### Required Secrets and Variables
+
+The following must be configured in the GitHub repository (`polycloudinc/ticketscli`):
+
+| Name | Type | Purpose |
+|---|---|---|
+| `NPM_TOKEN` | Secret | npmjs.org automation token for publishing `@polycloudinc/ticketscli` |
+| `VERSION_BUILD` | Variable | Build number, seeded with initial value (e.g., `0`) before the first workflow run; auto-incremented by both workflows |
+
+Both workflows use `gh variable` (the GitHub CLI) to read and increment `VERSION_BUILD`, which requires the `variables: write` permission on the workflow job. The `${{ github.token }}` is used to authenticate `gh` commands.
+
+### Manual Dispatch
+
+Both workflows can be triggered manually from the GitHub Actions UI via `workflow_dispatch`. On manual dispatch, neither workflow checks path filters — they run unconditionally on the selected branch.
+
 ## Agent Skills
 
 The following agent skills are available to assist with ticket workflows:

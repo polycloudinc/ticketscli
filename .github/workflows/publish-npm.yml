@@ -1,0 +1,45 @@
+name: Publish Packages
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'als-tickets-cli/**'
+      - '.github/workflows/publish-npm.yml'
+      - 'version'
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Set Build Number
+        run: sed -i "s/^VERSION_BUILD=.*/VERSION_BUILD=${{ github.run_number }}/" version
+
+      - name: Render Version and Publish
+        working-directory: als-tickets-cli/als-tickets-cli-main
+        run: |
+          set -x
+
+          PACKAGE_NAME=$(node -p "require('./package.json').name")
+
+          npx @polycloudinc/modver packagejson --style semver
+
+          VERSION="$(npx @polycloudinc/modver show --style semver)"
+          echo "Package: ${PACKAGE_NAME}"
+          echo "Version: ${VERSION}"
+
+          npm publish --access public
