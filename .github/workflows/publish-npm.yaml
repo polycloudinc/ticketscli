@@ -5,7 +5,7 @@ on:
     branches: [master]
     paths:
       - 'polycloud-tickets-cli/**'
-      - '.github/workflows/publish-npm.yml'
+      - '.github/workflows/publish-npm.yaml'
       - 'version'
   workflow_dispatch:
 
@@ -23,7 +23,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
           registry-url: 'https://registry.npmjs.org'
 
       - name: Set Build Number

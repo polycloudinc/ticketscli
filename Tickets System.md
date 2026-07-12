@@ -421,9 +421,9 @@ The file is append-only; existing records are never modified. If `.tickets/stati
 
 The project uses GitHub Actions for continuous delivery. Two workflows live under `.github/workflows/`.
 
-### publish-npm.yml — npm Package
+### publish-npm.yaml — npm Package
 
-Publishes `@polycloudinc/ticketscli` to npmjs.org when changes are pushed to `master` on paths `polycloud-tickets-cli/**`, `.github/workflows/publish-npm.yml`, or `version`. Also supports manual dispatch via `workflow_dispatch`.
+Publishes `@polycloudinc/ticketscli` to npmjs.org when changes are pushed to `master` on paths `polycloud-tickets-cli/**`, `.github/workflows/publish-npm.yaml`, or `version`. Also supports manual dispatch via `workflow_dispatch`.
 
 | Setting | Value |
 |---|---|
