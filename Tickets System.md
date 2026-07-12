@@ -1,4 +1,4 @@
-# Tickets
+# Introduction
 
 Tickets are Markdown files in the `.tickets/` directory with YAML frontmatter.
 
