@@ -12,7 +12,6 @@ on:
 
 permissions:
   contents: write
-  variables: write
 
 jobs:
   publish:
@@ -28,15 +27,8 @@ jobs:
         with:
           node-version: '22'
 
-      - name: Increment Build Number
-        id: build
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          CURRENT=$(gh variable get VERSION_BUILD 2>/dev/null || echo "0")
-          NEXT=$((CURRENT + 1))
-          gh variable set VERSION_BUILD --body "$NEXT"
-          echo "current=$NEXT" >> "$GITHUB_OUTPUT"
+      - name: Set Build Number
+        run: sed -i "s/^VERSION_BUILD=.*/VERSION_BUILD=${{ github.run_number }}/" version
 
       - name: Tag and push
         run: |
