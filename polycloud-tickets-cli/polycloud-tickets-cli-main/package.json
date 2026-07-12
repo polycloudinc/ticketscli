@@ -13,7 +13,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/polycloudinc/ticketscli.git",
-    "directory": "als-tickets-cli/als-tickets-cli-main"
+    "directory": "polycloud-tickets-cli/polycloud-tickets-cli-main"
   },
   "license": "GPL-3.0"
 }

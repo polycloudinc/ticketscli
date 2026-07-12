@@ -4,7 +4,7 @@ on:
   push:
     branches: [master]
     paths:
-      - 'als-tickets-cli/**'
+      - 'polycloud-tickets-cli/**'
       - '.github/workflows/publish-npm.yml'
       - 'version'
   workflow_dispatch:
@@ -30,7 +30,7 @@ jobs:
         run: sed -i "s/^VERSION_BUILD=.*/VERSION_BUILD=${{ github.run_number }}/" version
 
       - name: Render Version and Publish
-        working-directory: als-tickets-cli/als-tickets-cli-main
+        working-directory: polycloud-tickets-cli/polycloud-tickets-cli-main
         run: |
           set -x
 

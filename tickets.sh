@@ -1,1 +1,1 @@
-als-tickets-cli/als-tickets-cli-main/tickets.sh
+polycloud-tickets-cli/polycloud-tickets-cli-main/tickets.sh

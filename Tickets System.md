@@ -423,7 +423,7 @@ The project uses GitHub Actions for continuous delivery. Two workflows live unde
 
 ### publish-npm.yml — npm Package
 
-Publishes `@polycloudinc/ticketscli` to npmjs.org when changes are pushed to `master` on paths `als-tickets-cli/**`, `.github/workflows/publish-npm.yml`, or `version`. Also supports manual dispatch via `workflow_dispatch`.
+Publishes `@polycloudinc/ticketscli` to npmjs.org when changes are pushed to `master` on paths `polycloud-tickets-cli/**`, `.github/workflows/publish-npm.yml`, or `version`. Also supports manual dispatch via `workflow_dispatch`.
 
 | Setting | Value |
 |---|---|

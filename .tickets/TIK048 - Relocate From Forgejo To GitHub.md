@@ -39,7 +39,7 @@ Move the tickets CLI project and all associated infrastructure from Forgejo (for
 The two Forgejo workflows (`publish.yml` and `publish-skills.yaml`) convert to `.github/workflows/` with these adjustments:
 
 **`publish.yml`** — publishes `@polycloudinc/ticketscli` to npmjs.org:
-- Trigger: push to `master` on paths `als-tickets-cli/**`, `.github/workflows/publish.yml`, `version`; plus `workflow_dispatch`
+- Trigger: push to `master` on paths `polycloud-tickets-cli/**`, `.github/workflows/publish.yml`, `version`; plus `workflow_dispatch`
 - Runs on `ubuntu-latest` with `permissions: contents: read, variables: write`
 - Steps: checkout with fetch-depth 0 → setup-node@v4 (node 20) → configure npm auth token for npmjs.org → increment build number (replace `repo-var` action) → render version via modver → `npm publish`
 
@@ -75,7 +75,7 @@ The two Forgejo workflows (`publish.yml` and `publish-skills.yaml`) convert to `
 - [x] Convert `.forgejo/workflows/publish.yml` to `.github/workflows/publish.yml` using GitHub Actions syntax, `gh variable` for build number, npmjs.org auth, and `ubuntu-latest` runner
 - [x] Convert `.forgejo/workflows/publish-skills.yaml` to `.github/workflows/publish-skills.yaml` using GitHub Actions syntax, `gh variable` for build number, and `ubuntu-latest` runner with `contents: write` for tag pushing
 - [x] Delete `.forgejo/` directory
-- [x] Update `als-tickets-cli/als-tickets-cli-main/package.json`: change name to `@polycloudinc/ticketscli`, repository URL to `https://github.com/polycloudinc/ticketscli.git`, remove `publishConfig.registry`
+- [x] Update `polycloud-tickets-cli/polycloud-tickets-cli-main/package.json`: change name to `@polycloudinc/ticketscli`, repository URL to `https://github.com/polycloudinc/ticketscli.git`, remove `publishConfig.registry`
 - [x] Drop `als_sys_app_modver` from `apm.yml` devDependencies
 - [x] Remove modver entry from `apm.lock.yaml` dependencies and regenerate with new host
 - [x] Delete root `package-lock.json`
