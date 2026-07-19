@@ -4,13 +4,13 @@ set -euo pipefail
 readarray -t all_files < <(git diff --cached --name-only)
 staged_tickets=()
 for file in "${all_files[@]}"; do
-    if [[ "$file" =~ ^_tickets/.*\.md$ ]]; then
+    if [[ "$file" =~ ^.tickets/.*\.md$ ]]; then
         staged_tickets+=("$file")
     fi
 done
 
 if [ ${#staged_tickets[@]} -eq 0 ]; then
-    echo "No staged ticket files found under _tickets/"
+    echo "No staged ticket files found under .tickets/"
     exit 1
 fi
 

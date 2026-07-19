@@ -15,6 +15,7 @@ jobs:
     permissions:
       contents: write
       id-token: write
+      packages: write
 
     steps:
       - uses: actions/checkout@v4
@@ -43,3 +44,11 @@ jobs:
           echo "Version: ${VERSION}"
 
           npm publish --access public
+
+      - name: Publish to GitHub Packages
+        working-directory: polycloud-tickets-cli/polycloud-tickets-cli-main
+        env:
+          GHP_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          npm config set '//npm.pkg.github.com/:_authToken' "${GHP_TOKEN}" --userconfig .npmrc
+          npm publish --registry https://npm.pkg.github.com --access public
