@@ -1,18 +1,18 @@
 ---
-template: "[[Ticket]]"
+template: '[[Ticket]]'
 kind: ticket
 tags:
-  - ticket
+- ticket
 code: TIK048
 aliases:
-  - TIK048
+- TIK048
 name: Relocate From Forgejo To GitHub
-ticket_status: "[[Backlog]]"
+ticket_status: '[[Backlog]]'
 ticket_priority: Medium
 ticket_rank: 10
-ticket_created: 2026-07-06T05:11:24Z
-ticket_updated: 2026-07-06T05:11:24Z
-ticket_completed:
+ticket_created: '2026-07-06T05:11:24Z'
+ticket_updated: '2026-07-06T05:11:24Z'
+ticket_completed: null
 ---
 # Introduction
 

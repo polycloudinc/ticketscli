@@ -9,7 +9,7 @@ aliases:
 name: Change Default Tickets Directory From Underscore Tickets To Dot Tickets
 ticket_status: '[[Complete]]'
 ticket_priority: Medium
-ticket_rank: null
+ticket_rank:
 ticket_created: '2026-06-20T06:44:30Z'
 ticket_updated: '2026-06-20T06:58:53Z'
 ticket_completed: '2026-06-20T06:58:48Z'

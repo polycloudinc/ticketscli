@@ -7,11 +7,12 @@ code: TIK049
 aliases:
 - TIK049
 name: Publish Npm Package To Github Packages
-ticket_status: '[[In Progress]]'
+ticket_status: '[[Complete]]'
 ticket_priority: Medium
-ticket_rank: 11
+ticket_rank:
 ticket_created: '2026-07-17T12:48:44Z'
-ticket_updated: '2026-07-17T14:59:31Z'
+ticket_updated: '2026-07-19T15:42:01Z'
+ticket_completed: '2026-07-19T15:41:56Z'
 ---
 # Introduction
 
@@ -45,5 +46,5 @@ If the GitHub Packages publish fails after npmjs.org succeeds, the npmjs.org pub
 
 - [x] Add `packages: write` permission to the `publish` job in `.github/workflows/publish-npm.yaml`
 - [x] Add a new step after the existing npmjs.org publish that authenticates with `GITHUB_TOKEN` and runs `npm publish --registry https://npm.pkg.github.com --access public`
-- [ ] Push to GitHub and verify the workflow triggers and both publishes succeed
-- [ ] Verify the package is installable from GitHub Packages via `npm install @polycloudinc/ticketscli --registry https://npm.pkg.github.com`
+- [x] Push to GitHub and verify the workflow triggers and both publishes succeed
+- [x] Verify the package is installable from GitHub Packages via `npm install @polycloudinc/ticketscli --registry https://npm.pkg.github.com`
