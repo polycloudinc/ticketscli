@@ -1,18 +1,18 @@
 ---
-template: "[[Ticket]]"
+template: '[[Ticket]]'
 kind: ticket
 tags:
-  - ticket
+- ticket
 code: TIK051
 aliases:
-  - TIK051
+- TIK051
 name: Curl Bash Install Script
-ticket_status: "[[Backlog]]"
+ticket_status: '[[Backlog]]'
 ticket_priority: Medium
 ticket_rank: 12
-ticket_created: 2026-07-24T14:57:26Z
-ticket_updated: 2026-07-24T14:57:26Z
-ticket_completed:
+ticket_created: '2026-07-24T14:57:26Z'
+ticket_updated: '2026-07-24T14:57:26Z'
+ticket_completed: null
 ---
 # Introduction
 
