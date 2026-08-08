@@ -4,6 +4,7 @@ apm_version: 0.18.0
 dependencies: []
 local_deployed_files:
 - .agents/skills/tickets-create
+- .agents/skills/tickets-execute
 - .agents/skills/tickets-execution-plan
 - .agents/skills/tickets-list
 - .agents/skills/tickets-rank
