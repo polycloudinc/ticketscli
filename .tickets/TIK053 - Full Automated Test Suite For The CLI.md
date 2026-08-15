@@ -1,18 +1,18 @@
 ---
-template: "[[Ticket]]"
+template: '[[Ticket]]'
 kind: ticket
 tags:
-  - ticket
+- ticket
 code: TIK053
 aliases:
-  - TIK053
+- TIK053
 name: Full Automated Test Suite For The CLI
-ticket_status: "[[Backlog]]"
+ticket_status: '[[Complete]]'
 ticket_priority: Medium
-ticket_rank: 12
-ticket_created: 2026-08-15T09:36:45Z
-ticket_updated: 2026-08-15T09:36:45Z
-ticket_completed:
+ticket_rank: null
+ticket_created: '2026-08-15T09:36:45Z'
+ticket_updated: '2026-08-15T14:24:30Z'
+ticket_completed: '2026-08-15T14:24:25Z'
 ---
 # Introduction
 

@@ -9,7 +9,7 @@ aliases:
 name: Publish Project As Open Source
 ticket_status: '[[Complete]]'
 ticket_priority: Medium
-ticket_rank: null
+ticket_rank:
 ticket_created: '2026-06-14T07:19:17Z'
 ticket_updated: '2026-08-15T08:32:05Z'
 ticket_completed: '2026-08-15T08:31:59Z'
