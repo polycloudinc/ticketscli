@@ -9,9 +9,9 @@ aliases:
 name: Rewrite CLI in Rust
 ticket_status: '[[Backlog]]'
 ticket_priority: Medium
-ticket_rank: 8
+ticket_rank: 7
 ticket_created: '2026-06-14T03:36:05Z'
-ticket_updated: '2026-06-20T05:59:43Z'
+ticket_updated: '2026-08-15T08:32:04Z'
 ticket_completed: null
 ---
 # Introduction

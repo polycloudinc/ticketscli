@@ -9,9 +9,9 @@ aliases:
 name: Separate Ticketscli Distribution From Agent Skill Consumption
 ticket_status: '[[Backlog]]'
 ticket_priority: Medium
-ticket_rank: 11
+ticket_rank: 10
 ticket_created: '2026-07-19T15:47:00Z'
-ticket_updated: '2026-07-19T15:47:00Z'
+ticket_updated: '2026-08-15T08:32:04Z'
 ticket_completed: null
 ---
 # Introduction
