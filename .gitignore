@@ -3,3 +3,7 @@
 apm_modules/
 .agents
 node_modules/
+
+# Root-level npm files (no root package; the publishable package lives under polycloud-tickets-cli/)
+/package.json
+/package-lock.json

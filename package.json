@@ -1,7 +1,0 @@
-{
-  "devDependencies": {
-    "@aleisium/sourcepkg-dc-bren": "^0.0.26",
-    "@aleisium/sourcepkg-dc-lifecycle": "^0.0.26",
-    "@aleisium/sourcepkg-tmux-scripts": "^0.0.26"
-  }
-}

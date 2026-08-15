@@ -5,7 +5,7 @@
   },
   "mounts": [
     "type=bind,source=${localEnv:HOME}/.config/opencode,target=/home/vscode/.config/opencode",
-    "type=bind,source=${localEnv:HOME}/.local/share/opencode,target=/home/vscode/.local/share/opencode"
+    "type=bind,source=${localEnv:HOME}/.local/share/opencode,target=/home/vscode/.local/share/opencode",
     "type=bind,source=${localEnv:HOME}/.local/state/opencode,target=/home/vscode/.local/state/opencode"
   ],
   "customizations": {
