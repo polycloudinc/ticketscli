@@ -417,9 +417,56 @@ statistics:
 
 The file is append-only; existing records are never modified. If `.tickets/statistics.yaml` does not exist, it is created. The `list` and `validate` subcommands ignore `statistics.yaml` (it does not match the ticket filename convention).
 
+## Test Suite
+
+An automated test suite exercises the CLI end to end through its external interface (arguments, stdout/stderr, exit codes, and file system effects) rather than implementation internals. Because the suite is pointed at a CLI executable, it can be run against a replacement implementation (e.g., the Rust rewrite planned in TIK021) via `--cli` to verify functional equivalence.
+
+### Layout
+
+| Path | Purpose |
+|---|---|
+| `test.sh` | Test executor CLI at the project root |
+| `test/cases/` | Test case scripts, one per case |
+| `test/fixtures/` | Read-only project-state fixtures |
+| `test/executions/` | Throwaway per-run execution directories (git-ignored) |
+
+### Fixtures
+
+Each fixture represents a project state (e.g., `f001_no_tickets_dir`, `f003_mixed_status_tickets`) stored in `test/fixtures/fXXX_short_fixture_name`. Each test case uses exactly one fixture; the executor copies the fixture into the execution directory per run, so fixtures are never mutated in place and may be shared by many cases.
+
+### Test Cases
+
+Each case is a Bash script `test/cases/tcXXX_short_test_name.sh` sourced by the executor (not executed directly). It exposes two functions:
+
+- `fixture` — echoes the code of the required fixture (e.g., `f003`)
+- `run` — executes the test inside the prepared execution directory; exit 0 means pass, non-zero means fail; it echoes a short informative message
+
+Assertions are the responsibility of each test case; there is no shared assertion library.
+
+### Executor
+
+```
+./test.sh exec --cases tc001,tc005 --cli ./tickets.sh
+```
+
+- `--cases` — comma-separated case codes (e.g., `tc001,tc005`) or `all` to run every case
+- `--cli` — path to the CLI under test (default: `tickets.sh` in the repo root)
+
+For each selected case the executor: sources the case script; calls `fixture()` to learn the required fixture; creates a fresh execution directory `test/executions/tcXXX_YYYY-MM-DDTHH-mm-ssZ`; copies the fixture into it; and calls `run()` with `TICKETS_CLI` set to the CLI path, capturing its exit status and output (saved to `output.log` in the execution directory). It logs each test as it runs with its PASS/FAIL status and the case's message, prints an aggregated summary, and exits non-zero if any case failed, so it can gate CI.
+
+### Adding a Test Case
+
+1. Create the fixture (if needed) under `test/fixtures/fXXX_short_fixture_name/`.
+2. Create `test/cases/tcXXX_short_test_name.sh` implementing `fixture` and `run`.
+3. Run `./test.sh exec --cases tcXXX` and confirm it passes.
+
 ## CI/CD
 
-The project uses GitHub Actions for continuous delivery. Two workflows live under `.github/workflows/`.
+The project uses GitHub Actions for continuous integration and delivery. Three workflows live under `.github/workflows/`.
+
+### test.yaml — Automated Test Suite
+
+Runs `./test.sh exec --cases all` on every push to `master` and every pull request, so test failures block merging.
 
 ### publish-npm.yaml — npm Package
 
