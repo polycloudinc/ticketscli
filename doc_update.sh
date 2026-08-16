@@ -206,8 +206,8 @@ found_markers=0
 current_id=""
 buffer=()
 
-start_re='^<!-- (cli_[a-z0-9_]+):start -->$'
-end_re='^<!-- (cli_[a-z0-9_]+):end -->$'
+start_re='^<!-- ((cli|misc)_[a-z0-9_]+):start -->$'
+end_re='^<!-- ((cli|misc)_[a-z0-9_]+):end -->$'
 
 while IFS= read -r line || [[ -n "$line" ]]; do
   if [[ "$line" =~ $start_re ]]; then

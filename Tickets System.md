@@ -26,24 +26,25 @@ For example: `TIK001 - List Subcommand.md`
 
 The code and name are stored in the ticket file as YAML front matter along with other attributes.  The structure of a ticket is defined by the following template which is embedded in ticketscli:
 
+<!-- misc_template:start -->
 ```markdown
 ---
 template: "[[Ticket]]"
 kind: ticket
 tags:
   - ticket
-code: TIK001
+code:
 aliases:
-  - TIK001
-name: List Subcommand
-ticket_status: "[[Backlog]]"
-ticket_priority: Medium
-ticket_rank: 32
-ticket_created: 2026-06-14T03:02:32Z
-ticket_updated: 2026-06-14T03:02:32Z
+name:
+ticket_status:
+ticket_priority:
+ticket_rank:
+ticket_created:
+ticket_updated:
 ticket_completed:
 ---
 ```
+<!-- misc_template:end -->
 
 A ticket's status may be:
 - Backlog
@@ -252,6 +253,277 @@ Options:
   -h, --help                  Show this help message
 ```
 <!-- cli_rank_up_help:end -->
+
+Example usage:
+
+<!-- cli_rank_example:start -->
+```bash
+$ tickets list
+
+Code     Subject                                               Rank Status      
+-------- ---------------------------------------------------- ----- ------------
+TST002   Bravo Ticket                                             1 Ready       
+TST001   Alpha Ticket                                             2 Backlog     
+TST003   Charlie Ticket                                           3 In Progress 
+TST004   Delta Ticket                                             - Complete    
+TST005   Echo Ticket                                              - Duplicate   
+TST006   Foxtrot Ticket                                           - Won't Fix   
+-------- ---------------------------------------------------- ----- ------------
+6 matching from 6 total tickets
+
+$ tickets rank first --ticket TST003
+
+3 ticket(s) normalized.
+Moved TST003 to rank 1.
+
+$ tickets rank down -t TST002
+
+3 ticket(s) normalized.
+Demoted TST002 to rank 3.
+
+$ tickets list
+
+Code     Subject                                               Rank Status      
+-------- ---------------------------------------------------- ----- ------------
+TST003   Charlie Ticket                                           1 In Progress 
+TST001   Alpha Ticket                                             2 Backlog     
+TST002   Bravo Ticket                                             3 Ready       
+TST004   Delta Ticket                                             - Complete    
+TST005   Echo Ticket                                              - Duplicate   
+TST006   Foxtrot Ticket                                           - Won't Fix   
+-------- ---------------------------------------------------- ----- ------------
+6 matching from 6 total tickets
+```
+<!-- cli_rank_example:end -->
+
+## transition
+
+The `transition` subcommand manages the process of transitioning a ticket from one status to another.
+
+<!-- cli_transition_help:start -->
+```
+$ tickets transition --help
+
+Usage: tickets transition --ticket <code> --target <status> [options]
+
+Options:
+  -t, --ticket <code>        Ticket code to transition
+  -T, --target <status>      Target status (backlog, ready, inprogress, complete, duplicate, wontfix; case-insensitive, fuzzy-matched)
+  -d, --tickets-dir <path>   Path to tickets directory (default: _tickets)
+  -h, --help                  Show this help message
+```
+<!-- cli_transition_help:end -->
+
+Example usage:
+
+<!-- cli_transition_example:start -->
+```bash
+$ tickets list
+
+Code     Subject                                               Rank Status      
+-------- ---------------------------------------------------- ----- ------------
+TST002   Bravo Ticket                                             1 Ready       
+TST001   Alpha Ticket                                             2 Backlog     
+TST003   Charlie Ticket                                           3 In Progress 
+TST004   Delta Ticket                                             - Complete    
+TST005   Echo Ticket                                              - Duplicate   
+TST006   Foxtrot Ticket                                           - Won't Fix   
+-------- ---------------------------------------------------- ----- ------------
+6 matching from 6 total tickets
+
+$ tickets transition --ticket TST001 --target inprogress
+
+Transitioned TST001 to 'inprogress'.
+
+$ tickets list
+
+Code     Subject                                               Rank Status      
+-------- ---------------------------------------------------- ----- ------------
+TST002   Bravo Ticket                                             1 Ready       
+TST001   Alpha Ticket                                             2 In Progress 
+TST003   Charlie Ticket                                           3 In Progress 
+TST004   Delta Ticket                                             - Complete    
+TST005   Echo Ticket                                              - Duplicate   
+TST006   Foxtrot Ticket                                           - Won't Fix   
+-------- ---------------------------------------------------- ----- ------------
+6 matching from 6 total tickets
+
+$ tickets transition -t TST001 -T complete
+
+Transitioned TST001 to 'complete'.
+
+$ tickets list
+
+Code     Subject                                               Rank Status      
+-------- ---------------------------------------------------- ----- ------------
+TST002   Bravo Ticket                                             1 Ready       
+TST003   Charlie Ticket                                           2 In Progress 
+TST001   Alpha Ticket                                             - Complete    
+TST004   Delta Ticket                                             - Complete    
+TST005   Echo Ticket                                              - Duplicate   
+TST006   Foxtrot Ticket                                           - Won't Fix   
+-------- ---------------------------------------------------- ----- ------------
+6 matching from 6 total tickets
+
+$ cp -a .tickets other
+
+
+$ tickets list -d other
+
+Code     Subject                                               Rank Status      
+-------- ---------------------------------------------------- ----- ------------
+TST002   Bravo Ticket                                             1 Ready       
+TST003   Charlie Ticket                                           2 In Progress 
+TST001   Alpha Ticket                                             - Complete    
+TST004   Delta Ticket                                             - Complete    
+TST005   Echo Ticket                                              - Duplicate   
+TST006   Foxtrot Ticket                                           - Won't Fix   
+-------- ---------------------------------------------------- ----- ------------
+6 matching from 6 total tickets
+
+$ tickets transition --ticket TST003 --target ready -d other
+
+Transitioned TST003 to 'ready'.
+
+$ tickets list -d other
+
+Code     Subject                                               Rank Status      
+-------- ---------------------------------------------------- ----- ------------
+TST002   Bravo Ticket                                             1 Ready       
+TST003   Charlie Ticket                                           2 Ready       
+TST001   Alpha Ticket                                             - Complete    
+TST004   Delta Ticket                                             - Complete    
+TST005   Echo Ticket                                              - Duplicate   
+TST006   Foxtrot Ticket                                           - Won't Fix   
+-------- ---------------------------------------------------- ----- ------------
+6 matching from 6 total tickets
+```
+
+Transitioned ticket file:
+
+```markdown
+---
+template: '[[Ticket]]'
+kind: ticket
+tags:
+- ticket
+code: TST001
+aliases:
+- TST001
+name: Alpha Ticket
+ticket_status: '[[Complete]]'
+ticket_priority: Medium
+ticket_rank: null
+ticket_created: '2026-01-01T00:00:00Z'
+ticket_updated: '2026-01-01T00:00:00Z'
+ticket_completed: '2026-01-01T00:00:00Z'
+---
+# Introduction
+
+Fixture ticket in Backlog status.
+
+# Requirements
+
+- Fixture requirement
+
+# Technical Solution
+
+TODO
+
+# Execution Plan
+
+TODO
+```
+<!-- cli_transition_example:end -->
+
+## validate
+
+The `validate` command checks the structure of tickets in the `.tickets/` directory against the template to identify any differences in the schema of the YAML front matter.
+
+<!-- cli_validate_help:start -->
+```
+$ tickets validate --help
+
+Usage: tickets validate [--all | --ticket <code>] [options]
+
+Options:
+  -a, --all                 Validate all tickets
+  -t, --ticket <code>       Validate a single ticket by code
+  -d, --tickets-dir <path>  Path to tickets directory (default: _tickets)
+  -h, --help                Show this help message
+```
+<!-- cli_validate_help:end -->
+
+Example usage:
+
+<!-- cli_validate_example:start -->
+```bash
+$ tickets validate --ticket TST001
+
+Validating: .tickets/TST001 - Alpha Ticket.md
+
+$ tickets validate --ticket TST001 -d other
+
+Validating: other/TST001 - Alpha Ticket.md
+```
+<!-- cli_validate_example:end -->
+
+## statistics
+
+The `statistics` command lets you track metrics related to your backlog and tickets.
+
+This capability is still a work in progress and currently provides a snapshot subcommand that records the point in time metrics regarding your tickets to `.tickets/statistics.yaml`.
+
+<!-- cli_statistics_snapshot_help:start -->
+```
+$ tickets statistics snapshot --help
+
+Usage: tickets statistics snapshot [options]
+
+Options:
+  -d, --tickets-dir <path>  Path to tickets directory (default: _tickets)
+  -h, --help                Show this help message
+```
+<!-- cli_statistics_snapshot_help:end -->
+
+Example usage:
+
+<!-- cli_statistics_snapshot_example:start -->
+```bash
+$ tickets statistics snapshot
+
+ts: 2026-01-01T00:00:00Z
+total: 6
+status:
+  backlog: 1
+  ready: 1
+  inprogress: 1
+  complete: 1
+  duplicate: 1
+  wontfix: 1
+groups:
+  todo: 3
+  done: 3
+```
+
+The snapshot is also appended to `.tickets/statistics.yaml` as a timestamped record:
+
+```yaml
+statistics:
+- ts: '2026-01-01T00:00:00Z'
+  total: 6
+  status:
+    backlog: 1
+    ready: 1
+    inprogress: 1
+    complete: 1
+    duplicate: 1
+    wontfix: 1
+  groups:
+    todo: 3
+    done: 3
+```
+<!-- cli_statistics_snapshot_example:end -->
 
 ## Installing the CLI
 
@@ -549,13 +821,41 @@ The ticket template is always resolved from the directory where `tickets.sh` res
 
 <!-- cli_rank_example:start -->
 ```bash
-$ tickets rank
+$ tickets list
+
+Code     Subject                                               Rank Status      
+-------- ---------------------------------------------------- ----- ------------
+TST002   Bravo Ticket                                             1 Ready       
+TST001   Alpha Ticket                                             2 Backlog     
+TST003   Charlie Ticket                                           3 In Progress 
+TST004   Delta Ticket                                             - Complete    
+TST005   Echo Ticket                                              - Duplicate   
+TST006   Foxtrot Ticket                                           - Won't Fix   
+-------- ---------------------------------------------------- ----- ------------
+6 matching from 6 total tickets
+
+$ tickets rank first --ticket TST003
 
 3 ticket(s) normalized.
+Moved TST003 to rank 1.
 
-$ tickets rank -d other
+$ tickets rank down -t TST002
 
 3 ticket(s) normalized.
+Demoted TST002 to rank 3.
+
+$ tickets list
+
+Code     Subject                                               Rank Status      
+-------- ---------------------------------------------------- ----- ------------
+TST003   Charlie Ticket                                           1 In Progress 
+TST001   Alpha Ticket                                             2 Backlog     
+TST002   Bravo Ticket                                             3 Ready       
+TST004   Delta Ticket                                             - Complete    
+TST005   Echo Ticket                                              - Duplicate   
+TST006   Foxtrot Ticket                                           - Won't Fix   
+-------- ---------------------------------------------------- ----- ------------
+6 matching from 6 total tickets
 ```
 <!-- cli_rank_example:end -->
 
@@ -664,17 +964,85 @@ Options:
 
 <!-- cli_transition_example:start -->
 ```bash
+$ tickets list
+
+Code     Subject                                               Rank Status      
+-------- ---------------------------------------------------- ----- ------------
+TST002   Bravo Ticket                                             1 Ready       
+TST001   Alpha Ticket                                             2 Backlog     
+TST003   Charlie Ticket                                           3 In Progress 
+TST004   Delta Ticket                                             - Complete    
+TST005   Echo Ticket                                              - Duplicate   
+TST006   Foxtrot Ticket                                           - Won't Fix   
+-------- ---------------------------------------------------- ----- ------------
+6 matching from 6 total tickets
+
 $ tickets transition --ticket TST001 --target inprogress
 
 Transitioned TST001 to 'inprogress'.
+
+$ tickets list
+
+Code     Subject                                               Rank Status      
+-------- ---------------------------------------------------- ----- ------------
+TST002   Bravo Ticket                                             1 Ready       
+TST001   Alpha Ticket                                             2 In Progress 
+TST003   Charlie Ticket                                           3 In Progress 
+TST004   Delta Ticket                                             - Complete    
+TST005   Echo Ticket                                              - Duplicate   
+TST006   Foxtrot Ticket                                           - Won't Fix   
+-------- ---------------------------------------------------- ----- ------------
+6 matching from 6 total tickets
 
 $ tickets transition -t TST001 -T complete
 
 Transitioned TST001 to 'complete'.
 
+$ tickets list
+
+Code     Subject                                               Rank Status      
+-------- ---------------------------------------------------- ----- ------------
+TST002   Bravo Ticket                                             1 Ready       
+TST003   Charlie Ticket                                           2 In Progress 
+TST001   Alpha Ticket                                             - Complete    
+TST004   Delta Ticket                                             - Complete    
+TST005   Echo Ticket                                              - Duplicate   
+TST006   Foxtrot Ticket                                           - Won't Fix   
+-------- ---------------------------------------------------- ----- ------------
+6 matching from 6 total tickets
+
+$ cp -a .tickets other
+
+
+$ tickets list -d other
+
+Code     Subject                                               Rank Status      
+-------- ---------------------------------------------------- ----- ------------
+TST002   Bravo Ticket                                             1 Ready       
+TST003   Charlie Ticket                                           2 In Progress 
+TST001   Alpha Ticket                                             - Complete    
+TST004   Delta Ticket                                             - Complete    
+TST005   Echo Ticket                                              - Duplicate   
+TST006   Foxtrot Ticket                                           - Won't Fix   
+-------- ---------------------------------------------------- ----- ------------
+6 matching from 6 total tickets
+
 $ tickets transition --ticket TST003 --target ready -d other
 
 Transitioned TST003 to 'ready'.
+
+$ tickets list -d other
+
+Code     Subject                                               Rank Status      
+-------- ---------------------------------------------------- ----- ------------
+TST002   Bravo Ticket                                             1 Ready       
+TST003   Charlie Ticket                                           2 Ready       
+TST001   Alpha Ticket                                             - Complete    
+TST004   Delta Ticket                                             - Complete    
+TST005   Echo Ticket                                              - Duplicate   
+TST006   Foxtrot Ticket                                           - Won't Fix   
+-------- ---------------------------------------------------- ----- ------------
+6 matching from 6 total tickets
 ```
 
 Transitioned ticket file:

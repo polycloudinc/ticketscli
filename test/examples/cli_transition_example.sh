@@ -19,18 +19,41 @@ fixture() {
 }
 
 run() {
+  echo '$ tickets list'
+  echo ''
+  "$TICKETS_CLI" list
+  echo ''
   echo '$ tickets transition --ticket TST001 --target inprogress'
   echo ''
   "$TICKETS_CLI" transition --ticket TST001 --target inprogress
+  echo ''
+  echo '$ tickets list'
+  echo ''
+  "$TICKETS_CLI" list
   echo ''
   echo '$ tickets transition -t TST001 -T complete'
   echo ''
   "$TICKETS_CLI" transition -t TST001 -T complete
   echo ''
-  echo '$ tickets transition --ticket TST003 --target ready -d other'
+  echo '$ tickets list'
+  echo ''
+  "$TICKETS_CLI" list
+  echo ''
+  echo '$ cp -a .tickets other'
   echo ''
   cp -a .tickets other
+  echo ''
+  echo '$ tickets list -d other'
+  echo ''
+  "$TICKETS_CLI" list -d other
+  echo ''
+  echo '$ tickets transition --ticket TST003 --target ready -d other'
+  echo ''
   "$TICKETS_CLI" transition --ticket TST003 --target ready -d other
+  echo ''
+  echo '$ tickets list -d other'
+  echo ''
+  "$TICKETS_CLI" list -d other
 }
 
 result_description() {
