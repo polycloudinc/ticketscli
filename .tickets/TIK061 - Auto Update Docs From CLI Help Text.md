@@ -1,18 +1,18 @@
 ---
-template: "[[Ticket]]"
+template: '[[Ticket]]'
 kind: ticket
 tags:
-  - ticket
+- ticket
 code: TIK061
 aliases:
-  - TIK061
+- TIK061
 name: Auto Update Docs From CLI Help Text
-ticket_status: "[[Backlog]]"
+ticket_status: '[[Complete]]'
 ticket_priority: Medium
-ticket_rank: 18
-ticket_created: 2026-08-16T03:38:31Z
-ticket_updated: 2026-08-16T03:38:31Z
-ticket_completed:
+ticket_rank: null
+ticket_created: '2026-08-16T03:38:31Z'
+ticket_updated: '2026-08-16T04:59:34Z'
+ticket_completed: '2026-08-16T04:59:28Z'
 ---
 # Introduction
 

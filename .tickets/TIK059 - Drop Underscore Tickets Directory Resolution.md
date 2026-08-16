@@ -1,18 +1,18 @@
 ---
-template: "[[Ticket]]"
+template: '[[Ticket]]'
 kind: ticket
 tags:
-  - ticket
+- ticket
 code: TIK059
 aliases:
-  - TIK059
+- TIK059
 name: Drop Underscore Tickets Directory Resolution
-ticket_status: "[[Backlog]]"
+ticket_status: '[[Backlog]]'
 ticket_priority: Medium
 ticket_rank: 16
-ticket_created: 2026-08-16T01:54:17Z
-ticket_updated: 2026-08-16T01:54:17Z
-ticket_completed:
+ticket_created: '2026-08-16T01:54:17Z'
+ticket_updated: '2026-08-16T01:54:17Z'
+ticket_completed: null
 ---
 # Introduction
 

@@ -1,18 +1,18 @@
 ---
-template: "[[Ticket]]"
+template: '[[Ticket]]'
 kind: ticket
 tags:
-  - ticket
+- ticket
 code: TIK060
 aliases:
-  - TIK060
+- TIK060
 name: Polish Tickets CLI
-ticket_status: "[[Backlog]]"
+ticket_status: '[[Backlog]]'
 ticket_priority: Medium
 ticket_rank: 17
-ticket_created: 2026-08-16T03:04:59Z
-ticket_updated: 2026-08-16T03:04:59Z
-ticket_completed:
+ticket_created: '2026-08-16T03:04:59Z'
+ticket_updated: '2026-08-16T03:04:59Z'
+ticket_completed: null
 ---
 # Introduction
 
