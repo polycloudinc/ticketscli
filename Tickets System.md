@@ -90,7 +90,6 @@ Options:
   --code-prefix <prefix>      Ticket code prefix (3-4 alpha characters)
   -h, --help                  Show this help message
 ```
-
 <!-- cli_init_help:end -->
 
 Typically this command is used only once when you're starting a new project:
@@ -113,7 +112,6 @@ Resultant settings.yaml file in the `.tickets/` directory:
 ```yaml
 code_prefix: MYP
 ```
-
 <!-- cli_init_example:end -->
 
 ## create
@@ -131,7 +129,6 @@ Options:
   -d, --tickets-dir <path>   Path to tickets directory (default: _tickets)
   -h, --help                  Show this help message
 ```
-
 <!-- cli_create_help:end -->
 
 Example usage:
@@ -182,7 +179,6 @@ TODO
 
 TODO
 ```
-
 <!-- cli_create_example:end -->
 
 ## list
@@ -205,7 +201,6 @@ Options:
   -s, --status <status>    Filter by status (exact or distinguishing substring, case-insensitive)
   -h, --help                Show this help message
 ```
-
 <!-- cli_list_help:end -->
 
 Example usage:
@@ -233,7 +228,6 @@ TST004   Delta Ticket                                             - Complete
 -------- ---------------------------------------------------- ----- ------------
 1 matching from 6 total tickets
 ```
-
 <!-- cli_list_example:end -->
 
 ## rank
@@ -257,7 +251,6 @@ Options:
   -d, --tickets-dir <path>   Path to tickets directory (default: _tickets)
   -h, --help                  Show this help message
 ```
-
 <!-- cli_rank_up_help:end -->
 
 ## Installing the CLI
@@ -423,7 +416,6 @@ Options:
   -d, --tickets-dir <path>  Path to tickets directory (default: _tickets)
   -h, --help                Show this help message
 ```
-
 <!-- cli_validate_help:end -->
 
 <!-- cli_validate_example:start -->
@@ -436,7 +428,6 @@ $ tickets validate --ticket TST001 -d other
 
 Validating: other/TST001 - Alpha Ticket.md
 ```
-
 <!-- cli_validate_example:end -->
 
 ### Schema Source
@@ -526,7 +517,6 @@ Created: custom_path/
 Created: custom_path/settings.yaml
 Created: custom_path/statistics.yaml
 ```
-
 <!-- cli_init_flags_example:end -->
 
 ### Behavior
@@ -567,7 +557,6 @@ $ tickets rank -d other
 
 3 ticket(s) normalized.
 ```
-
 <!-- cli_rank_example:end -->
 
 ### Rank Mutation Subcommands
@@ -601,7 +590,6 @@ $ tickets rank last -t TST003
 3 ticket(s) normalized.
 Moved TST003 to rank 3.
 ```
-
 <!-- cli_rank_mutations_example:end -->
 
 <!-- cli_rank_down_help:start -->
@@ -615,7 +603,6 @@ Options:
   -d, --tickets-dir <path>   Path to tickets directory (default: _tickets)
   -h, --help                  Show this help message
 ```
-
 <!-- cli_rank_down_help:end -->
 
 <!-- cli_rank_first_help:start -->
@@ -629,7 +616,6 @@ Options:
   -d, --tickets-dir <path>   Path to tickets directory (default: _tickets)
   -h, --help                  Show this help message
 ```
-
 <!-- cli_rank_first_help:end -->
 
 <!-- cli_rank_last_help:start -->
@@ -643,7 +629,6 @@ Options:
   -d, --tickets-dir <path>   Path to tickets directory (default: _tickets)
   -h, --help                  Show this help message
 ```
-
 <!-- cli_rank_last_help:end -->
 
 All mutation subcommands normalize ranks first (closing gaps) before applying the operation. If the target is already at the boundary (rank 1 for `up`/`first`, highest rank number for `down`/`last`), the command prints a message and exits without changes.
@@ -668,7 +653,6 @@ Options:
   -d, --tickets-dir <path>   Path to tickets directory (default: _tickets)
   -h, --help                  Show this help message
 ```
-
 <!-- cli_transition_help:end -->
 
 | Flag                | Short | Required | Description                                          |
@@ -728,7 +712,6 @@ TODO
 
 TODO
 ```
-
 <!-- cli_transition_example:end -->
 
 ### Target Status Values
@@ -776,7 +759,6 @@ Options:
   -d, --tickets-dir <path>  Path to tickets directory (default: _tickets)
   -h, --help                Show this help message
 ```
-
 <!-- cli_statistics_help:end -->
 
 Running `tickets statistics` without `snapshot` prints usage and exits.
@@ -826,7 +808,6 @@ groups:
   todo: 3
   done: 3
 ```
-
 <!-- cli_statistics_example:end -->
 
 The file is append-only; existing records are never modified. If `.tickets/statistics.yaml` does not exist, it is created. The `list` and `validate` subcommands ignore `statistics.yaml` (it does not match the ticket filename convention).

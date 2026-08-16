@@ -229,7 +229,6 @@ while IFS= read -r line || [[ -n "$line" ]]; do
       buffer+=("$bline")
     done < /tmp/example_block_$$
     rm -f /tmp/example_block_$$
-    buffer+=("")
     current_id="$id"
     continue
   fi
