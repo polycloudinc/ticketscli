@@ -1,6 +1,244 @@
 # Introduction
 
-Tickets are Markdown files in the `.tickets/` directory with YAML frontmatter.
+The ticketscli project lets you manage tickets using a terminal-based CLI and also using agent skills.
+
+With ticketscli you can:
+- Implement spec-driven development (SDD)
+- Capture your complete backlog in Git
+- Plan your project and track execution
+- Track code changes and backlog changes together
+
+# Demo / Quick Start
+
+TODO
+
+# Tickets
+
+A ticket represents a feature, a bug fix, it some other piece of work to be done on your project.  Other work planning systems use different names for these - for example JIRA calls these "Issues" and Azure DevOps calls them "Work Items".
+
+A ticket is simply a Markdown file created from our template and stored in the `.tickets/` directory in your project.  A ticket has a code which identifies it, and a name, and ticket files are named with the following pattern:
+
+```
+<code> - <name>.md
+```
+
+For example: `TIK001 - List Subcommand.md`
+
+The code and name are stored in the ticket file as YAML front matter along with other attributes.  The structure of a ticket is defined by the following template which is embedded in ticketscli:
+
+```markdown
+---
+template: "[[Ticket]]"
+kind: ticket
+tags:
+  - ticket
+code: TIK001
+aliases:
+  - TIK001
+name: List Subcommand
+ticket_status: "[[Backlog]]"
+ticket_priority: Medium
+ticket_rank: 32
+ticket_created: 2026-06-14T03:02:32Z
+ticket_updated: 2026-06-14T03:02:32Z
+ticket_completed:
+---
+```
+
+A ticket's status may be:
+- Backlog
+- Ready
+- In Progress
+- Completed
+- Duplicate
+- Won't Fix
+
+At the moment there is no state machine to govern transitions, and any status may transition to any other status.  This might be changed in the future.
+
+The body of the ticket has the following sections:
+- **Introduction** - typically a one-liner stating the purpose of the ticket.
+- **Requirements** - the requirements in business or outcome terms without dictating technical solution.
+- **Technical Solution** - the solution design with the specific technical choices that have been made.
+- **Execution Plan** - a flat linear list of tasks, broken into logical phases, with verification steps that must pass before exiting each phase.
+
+The ticketscli project itself is managed with ticketscli, and you can browse it's backlog for examples of real tickets: https://github.com/polycloudinc/ticketscli/tree/master/.tickets
+
+# Workflow
+
+Regardless of whether you are interacting with the tickets system directly or through agent skills, ...
+
+# Command-Line Interface (CLI)
+
+## Introduction
+
+The CLI is the primary way of working with the tickets system, and you can fully manage your project backlog and roadmap vie CLI.
+
+This section walks through the subcommands offered by the CLI in logical order.
+
+## init
+
+The `init` subcommand initializes the Tickets system, setting up the .tickets/ directory and it's `settings.yaml` configuration file.
+
+```
+$ tickets init --help
+
+Usage: tickets init [options]
+
+Options:                                          -d, --tickets-dir <path>   Path to tickets directory (default: _tickets)                     --code-prefix <prefix>     Ticket code prefix (3-4 alpha characters)
+```
+
+Typically this command is used only once when you're starting a new project:
+
+```bash
+mkdir myproj
+cd myproj
+git init .
+tickets init --code-prefix MYP
+git add .
+git commit -m "Scaffold project"
+```
+
+Resultant settings.yaml file in the `.tickets/` directory:
+
+```yaml
+code_prefix: MYP
+```
+
+## create
+
+The `create` subcommand creates a new ticket.  It generates the ticket from the built-in template and injects values into the ticket's YAML front matter.
+
+```
+tickets create --help
+
+Usage: tickets create --name <subject> [options]
+
+Options:
+  -n, --name <subject>       Subject/name for the new ticket (required)
+  -d, --tickets-dir <path>   Path to tickets directory (default: _tickets)
+```
+
+Example usage:
+
+```bash
+tickets create --name "Add database connection pool to service"
+```
+
+Resultant ticket file:
+
+```markdown
+---
+template: "[[Ticket]]"
+kind: ticket
+tags:
+  - ticket
+code: MYP001
+aliases:
+  - MYP001
+name: Add database connection pool to service
+ticket_status: "[[Backlog]]"
+ticket_priority: Medium
+ticket_rank: 1
+ticket_created: 2026-08-16T03:15:12Z
+ticket_updated: 2026-08-16T03:15:12Z
+ticket_completed:
+---
+# Introduction
+
+TODO
+
+# Requirements
+
+TODO
+
+# Technical Solution
+
+TODO
+
+# Execution Plan
+
+TODO
+```
+
+## list
+
+The `list` subcommand let's you list some or all of the tickets in your project.
+
+<!-- cli_list:start -->
+
+```
+tickets list --help
+
+Usage: tickets list [options]
+
+Output is sorted ascending by ticket_rank. Tickets without a rank or with a non-integer rank value sort last.
+
+Options:
+  -d, --tickets-dir <path>  Path to tickets directory (default: _tickets)
+  -g, --group <backlog|active|done|todo>  Filter tickets by status group
+  -l, --limit <N>           Limit output to the first N tickets after filtering and sorting
+  -s, --status <status>    Filter by status (exact or distinguishing substring, case-insensitive)
+```
+
+<!-- cli_list:end -->
+
+Example usage:
+
+```bash
+TODO
+```
+
+## rank
+
+The `rank` subcommand let's you change the planned execution order of your backlog.  `rank` has four subcommands of it's own:
+- `rank up` - moves a ticket up one slot
+- `rank down` - moves a ticket down one slot
+- `rank first` - moves a ticket to the top of ranked list
+- `rank last` - moves a ticket to the bottom of the ranked list
+
+All four subcommands have the same switches:
+
+```
+tickets rank up --help
+
+Usage: tickets rank up --ticket <code> [options]
+
+Options:
+  -t, --ticket <code>        Ticket code to promote
+  -d, --tickets-dir <path>   Path to tickets directory (default: _tickets)
+```
+
+Example usage:
+
+```bash
+# Create some tickets 
+tickets create --name "Add database connection pool to service"
+tickets create --name "Integrate OTEL Collector"
+tickets create --name "Revise user guide"
+
+
+```
+
+## Installing the CLI
+
+
+# Agent Skills
+
+
+## Installing the Agent Skills
+
+
+# Feature Roadmap
+
+The highest priority right now is to rewrite the CLI on Rust.  It is currently just a big Bash script which was really just a proof-of-concept.  While it is fully functional, it had some rough edges around distribution (through npm) and Python dependencies for front matter processing.  These rough edges add adoption friction.
+
+Once the Rust rewrite is done and the distribution is smoother, there are quite a number of features planned to help with planning and executing work.
+
+The backlog is as follows:
+
+```
+TODO
+```
 
 ## Prerequisites
 
@@ -29,9 +267,9 @@ The CLI resolves the tickets directory on every invocation:
 | Both exist | Error: `Error: both .tickets and _tickets directories exist. Remove one or use --tickets-dir.` |
 | Neither exists | Defaults to `.tickets/` |
 
-Migration from the old `_tickets` naming to `.tickets` is a manual rename: `mv _tickets .tickets`.
 
-## Architecture
+
+# Implementation Notes
 
 `tickets.sh` is a bash script that delegates all YAML operations to a bundled Python helper (`yz.py`) using PyYAML. The helper is located alongside `tickets.sh` in the npm package and handles both front matter manipulation in Markdown files and plain YAML file operations.
 
@@ -70,34 +308,6 @@ sed -i 's/^ticket_rank: null$/ticket_rank:/' "$ticket"
 
 Writing front matter from scratch (e.g. in `cmd_create`) uses `printf`, not yq, since there is no existing YAML to manipulate.
 
-## Filename Convention
-
-```
-<TicketCode> <Subject>.md
-```
-
-Example: `TIK001 - List Subcommand.md`
-
-## Frontmatter
-
-```yaml
----
-template: "[[Ticket]]"
-kind: ticket
-tags:
-  - ticket
-code: TIK001
-aliases:
-  - TIK001
-name: List Subcommand
-ticket_status: "[[Backlog]]"
-ticket_priority: Medium
-ticket_rank: 32
-ticket_created: 2026-06-14T03:02:32Z
-ticket_updated: 2026-06-14T03:02:32Z
-ticket_completed:
----
-```
 
 ## Status Values
 
@@ -417,56 +627,9 @@ statistics:
 
 The file is append-only; existing records are never modified. If `.tickets/statistics.yaml` does not exist, it is created. The `list` and `validate` subcommands ignore `statistics.yaml` (it does not match the ticket filename convention).
 
-## Test Suite
-
-An automated test suite exercises the CLI end to end through its external interface (arguments, stdout/stderr, exit codes, and file system effects) rather than implementation internals. Because the suite is pointed at a CLI executable, it can be run against a replacement implementation (e.g., the Rust rewrite planned in TIK021) via `--cli` to verify functional equivalence.
-
-### Layout
-
-| Path | Purpose |
-|---|---|
-| `test.sh` | Test executor CLI at the project root |
-| `test/cases/` | Test case scripts, one per case |
-| `test/fixtures/` | Read-only project-state fixtures |
-| `test/executions/` | Throwaway per-run execution directories (git-ignored) |
-
-### Fixtures
-
-Each fixture represents a project state (e.g., `f001_no_tickets_dir`, `f003_mixed_status_tickets`) stored in `test/fixtures/fXXX_short_fixture_name`. Each test case uses exactly one fixture; the executor copies the fixture into the execution directory per run, so fixtures are never mutated in place and may be shared by many cases.
-
-### Test Cases
-
-Each case is a Bash script `test/cases/tcXXX_short_test_name.sh` sourced by the executor (not executed directly). It exposes two functions:
-
-- `fixture` — echoes the code of the required fixture (e.g., `f003`)
-- `run` — executes the test inside the prepared execution directory; exit 0 means pass, non-zero means fail; it echoes a short informative message
-
-Assertions are the responsibility of each test case; there is no shared assertion library.
-
-### Executor
-
-```
-./test.sh exec --cases tc001,tc005 --cli ./tickets.sh
-```
-
-- `--cases` — comma-separated case codes (e.g., `tc001,tc005`) or `all` to run every case
-- `--cli` — path to the CLI under test (default: `tickets.sh` in the repo root)
-
-For each selected case the executor: sources the case script; calls `fixture()` to learn the required fixture; creates a fresh execution directory `test/executions/tcXXX_YYYY-MM-DDTHH-mm-ssZ`; copies the fixture into it; and calls `run()` with `TICKETS_CLI` set to the CLI path, capturing its exit status and output (saved to `output.log` in the execution directory). It logs each test as it runs with its PASS/FAIL status and the case's message, prints an aggregated summary, and exits non-zero if any case failed, so it can gate CI.
-
-### Adding a Test Case
-
-1. Create the fixture (if needed) under `test/fixtures/fXXX_short_fixture_name/`.
-2. Create `test/cases/tcXXX_short_test_name.sh` implementing `fixture` and `run`.
-3. Run `./test.sh exec --cases tcXXX` and confirm it passes.
-
 ## CI/CD
 
-The project uses GitHub Actions for continuous integration and delivery. Three workflows live under `.github/workflows/`.
-
-### test.yaml — Automated Test Suite
-
-Runs `./test.sh exec --cases all` on every push to `master` and every pull request, so test failures block merging.
+The project uses GitHub Actions for continuous delivery. Two workflows live under `.github/workflows/`.
 
 ### publish-npm.yaml — npm Package
 
