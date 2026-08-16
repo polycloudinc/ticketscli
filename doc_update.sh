@@ -189,12 +189,14 @@ run_example() {
       *.md|*.markdown) rfence="markdown" ;;
       *.yaml|*.yml)    rfence="yaml" ;;
     esac
-    printf '%s\n' "" "\`\`\`$rfence"
+    local rcontent
     if declare -F result_postprocess >/dev/null; then
-      sed -E "s|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|2026-01-01T00:00:00Z|g" "$rpath" | result_postprocess
+      rcontent=$(sed -E "s|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|2026-01-01T00:00:00Z|g" "$rpath" | result_postprocess)
     else
-      sed -E "s|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|2026-01-01T00:00:00Z|g" "$rpath"
+      rcontent=$(sed -E "s|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z|2026-01-01T00:00:00Z|g" "$rpath")
     fi
+    printf '%s\n' "" "\`\`\`$rfence"
+    printf '%s\n' "$rcontent"
     printf '%s\n' '```'
   fi
 }
