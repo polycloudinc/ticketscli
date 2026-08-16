@@ -1,17 +1,13 @@
 ---
-template: "[[Ticket]]"
+api: polycloudinc/ticketscli/v1
 kind: ticket
-tags:
-  - ticket
-code: TST003
-aliases:
-  - TST003
-name: Charlie Ticket
-ticket_status: "[[In Progress]]"
+ticket_code: TST003
+ticket_name: Charlie Ticket
+ticket_status: inprogress
 ticket_priority: Critical
 ticket_rank: 3
-ticket_created: 2026-06-03T09:30:00Z
-ticket_updated: 2026-06-05T14:15:00Z
+ticket_created: "2026-06-03T09:30:00Z"
+ticket_updated: "2026-06-05T14:15:00Z"
 ticket_completed:
 ---
 # Introduction

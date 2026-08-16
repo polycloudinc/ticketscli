@@ -1,18 +1,14 @@
 ---
-template: '[[Ticket]]'
+api: polycloudinc/ticketscli/v1
 kind: ticket
-tags:
-- ticket
-code: TIK060
-aliases:
-- TIK060
-name: Polish Tickets CLI
-ticket_status: '[[Backlog]]'
+ticket_code: TIK060
+ticket_name: Polish Tickets CLI
+ticket_status: backlog
 ticket_priority: Medium
 ticket_rank: 17
-ticket_created: '2026-08-16T03:04:59Z'
-ticket_updated: '2026-08-16T03:04:59Z'
-ticket_completed: null
+ticket_created: "2026-08-16T03:04:59Z"
+ticket_updated: "2026-08-16T03:04:59Z"
+ticket_completed:
 ---
 # Introduction
 

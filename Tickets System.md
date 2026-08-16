@@ -33,13 +33,10 @@ The code and name are stored in the ticket file as YAML front matter along with 
 <!-- misc_template:start -->
 ```markdown
 ---
-template: "[[Ticket]]"
+api: polycloudinc/ticketscli/v1
 kind: ticket
-tags:
-  - ticket
-code:
-aliases:
-name:
+ticket_code:
+ticket_name:
 ticket_status:
 ticket_priority:
 ticket_rank:
@@ -50,13 +47,26 @@ ticket_completed:
 ```
 <!-- misc_template:end -->
 
-A ticket's status may be:
-- Backlog
-- Ready
-- In Progress
-- Completed
-- Duplicate
-- Won't Fix
+The `api` key identifies the front matter schema version.  All tickets must declare `api: polycloudinc/ticketscli/v1`; commands other than `tickets migrate` halt with an error when a ticket is not declared as such.
+
+A ticket's status is stored as a lowercase code with no spaces:
+- `backlog`
+- `ready`
+- `inprogress`
+- `complete`
+- `duplicate`
+- `wontfix`
+
+Status codes map to display names as follows:
+
+| Code | Display name |
+| --- | --- |
+| `backlog` | Backlog |
+| `ready` | Ready |
+| `inprogress` | In Progress |
+| `complete` | Complete |
+| `duplicate` | Duplicate |
+| `wontfix` | Won't Fix |
 
 At the moment there is no state machine to govern transitions, and any status may transition to any other status.  This might be changed in the future.
 
@@ -162,15 +172,11 @@ Resultant ticket file:
 
 ```markdown
 ---
-template: "[[Ticket]]"
+api: polycloudinc/ticketscli/v1
 kind: ticket
-tags:
-  - ticket
-code: MYP001
-aliases:
-  - MYP001
-name: Add database connection pool to service
-ticket_status: "[[Backlog]]"
+ticket_code: MYP001
+ticket_name: Add database connection pool to service
+ticket_status: backlog
 ticket_priority: Medium
 ticket_rank: 1
 ticket_created: 2026-01-01T00:00:00Z
@@ -217,27 +223,27 @@ Options:
 ```
 <!-- cli_list_help:end -->
 
-The `ticket_status` field accepts one of the following wiki-linked values:
+The `ticket_status` field stores one of the following lowercase codes:
 
-| Status            | Description                         | Filter Group      |
-| ----------------- | ----------------------------------- | ----------------- |
-| `[[Backlog]]`     | Not yet scheduled for work          | `--group backlog` |
-| `[[Ready]]`       | Scheduled and ready to be picked up | `--group active`  |
-| `[[In Progress]]` | Currently being worked on           | `--group active`  |
-| `[[Complete]]`    | Work has been finished              | `--group done`    |
-| `[[Duplicate]]`   | Duplicate of another ticket         | `--group done`    |
-| `[[Won't Fix]]`   | Will not be implemented             | `--group done`    |
+| Status (`ticket_status` value) | Display name      | Filter Group      |
+| ------------------------------ | ----------------- | ----------------- |
+| `backlog`                      | Backlog           | `--group backlog` |
+| `ready`                        | Ready             | `--group active`  |
+| `inprogress`                   | In Progress       | `--group active`  |
+| `complete`                     | Complete          | `--group done`    |
+| `duplicate`                    | Duplicate         | `--group done`    |
+| `wontfix`                      | Won't Fix         | `--group done`    |
 
-The `--group todo` filter returns tickets from both `--group backlog` and `--group active` (i.e., `[[Backlog]]`, `[[Ready]]`, `[[In Progress]]`), sorted by rank.
+The `--group todo` filter returns tickets from both `--group backlog` and `--group active` (i.e., `backlog`, `ready`, `inprogress`), sorted by rank.
 
 ## CLI Filters
 
 | Flag                     | Short | Matches                                   |
 |--------------------------|-------|-------------------------------------------|
-| `--group backlog`        | `-g`  | `[[Backlog]]`                             |
-| `--group active`         | `-g`  | `[[Ready]]`, `[[In Progress]]`            |
-| `--group done`           | `-g`  | `[[Complete]]`, `[[Duplicate]]`, `[[Won't Fix]]` |
-| `--group todo`           | `-g`  | `[[Backlog]]`, `[[Ready]]`, `[[In Progress]]`    |
+| `--group backlog`        | `-g`  | `backlog`                                 |
+| `--group active`         | `-g`  | `ready`, `inprogress`                     |
+| `--group done`           | `-g`  | `complete`, `duplicate`, `wontfix`        |
+| `--group todo`           | `-g`  | `backlog`, `ready`, `inprogress`          |
 | `--status <value>`       | `-s`  | Tickets whose `ticket_status` matches the given value. Valid values (case-insensitive, single-word): `backlog`, `ready`, `inprogress`, `complete`, `duplicate`, `wontfix`. |
 | `--limit <N>`            | `-l`  | Limits output to the first N tickets after filtering and sorting. `N` must be a positive integer >= 1. If the limit exceeds the number of matching tickets, all are displayed.
 
@@ -280,12 +286,12 @@ $ tickets list
 
 Code     Subject                                               Rank Status      
 -------- ---------------------------------------------------- ----- ------------
-TST002   Bravo Ticket                                             1 Ready       
-TST001   Alpha Ticket                                             2 Backlog     
-TST003   Charlie Ticket                                           3 In Progress 
-TST004   Delta Ticket                                             - Complete    
-TST005   Echo Ticket                                              - Duplicate   
-TST006   Foxtrot Ticket                                           - Won't Fix   
+TST002   Bravo Ticket                                             1 ready       
+TST001   Alpha Ticket                                             2 backlog     
+TST003   Charlie Ticket                                           3 inprogress  
+TST004   Delta Ticket                                             - complete    
+TST005   Echo Ticket                                              - duplicate   
+TST006   Foxtrot Ticket                                           - wontfix     
 -------- ---------------------------------------------------- ----- ------------
 6 matching from 6 total tickets
 
@@ -293,7 +299,7 @@ $ tickets list --status complete
 
 Code     Subject                                               Rank Status      
 -------- ---------------------------------------------------- ----- ------------
-TST004   Delta Ticket                                             - Complete    
+TST004   Delta Ticket                                             - complete    
 -------- ---------------------------------------------------- ----- ------------
 1 matching from 6 total tickets
 ```
@@ -330,12 +336,12 @@ $ tickets list
 
 Code     Subject                                               Rank Status      
 -------- ---------------------------------------------------- ----- ------------
-TST002   Bravo Ticket                                             1 Ready       
-TST001   Alpha Ticket                                             2 Backlog     
-TST003   Charlie Ticket                                           3 In Progress 
-TST004   Delta Ticket                                             - Complete    
-TST005   Echo Ticket                                              - Duplicate   
-TST006   Foxtrot Ticket                                           - Won't Fix   
+TST002   Bravo Ticket                                             1 ready       
+TST001   Alpha Ticket                                             2 backlog     
+TST003   Charlie Ticket                                           3 inprogress  
+TST004   Delta Ticket                                             - complete    
+TST005   Echo Ticket                                              - duplicate   
+TST006   Foxtrot Ticket                                           - wontfix     
 -------- ---------------------------------------------------- ----- ------------
 6 matching from 6 total tickets
 
@@ -353,12 +359,12 @@ $ tickets list
 
 Code     Subject                                               Rank Status      
 -------- ---------------------------------------------------- ----- ------------
-TST003   Charlie Ticket                                           1 In Progress 
-TST001   Alpha Ticket                                             2 Backlog     
-TST002   Bravo Ticket                                             3 Ready       
-TST004   Delta Ticket                                             - Complete    
-TST005   Echo Ticket                                              - Duplicate   
-TST006   Foxtrot Ticket                                           - Won't Fix   
+TST003   Charlie Ticket                                           1 inprogress  
+TST001   Alpha Ticket                                             2 backlog     
+TST002   Bravo Ticket                                             3 ready       
+TST004   Delta Ticket                                             - complete    
+TST005   Echo Ticket                                              - duplicate   
+TST006   Foxtrot Ticket                                           - wontfix     
 -------- ---------------------------------------------------- ----- ------------
 6 matching from 6 total tickets
 ```
@@ -390,12 +396,12 @@ $ tickets list
 
 Code     Subject                                               Rank Status      
 -------- ---------------------------------------------------- ----- ------------
-TST002   Bravo Ticket                                             1 Ready       
-TST001   Alpha Ticket                                             2 Backlog     
-TST003   Charlie Ticket                                           3 In Progress 
-TST004   Delta Ticket                                             - Complete    
-TST005   Echo Ticket                                              - Duplicate   
-TST006   Foxtrot Ticket                                           - Won't Fix   
+TST002   Bravo Ticket                                             1 ready       
+TST001   Alpha Ticket                                             2 backlog     
+TST003   Charlie Ticket                                           3 inprogress  
+TST004   Delta Ticket                                             - complete    
+TST005   Echo Ticket                                              - duplicate   
+TST006   Foxtrot Ticket                                           - wontfix     
 -------- ---------------------------------------------------- ----- ------------
 6 matching from 6 total tickets
 
@@ -407,12 +413,12 @@ $ tickets list
 
 Code     Subject                                               Rank Status      
 -------- ---------------------------------------------------- ----- ------------
-TST002   Bravo Ticket                                             1 Ready       
-TST001   Alpha Ticket                                             2 In Progress 
-TST003   Charlie Ticket                                           3 In Progress 
-TST004   Delta Ticket                                             - Complete    
-TST005   Echo Ticket                                              - Duplicate   
-TST006   Foxtrot Ticket                                           - Won't Fix   
+TST002   Bravo Ticket                                             1 ready       
+TST001   Alpha Ticket                                             2 inprogress  
+TST003   Charlie Ticket                                           3 inprogress  
+TST004   Delta Ticket                                             - complete    
+TST005   Echo Ticket                                              - duplicate   
+TST006   Foxtrot Ticket                                           - wontfix     
 -------- ---------------------------------------------------- ----- ------------
 6 matching from 6 total tickets
 
@@ -424,12 +430,12 @@ $ tickets list
 
 Code     Subject                                               Rank Status      
 -------- ---------------------------------------------------- ----- ------------
-TST002   Bravo Ticket                                             1 Ready       
-TST003   Charlie Ticket                                           2 In Progress 
-TST001   Alpha Ticket                                             - Complete    
-TST004   Delta Ticket                                             - Complete    
-TST005   Echo Ticket                                              - Duplicate   
-TST006   Foxtrot Ticket                                           - Won't Fix   
+TST002   Bravo Ticket                                             1 ready       
+TST003   Charlie Ticket                                           2 inprogress  
+TST001   Alpha Ticket                                             - complete    
+TST004   Delta Ticket                                             - complete    
+TST005   Echo Ticket                                              - duplicate   
+TST006   Foxtrot Ticket                                           - wontfix     
 -------- ---------------------------------------------------- ----- ------------
 6 matching from 6 total tickets
 
@@ -440,12 +446,12 @@ $ tickets list -d other
 
 Code     Subject                                               Rank Status      
 -------- ---------------------------------------------------- ----- ------------
-TST002   Bravo Ticket                                             1 Ready       
-TST003   Charlie Ticket                                           2 In Progress 
-TST001   Alpha Ticket                                             - Complete    
-TST004   Delta Ticket                                             - Complete    
-TST005   Echo Ticket                                              - Duplicate   
-TST006   Foxtrot Ticket                                           - Won't Fix   
+TST002   Bravo Ticket                                             1 ready       
+TST003   Charlie Ticket                                           2 inprogress  
+TST001   Alpha Ticket                                             - complete    
+TST004   Delta Ticket                                             - complete    
+TST005   Echo Ticket                                              - duplicate   
+TST006   Foxtrot Ticket                                           - wontfix     
 -------- ---------------------------------------------------- ----- ------------
 6 matching from 6 total tickets
 
@@ -457,12 +463,12 @@ $ tickets list -d other
 
 Code     Subject                                               Rank Status      
 -------- ---------------------------------------------------- ----- ------------
-TST002   Bravo Ticket                                             1 Ready       
-TST003   Charlie Ticket                                           2 Ready       
-TST001   Alpha Ticket                                             - Complete    
-TST004   Delta Ticket                                             - Complete    
-TST005   Echo Ticket                                              - Duplicate   
-TST006   Foxtrot Ticket                                           - Won't Fix   
+TST002   Bravo Ticket                                             1 ready       
+TST003   Charlie Ticket                                           2 ready       
+TST001   Alpha Ticket                                             - complete    
+TST004   Delta Ticket                                             - complete    
+TST005   Echo Ticket                                              - duplicate   
+TST006   Foxtrot Ticket                                           - wontfix     
 -------- ---------------------------------------------------- ----- ------------
 6 matching from 6 total tickets
 ```
@@ -471,15 +477,11 @@ Transitioned ticket file:
 
 ```markdown
 ---
-template: '[[Ticket]]'
+api: polycloudinc/ticketscli/v1
 kind: ticket
-tags:
-- ticket
-code: TST001
-aliases:
-- TST001
-name: Alpha Ticket
-ticket_status: '[[Complete]]'
+ticket_code: TST001
+ticket_name: Alpha Ticket
+ticket_status: complete
 ticket_priority: Medium
 ticket_rank: null
 ticket_created: '2026-01-01T00:00:00Z'

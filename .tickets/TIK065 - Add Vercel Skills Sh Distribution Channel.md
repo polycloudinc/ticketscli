@@ -1,17 +1,13 @@
 ---
-template: "[[Ticket]]"
+api: polycloudinc/ticketscli/v1
 kind: ticket
-tags:
-  - ticket
-code: TIK065
-aliases:
-  - TIK065
-name: Add Vercel Skills Sh Distribution Channel
-ticket_status: "[[Backlog]]"
+ticket_code: TIK065
+ticket_name: Add Vercel Skills Sh Distribution Channel
+ticket_status: backlog
 ticket_priority: Medium
 ticket_rank: 21
-ticket_created: 2026-08-16T09:52:27Z
-ticket_updated: 2026-08-16T09:52:27Z
+ticket_created: "2026-08-16T09:52:27Z"
+ticket_updated: "2026-08-16T09:52:27Z"
 ticket_completed:
 ---
 # Introduction

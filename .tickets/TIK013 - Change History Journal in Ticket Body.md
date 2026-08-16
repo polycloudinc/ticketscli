@@ -1,18 +1,14 @@
 ---
-template: '[[Ticket]]'
+api: polycloudinc/ticketscli/v1
 kind: ticket
-tags:
-- ticket
-code: TIK013
-aliases:
-- TIK013
-name: Change History Journal in Ticket Body
-ticket_status: '[[Backlog]]'
+ticket_code: TIK013
+ticket_name: Change History Journal in Ticket Body
+ticket_status: backlog
 ticket_priority: Medium
 ticket_rank: 7
-ticket_created: '2026-06-13T07:20:45Z'
-ticket_updated: '2026-08-16T01:43:18Z'
-ticket_completed: null
+ticket_created: "2026-06-13T07:20:45Z"
+ticket_updated: "2026-08-16T01:43:18Z"
+ticket_completed:
 ---
 # Introduction
 

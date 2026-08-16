@@ -1,18 +1,14 @@
 ---
-template: '[[Ticket]]'
+api: polycloudinc/ticketscli/v1
 kind: ticket
-tags:
-- ticket
-code: TIK057
-aliases:
-- TIK057
-name: Generate Markdown Roadmap For Documentation
-ticket_status: '[[Backlog]]'
+ticket_code: TIK057
+ticket_name: Generate Markdown Roadmap For Documentation
+ticket_status: backlog
 ticket_priority: Medium
 ticket_rank: 5
-ticket_created: '2026-08-15T17:13:16Z'
-ticket_updated: '2026-08-16T01:43:21Z'
-ticket_completed: null
+ticket_created: "2026-08-15T17:13:16Z"
+ticket_updated: "2026-08-16T01:43:21Z"
+ticket_completed:
 ---
 # Introduction
 

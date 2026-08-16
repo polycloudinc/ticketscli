@@ -1,18 +1,14 @@
 ---
-template: '[[Ticket]]'
+api: polycloudinc/ticketscli/v1
 kind: ticket
-tags:
-- ticket
-code: TIK061
-aliases:
-- TIK061
-name: Auto Update Docs From CLI Help Text
-ticket_status: '[[Complete]]'
+ticket_code: TIK061
+ticket_name: Auto Update Docs From CLI Help Text
+ticket_status: complete
 ticket_priority: Medium
-ticket_rank: null
-ticket_created: '2026-08-16T03:38:31Z'
-ticket_updated: '2026-08-16T04:59:34Z'
-ticket_completed: '2026-08-16T04:59:28Z'
+ticket_rank:
+ticket_created: "2026-08-16T03:38:31Z"
+ticket_updated: "2026-08-16T04:59:34Z"
+ticket_completed: "2026-08-16T04:59:28Z"
 ---
 # Introduction
 

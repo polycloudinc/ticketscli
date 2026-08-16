@@ -1,18 +1,14 @@
 ---
-template: '[[Ticket]]'
+api: polycloudinc/ticketscli/v1
 kind: ticket
-tags:
-- ticket
-code: TIK021
-aliases:
-- TIK021
-name: Rewrite CLI in Rust
-ticket_status: '[[Backlog]]'
+ticket_code: TIK021
+ticket_name: Rewrite CLI in Rust
+ticket_status: backlog
 ticket_priority: Medium
 ticket_rank: 3
-ticket_created: '2026-06-14T03:36:05Z'
-ticket_updated: '2026-08-16T01:43:19Z'
-ticket_completed: null
+ticket_created: "2026-06-14T03:36:05Z"
+ticket_updated: "2026-08-16T01:43:19Z"
+ticket_completed:
 ---
 # Introduction
 

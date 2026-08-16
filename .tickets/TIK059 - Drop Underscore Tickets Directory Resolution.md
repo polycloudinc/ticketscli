@@ -1,18 +1,14 @@
 ---
-template: '[[Ticket]]'
+api: polycloudinc/ticketscli/v1
 kind: ticket
-tags:
-- ticket
-code: TIK059
-aliases:
-- TIK059
-name: Drop Underscore Tickets Directory Resolution
-ticket_status: '[[Backlog]]'
+ticket_code: TIK059
+ticket_name: Drop Underscore Tickets Directory Resolution
+ticket_status: backlog
 ticket_priority: Medium
 ticket_rank: 16
-ticket_created: '2026-08-16T01:54:17Z'
-ticket_updated: '2026-08-16T01:54:17Z'
-ticket_completed: null
+ticket_created: "2026-08-16T01:54:17Z"
+ticket_updated: "2026-08-16T01:54:17Z"
+ticket_completed:
 ---
 # Introduction
 

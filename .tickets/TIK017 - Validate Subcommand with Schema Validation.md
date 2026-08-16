@@ -1,18 +1,14 @@
 ---
-template: '[[Ticket]]'
+api: polycloudinc/ticketscli/v1
 kind: ticket
-tags:
-- ticket
-code: TIK017
-aliases:
-- TIK017
-name: Validate Subcommand with Schema Validation
-ticket_status: '[[Complete]]'
+ticket_code: TIK017
+ticket_name: Validate Subcommand with Schema Validation
+ticket_status: complete
 ticket_priority: Medium
 ticket_rank:
-ticket_created: '2026-06-13T09:59:21Z'
-ticket_updated: '2026-06-14T05:45:20Z'
-ticket_completed: '2026-06-14T05:45:20Z'
+ticket_created: "2026-06-13T09:59:21Z"
+ticket_updated: "2026-06-14T05:45:20Z"
+ticket_completed: "2026-06-14T05:45:20Z"
 ---
 # Introduction
 

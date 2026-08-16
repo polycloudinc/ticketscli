@@ -1,18 +1,14 @@
 ---
-template: '[[Ticket]]'
+api: polycloudinc/ticketscli/v1
 kind: ticket
-tags:
-- ticket
-code: TIK002
-aliases:
-- TIK002
-name: Adaptive Table Output
-ticket_status: '[[Complete]]'
+ticket_code: TIK002
+ticket_name: Adaptive Table Output
+ticket_status: complete
 ticket_priority: Medium
 ticket_rank:
-ticket_created: '2026-06-09T06:11:51Z'
-ticket_updated: '2026-06-14T06:20:21Z'
-ticket_completed: '2026-06-14T06:20:21Z'
+ticket_created: "2026-06-09T06:11:51Z"
+ticket_updated: "2026-06-14T06:20:21Z"
+ticket_completed: "2026-06-14T06:20:21Z"
 ---
 # Introduction
 

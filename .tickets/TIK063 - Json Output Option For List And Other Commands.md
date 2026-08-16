@@ -1,17 +1,13 @@
 ---
-template: "[[Ticket]]"
+api: polycloudinc/ticketscli/v1
 kind: ticket
-tags:
-  - ticket
-code: TIK063
-aliases:
-  - TIK063
-name: Json Output Option For List And Other Commands
-ticket_status: "[[Backlog]]"
+ticket_code: TIK063
+ticket_name: Json Output Option For List And Other Commands
+ticket_status: backlog
 ticket_priority: Medium
 ticket_rank: 19
-ticket_created: 2026-08-16T06:37:06Z
-ticket_updated: 2026-08-16T06:37:06Z
+ticket_created: "2026-08-16T06:37:06Z"
+ticket_updated: "2026-08-16T06:37:06Z"
 ticket_completed:
 ---
 # Introduction

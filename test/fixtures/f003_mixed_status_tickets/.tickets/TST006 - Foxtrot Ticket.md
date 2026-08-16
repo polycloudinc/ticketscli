@@ -1,18 +1,14 @@
 ---
-template: "[[Ticket]]"
+api: polycloudinc/ticketscli/v1
 kind: ticket
-tags:
-  - ticket
-code: TST006
-aliases:
-  - TST006
-name: Foxtrot Ticket
-ticket_status: "[[Won't Fix]]"
+ticket_code: TST006
+ticket_name: Foxtrot Ticket
+ticket_status: wontfix
 ticket_priority: Low
 ticket_rank:
-ticket_created: 2026-06-06T15:30:00Z
-ticket_updated: 2026-06-12T13:10:00Z
-ticket_completed: 2026-06-12T13:10:00Z
+ticket_created: "2026-06-06T15:30:00Z"
+ticket_updated: "2026-06-12T13:10:00Z"
+ticket_completed: "2026-06-12T13:10:00Z"
 ---
 # Introduction
 

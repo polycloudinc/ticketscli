@@ -1,18 +1,14 @@
 ---
-template: '[[Ticket]]'
+api: polycloudinc/ticketscli/v1
 kind: ticket
-tags:
-- ticket
-code: TIK045
-aliases:
-- TIK045
-name: Add Roadmap Subcommand
-ticket_status: '[[Backlog]]'
+ticket_code: TIK045
+ticket_name: Add Roadmap Subcommand
+ticket_status: backlog
 ticket_priority: Medium
 ticket_rank: 12
-ticket_created: '2026-06-16T16:09:43Z'
-ticket_updated: '2026-08-16T01:43:20Z'
-ticket_completed: null
+ticket_created: "2026-06-16T16:09:43Z"
+ticket_updated: "2026-08-16T01:43:20Z"
+ticket_completed:
 ---
 # Introduction
 

@@ -1,18 +1,14 @@
 ---
-template: '[[Ticket]]'
+api: polycloudinc/ticketscli/v1
 kind: ticket
-tags:
-- ticket
-code: TIK039
-aliases:
-- TIK039
-name: Statistics Chart Subcommand
-ticket_status: '[[Backlog]]'
+ticket_code: TIK039
+ticket_name: Statistics Chart Subcommand
+ticket_status: backlog
 ticket_priority: Medium
 ticket_rank: 11
-ticket_created: '2026-06-14T14:55:07Z'
-ticket_updated: '2026-08-16T01:43:20Z'
-ticket_completed: null
+ticket_created: "2026-06-14T14:55:07Z"
+ticket_updated: "2026-08-16T01:43:20Z"
+ticket_completed:
 ---
 # Introduction
 

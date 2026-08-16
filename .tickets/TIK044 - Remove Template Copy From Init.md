@@ -1,18 +1,14 @@
 ---
-template: '[[Ticket]]'
+api: polycloudinc/ticketscli/v1
 kind: ticket
-tags:
-- ticket
-code: TIK044
-aliases:
-- TIK044
-name: Remove Template Copy From Init
-ticket_status: '[[Complete]]'
+ticket_code: TIK044
+ticket_name: Remove Template Copy From Init
+ticket_status: complete
 ticket_priority: Medium
 ticket_rank:
-ticket_created: '2026-06-15T14:59:12Z'
-ticket_updated: '2026-06-15T15:13:39Z'
-ticket_completed: '2026-06-15T15:13:38Z'
+ticket_created: "2026-06-15T14:59:12Z"
+ticket_updated: "2026-06-15T15:13:39Z"
+ticket_completed: "2026-06-15T15:13:38Z"
 ---
 # Introduction
 

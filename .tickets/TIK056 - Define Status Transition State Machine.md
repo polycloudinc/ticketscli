@@ -1,18 +1,14 @@
 ---
-template: '[[Ticket]]'
+api: polycloudinc/ticketscli/v1
 kind: ticket
-tags:
-- ticket
-code: TIK056
-aliases:
-- TIK056
-name: Define Status Transition State Machine
-ticket_status: '[[Backlog]]'
+ticket_code: TIK056
+ticket_name: Define Status Transition State Machine
+ticket_status: backlog
 ticket_priority: Medium
 ticket_rank: 14
-ticket_created: '2026-08-15T17:02:06Z'
-ticket_updated: '2026-08-16T01:46:47Z'
-ticket_completed: null
+ticket_created: "2026-08-15T17:02:06Z"
+ticket_updated: "2026-08-16T01:46:47Z"
+ticket_completed:
 ---
 # Introduction
 

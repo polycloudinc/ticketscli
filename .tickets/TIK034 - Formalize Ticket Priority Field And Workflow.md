@@ -1,18 +1,14 @@
 ---
-template: '[[Ticket]]'
+api: polycloudinc/ticketscli/v1
 kind: ticket
-tags:
-- ticket
-code: TIK034
-aliases:
-- TIK034
-name: Formalize Ticket Priority Field And Workflow
-ticket_status: '[[Backlog]]'
+ticket_code: TIK034
+ticket_name: Formalize Ticket Priority Field And Workflow
+ticket_status: backlog
 ticket_priority: Medium
 ticket_rank: 10
-ticket_created: '2026-06-14T07:24:21Z'
-ticket_updated: '2026-08-16T01:43:19Z'
-ticket_completed: null
+ticket_created: "2026-06-14T07:24:21Z"
+ticket_updated: "2026-08-16T01:43:19Z"
+ticket_completed:
 ---
 # Introduction
 

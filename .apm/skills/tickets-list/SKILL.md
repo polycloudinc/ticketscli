@@ -4,7 +4,7 @@ description: Use when the user asks to list tickets, show tickets, or similar li
 ---
 # About Tickets System
 
-The tickets system manages work items as Markdown files in the `.tickets/` directory, each with YAML frontmatter containing fields such as `code`, `name`, `ticket_status`, `ticket_priority`, and `ticket_rank`. Tickets progress through statuses: `[[Backlog]]` (unscheduled), `[[Ready]]` (scheduled), `[[In Progress]]` (active work), `[[Complete]]` (done), `[[Duplicate]]`, and `[[Won't Fix]]`. A `tickets` CLI provides `init`, `list`, `validate`, `create`, `transition`, `rank`, and `statistics` subcommands for managing tickets.
+The tickets system manages work items as Markdown files in the `.tickets/` directory, each with YAML frontmatter declaring `api: polycloudinc/ticketscli/v1` and containing fields such as `ticket_code`, `ticket_name`, `ticket_status`, `ticket_priority`, and `ticket_rank`. Tickets progress through statuses: `backlog` (unscheduled), `ready` (scheduled), `inprogress` (active work), `complete` (done), `duplicate`, and `wontfix`. A `tickets` CLI provides `init`, `list`, `validate`, `create`, `transition`, `rank`, `statistics`, and `migrate` subcommands for managing tickets.
 
 The `tickets` CLI is published as `@polycloudinc/ticketscli`. Always invoke it using `npx @polycloudinc/ticketscli@latest`.
 
@@ -116,6 +116,5 @@ The following natural-language aliases map to `--status`:
 
 ## Notes
 
-- The status field in ticket frontmatter is spelled `[[Backlog]]` (single 'g'), but the CLI group flag is `backlog` (double 'g'). Use the CLI spelling (`backlog`, double 'g') for `--group`.
-- Status values are case-insensitive and single-word: `backlog`, `ready`, `inprogress`, `complete`, `duplicate`, `wontfix`.
+- Status values are single-word lowercase codes: `backlog`, `ready`, `inprogress`, `complete`, `duplicate`, `wontfix` (same spelling in frontmatter and CLI flags).
 - If no keyword or recognizable alias is given, run the tickets CLI `list` subcommand with no filter.

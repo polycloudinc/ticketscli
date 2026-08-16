@@ -1,18 +1,14 @@
 ---
-template: '[[Ticket]]'
+api: polycloudinc/ticketscli/v1
 kind: ticket
-tags:
-- ticket
-code: TIK004
-aliases:
-- TIK004
-name: Kanban Subcommand
-ticket_status: '[[Backlog]]'
+ticket_code: TIK004
+ticket_name: Kanban Subcommand
+ticket_status: backlog
 ticket_priority: Medium
 ticket_rank: 6
-ticket_created: '2026-06-09T06:11:51Z'
-ticket_updated: '2026-08-16T01:43:18Z'
-ticket_completed: null
+ticket_created: "2026-06-09T06:11:51Z"
+ticket_updated: "2026-08-16T01:43:18Z"
+ticket_completed:
 ---
 # Introduction
 

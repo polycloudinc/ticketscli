@@ -1,18 +1,14 @@
 ---
-template: '[[Ticket]]'
+api: polycloudinc/ticketscli/v1
 kind: ticket
-tags:
-- ticket
-code: TIK046
-aliases:
-- TIK046
-name: Switch From Mikefarah Yq To Python Yq
-ticket_status: '[[Complete]]'
+ticket_code: TIK046
+ticket_name: Switch From Mikefarah Yq To Python Yq
+ticket_status: complete
 ticket_priority: Medium
 ticket_rank:
-ticket_created: '2026-06-18T15:10:05Z'
-ticket_updated: '2026-06-20T06:07:52Z'
-ticket_completed: '2026-06-20T06:07:47Z'
+ticket_created: "2026-06-18T15:10:05Z"
+ticket_updated: "2026-06-20T06:07:52Z"
+ticket_completed: "2026-06-20T06:07:47Z"
 ---
 # Introduction
 

@@ -1,18 +1,14 @@
 ---
-template: '[[Ticket]]'
+api: polycloudinc/ticketscli/v1
 kind: ticket
-tags:
-- ticket
-code: TIK016
-aliases:
-- TIK016
-name: Execution Plan Agent Skill
-ticket_status: '[[Complete]]'
+ticket_code: TIK016
+ticket_name: Execution Plan Agent Skill
+ticket_status: complete
 ticket_priority: Medium
 ticket_rank:
-ticket_created: '2026-06-13T08:13:50Z'
-ticket_updated: '2026-06-14T05:45:20Z'
-ticket_completed: '2026-06-14T05:45:20Z'
+ticket_created: "2026-06-13T08:13:50Z"
+ticket_updated: "2026-06-14T05:45:20Z"
+ticket_completed: "2026-06-14T05:45:20Z"
 ---
 # Introduction
 

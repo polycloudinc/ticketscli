@@ -1,18 +1,14 @@
 ---
-template: '[[Ticket]]'
+api: polycloudinc/ticketscli/v1
 kind: ticket
-tags:
-- ticket
-code: TIK003
-aliases:
-- TIK003
-name: Status Filter
-ticket_status: '[[Complete]]'
+ticket_code: TIK003
+ticket_name: Status Filter
+ticket_status: complete
 ticket_priority: Medium
 ticket_rank:
-ticket_created: '2026-06-09T06:11:51Z'
-ticket_updated: '2026-06-14T05:45:20Z'
-ticket_completed: '2026-06-14T05:45:20Z'
+ticket_created: "2026-06-09T06:11:51Z"
+ticket_updated: "2026-06-14T05:45:20Z"
+ticket_completed: "2026-06-14T05:45:20Z"
 ---
 # Introduction
 

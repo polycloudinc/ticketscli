@@ -1,18 +1,14 @@
 ---
-template: '[[Ticket]]'
+api: polycloudinc/ticketscli/v1
 kind: ticket
-tags:
-- ticket
-code: TIK027
-aliases:
-- TIK027
-name: Fix Rank Touching Updated Timestamp Unnecessarily
-ticket_status: '[[Complete]]'
+ticket_code: TIK027
+ticket_name: Fix Rank Touching Updated Timestamp Unnecessarily
+ticket_status: complete
 ticket_priority: Medium
 ticket_rank:
-ticket_created: '2026-06-14T06:36:31Z'
-ticket_updated: '2026-06-14T07:10:31Z'
-ticket_completed: '2026-06-14T07:10:31Z'
+ticket_created: "2026-06-14T06:36:31Z"
+ticket_updated: "2026-06-14T07:10:31Z"
+ticket_completed: "2026-06-14T07:10:31Z"
 ---
 # Introduction
 

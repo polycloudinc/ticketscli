@@ -1,18 +1,14 @@
 ---
-template: '[[Ticket]]'
+api: polycloudinc/ticketscli/v1
 kind: ticket
-tags:
-- ticket
-code: TIK043
-aliases:
-- TIK043
-name: Add Tickets Init Skill
-ticket_status: '[[Complete]]'
+ticket_code: TIK043
+ticket_name: Add Tickets Init Skill
+ticket_status: complete
 ticket_priority: Medium
 ticket_rank:
-ticket_created: '2026-06-15T13:35:22Z'
-ticket_updated: '2026-06-15T14:42:42Z'
-ticket_completed: '2026-06-15T14:42:41Z'
+ticket_created: "2026-06-15T13:35:22Z"
+ticket_updated: "2026-06-15T14:42:42Z"
+ticket_completed: "2026-06-15T14:42:41Z"
 ---
 # Introduction
 

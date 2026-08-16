@@ -1,18 +1,14 @@
 ---
-template: '[[Ticket]]'
+api: polycloudinc/ticketscli/v1
 kind: ticket
-tags:
-- ticket
-code: TIK024
-aliases:
-- TIK024
-name: Add --limit Switch To List Subcommand
-ticket_status: '[[Complete]]'
+ticket_code: TIK024
+ticket_name: Add --limit Switch To List Subcommand
+ticket_status: complete
 ticket_priority: Medium
 ticket_rank:
-ticket_created: '2026-06-14T04:35:04Z'
-ticket_updated: '2026-06-14T05:45:20Z'
-ticket_completed: '2026-06-14T05:45:20Z'
+ticket_created: "2026-06-14T04:35:04Z"
+ticket_updated: "2026-06-14T05:45:20Z"
+ticket_completed: "2026-06-14T05:45:20Z"
 ---
 # Introduction
 

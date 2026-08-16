@@ -1,18 +1,14 @@
 ---
-template: '[[Ticket]]'
+api: polycloudinc/ticketscli/v1
 kind: ticket
-tags:
-- ticket
-code: TIK038
-aliases:
-- TIK038
-name: Rename Skill Folders To Tickets Dash Prefix
-ticket_status: '[[Complete]]'
+ticket_code: TIK038
+ticket_name: Rename Skill Folders To Tickets Dash Prefix
+ticket_status: complete
 ticket_priority: Medium
 ticket_rank:
-ticket_created: '2026-06-14T08:47:59Z'
-ticket_updated: '2026-06-14T09:04:24Z'
-ticket_completed: '2026-06-14T09:04:24Z'
+ticket_created: "2026-06-14T08:47:59Z"
+ticket_updated: "2026-06-14T09:04:24Z"
+ticket_completed: "2026-06-14T09:04:24Z"
 ---
 # Introduction
 

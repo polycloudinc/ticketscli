@@ -5,7 +5,7 @@ description: Use when the user asks to create a new ticket. Extracts a name from
 
 # About Tickets System
 
-The tickets system manages work items as Markdown files in the `.tickets/` directory, each with YAML frontmatter containing fields such as `code`, `name`, `ticket_status`, `ticket_priority`, and `ticket_rank`. Tickets progress through statuses: `[[Backlog]]` (unscheduled), `[[Ready]]` (scheduled), `[[In Progress]]` (active work), `[[Complete]]` (done), `[[Duplicate]]`, and `[[Won't Fix]]`. A `tickets` CLI provides `init`, `list`, `validate`, `create`, `transition`, `rank`, and `statistics` subcommands for managing tickets.
+The tickets system manages work items as Markdown files in the `.tickets/` directory, each with YAML frontmatter declaring `api: polycloudinc/ticketscli/v1` and containing fields such as `ticket_code`, `ticket_name`, `ticket_status`, `ticket_priority`, and `ticket_rank`. Tickets progress through statuses: `backlog` (unscheduled), `ready` (scheduled), `inprogress` (active work), `complete` (done), `duplicate`, and `wontfix`. A `tickets` CLI provides `init`, `list`, `validate`, `create`, `transition`, `rank`, `statistics`, and `migrate` subcommands for managing tickets.
 
 The `tickets` CLI is published as `@polycloudinc/ticketscli`. Always invoke it using `npx @polycloudinc/ticketscli@latest`.
 
@@ -17,7 +17,7 @@ When the user asks to create a ticket:
 
 2. Format the name as title case: capitalize the first letter of every word (e.g., "add dark mode toggle" becomes "Add Dark Mode Toggle").
 
-3. Invoke the tickets CLI with `create -n "<title-cased name>"`. The CLI auto-assigns the next ticket code, sets `ticket_status` to `[[Backlog]]`, and sets `ticket_priority` to `Medium`.
+3. Invoke the tickets CLI with `create -n "<title-cased name>"`. The CLI auto-assigns the next ticket code, sets `ticket_status` to `backlog`, and sets `ticket_priority` to `Medium`.
 
 4. Verify the new ticket's front matter contains every field present in the template (`Ticket.md` alongside `tickets.sh`). If any field is missing (e.g., `ticket_completed`), add it in the same position it appears in the template as an empty field. Do not remove any template fields, even if they have no value.
 
