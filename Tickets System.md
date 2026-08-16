@@ -79,10 +79,9 @@ This section walks through the subcommands offered by the CLI in logical order.
 
 The `init` subcommand initializes the Tickets system, setting up the .tickets/ directory and it's `settings.yaml` configuration file.
 
-<!-- cli_init:start -->
-
+<!-- cli_init_help:start -->
 ```
-tickets init --help
+$ tickets init --help
 
 Usage: tickets init [options]
 
@@ -92,17 +91,21 @@ Options:
   -h, --help                  Show this help message
 ```
 
-<!-- cli_init:end -->
+<!-- cli_init_help:end -->
 
 Typically this command is used only once when you're starting a new project:
 
+<!-- cli_init_example:start -->
 ```bash
-mkdir myproj
-cd myproj
-git init .
-tickets init --code-prefix MYP
-git add .
-git commit -m "Scaffold project"
+$ mkdir myproj
+$ cd myproj
+$ git init .
+$ tickets init --code-prefix MYP
+Created: .tickets/
+Created: .tickets/settings.yaml
+Created: .tickets/statistics.yaml
+$ git add .
+$ git commit -m "Scaffold project"
 ```
 
 Resultant settings.yaml file in the `.tickets/` directory:
@@ -111,14 +114,15 @@ Resultant settings.yaml file in the `.tickets/` directory:
 code_prefix: MYP
 ```
 
+<!-- cli_init_example:end -->
+
 ## create
 
 The `create` subcommand creates a new ticket.  It generates the ticket from the built-in template and injects values into the ticket's YAML front matter.
 
-<!-- cli_create:start -->
-
+<!-- cli_create_help:start -->
 ```
-tickets create --help
+$ tickets create --help
 
 Usage: tickets create --name <subject> [options]
 
@@ -128,12 +132,19 @@ Options:
   -h, --help                  Show this help message
 ```
 
-<!-- cli_create:end -->
+<!-- cli_create_help:end -->
 
 Example usage:
 
+<!-- cli_create_example:start -->
 ```bash
-tickets create --name "Add database connection pool to service"
+$ tickets create --name "Add database connection pool to service"
+
+Created: .tickets/MYP001 - Add database connection pool to service.md
+
+$ tickets create -n "Fix Bug"
+
+Created: .tickets/MYP002 - Fix Bug.md
 ```
 
 Resultant ticket file:
@@ -151,8 +162,8 @@ name: Add database connection pool to service
 ticket_status: "[[Backlog]]"
 ticket_priority: Medium
 ticket_rank: 1
-ticket_created: 2026-08-16T03:15:12Z
-ticket_updated: 2026-08-16T03:15:12Z
+ticket_created: 2026-01-01T00:00:00Z
+ticket_updated: 2026-01-01T00:00:00Z
 ticket_completed:
 ---
 # Introduction
@@ -169,17 +180,17 @@ TODO
 
 # Execution Plan
 
-TODO
-```
+TODO```
+
+<!-- cli_create_example:end -->
 
 ## list
 
 The `list` subcommand let's you list some or all of the tickets in your project.
 
-<!-- cli_list:start -->
-
+<!-- cli_list_help:start -->
 ```
-tickets list --help
+$ tickets list --help
 
 Usage: tickets list [options]
 
@@ -194,13 +205,35 @@ Options:
   -h, --help                Show this help message
 ```
 
-<!-- cli_list:end -->
+<!-- cli_list_help:end -->
 
 Example usage:
 
+<!-- cli_list_example:start -->
 ```bash
-TODO
+$ tickets list
+
+Code     Subject                                               Rank Status      
+-------- ---------------------------------------------------- ----- ------------
+TST002   Bravo Ticket                                             1 Ready       
+TST001   Alpha Ticket                                             2 Backlog     
+TST003   Charlie Ticket                                           3 In Progress 
+TST004   Delta Ticket                                             - Complete    
+TST005   Echo Ticket                                              - Duplicate   
+TST006   Foxtrot Ticket                                           - Won't Fix   
+-------- ---------------------------------------------------- ----- ------------
+6 matching from 6 total tickets
+
+$ tickets list --status complete
+
+Code     Subject                                               Rank Status      
+-------- ---------------------------------------------------- ----- ------------
+TST004   Delta Ticket                                             - Complete    
+-------- ---------------------------------------------------- ----- ------------
+1 matching from 6 total tickets
 ```
+
+<!-- cli_list_example:end -->
 
 ## rank
 
@@ -212,10 +245,9 @@ The `rank` subcommand let's you change the planned execution order of your backl
 
 All four subcommands have the same switches:
 
-<!-- cli_rank_up:start -->
-
+<!-- cli_rank_up_help:start -->
 ```
-tickets rank up --help
+$ tickets rank up --help
 
 Usage: tickets rank up --ticket <code> [options]
 
@@ -225,18 +257,7 @@ Options:
   -h, --help                  Show this help message
 ```
 
-<!-- cli_rank_up:end -->
-
-Example usage:
-
-```bash
-# Create some tickets 
-tickets create --name "Add database connection pool to service"
-tickets create --name "Integrate OTEL Collector"
-tickets create --name "Revise user guide"
-
-
-```
+<!-- cli_rank_up_help:end -->
 
 ## Installing the CLI
 
@@ -389,10 +410,33 @@ Both `--group` and `--status` accept case-insensitive input and distinguishing s
 
 `tickets validate <ticket-code>` validates a ticket's YAML front matter against the standard ticket schema.
 
+<!-- cli_validate_help:start -->
 ```
-tickets validate TIK001                 # validate a single ticket
-tickets validate -t ./.tickets TIK001   # specify tickets directory
+$ tickets validate --help
+
+Usage: tickets validate [--all | --ticket <code>] [options]
+
+Options:
+  -a, --all                 Validate all tickets
+  -t, --ticket <code>       Validate a single ticket by code
+  -d, --tickets-dir <path>  Path to tickets directory (default: _tickets)
+  -h, --help                Show this help message
 ```
+
+<!-- cli_validate_help:end -->
+
+<!-- cli_validate_example:start -->
+```bash
+$ tickets validate --ticket TST001
+
+Validating: .tickets/TST001 - Alpha Ticket.md
+
+$ tickets validate --ticket TST001 -d other
+
+Validating: other/TST001 - Alpha Ticket.md
+```
+
+<!-- cli_validate_example:end -->
 
 ### Schema Source
 
@@ -439,12 +483,6 @@ Deviations are printed to stderr as bullet points. Exit code 0 if valid, 1 if de
 | `--tickets-dir`     | `-d`  | no       | Path to tickets directory (default: `.tickets`)      |
 | `--help`            | `-h`  | no       | Show usage text                                      |
 
-```
-tickets create --name "Add Login Page"     # create with full flag
-tickets create -n "Fix Bug"                # create with short flag
-tickets create -n "Custom" -d /other/dir   # create in a custom directory
-```
-
 ### Behavior
 
 The command locates the template from the directory where `tickets.sh` resides. It reads the `code_prefix` from `<tickets-dir>/settings.yaml` and scans existing ticket filenames to find the highest numeric suffix, then generates the next code as `<Prefix><NNN>` (zero-padded to 3 digits, starting at 001 if no tickets exist).
@@ -473,11 +511,22 @@ If `settings.yaml` is missing or `code_prefix` is not set, the command exits wit
 | `--tickets-dir`       | `-d`  | no       | Path to tickets directory (default: `.tickets`)                |
 | `--help`              | `-h`  | no       | Show usage text                                                |
 
+<!-- cli_init_flags_example:start -->
+```bash
+$ tickets init --code-prefix TKT
+
+Created: .tickets/
+Created: .tickets/settings.yaml
+Created: .tickets/statistics.yaml
+
+$ tickets init --code-prefix TKT -d custom_path
+
+Created: custom_path/
+Created: custom_path/settings.yaml
+Created: custom_path/statistics.yaml
 ```
-tickets init                                    # interactive prompt for code prefix
-tickets init --code-prefix TKT                  # specify prefix on command line
-tickets init --code-prefix TKT -d custom_path   # custom tickets directory
-```
+
+<!-- cli_init_flags_example:end -->
 
 ### Behavior
 
@@ -507,10 +556,18 @@ The ticket template is always resolved from the directory where `tickets.sh` res
 
 `tickets rank` normalizes ranks across all tickets, closing gaps by reassigning contiguous 1..N integers while preserving the existing relative ordering.
 
+<!-- cli_rank_example:start -->
+```bash
+$ tickets rank
+
+3 ticket(s) normalized.
+
+$ tickets rank -d other
+
+3 ticket(s) normalized.
 ```
-tickets rank                         # normalize all ranks
-tickets rank -d /other/dir           # normalize in a custom directory
-```
+
+<!-- cli_rank_example:end -->
 
 ### Rank Mutation Subcommands
 
@@ -521,12 +578,72 @@ tickets rank -d /other/dir           # normalize in a custom directory
 | `rank first` | Move a ticket to rank 1, shifting all tickets between the old and new positions down by 1. Accepts `--ticket` / `-t`. |
 | `rank last`  | Move a ticket to the lowest rank, shifting all tickets between the old and new positions up by 1. Accepts `--ticket` / `-t`. |
 
+<!-- cli_rank_mutations_example:start -->
+```bash
+$ tickets rank up --ticket TST003
+
+3 ticket(s) normalized.
+Promoted TST003 to rank 2.
+
+$ tickets rank down -t TST001
+
+3 ticket(s) normalized.
+Ticket TST001 is already at the lowest priority.
+
+$ tickets rank first --ticket TST003
+
+3 ticket(s) normalized.
+Moved TST003 to rank 1.
+
+$ tickets rank last -t TST003
+
+3 ticket(s) normalized.
+Moved TST003 to rank 3.
 ```
-tickets rank up --ticket TIK003      # promote TIK003
-tickets rank down -t TIK005          # demote TIK005
-tickets rank first --ticket TIK004   # move TIK004 to rank 1
-tickets rank last -t TIK002          # move TIK002 to lowest rank
+
+<!-- cli_rank_mutations_example:end -->
+
+<!-- cli_rank_down_help:start -->
 ```
+$ tickets rank down --help
+
+Usage: tickets rank down --ticket <code> [options]
+
+Options:
+  -t, --ticket <code>        Ticket code to demote
+  -d, --tickets-dir <path>   Path to tickets directory (default: _tickets)
+  -h, --help                  Show this help message
+```
+
+<!-- cli_rank_down_help:end -->
+
+<!-- cli_rank_first_help:start -->
+```
+$ tickets rank first --help
+
+Usage: tickets rank first --ticket <code> [options]
+
+Options:
+  -t, --ticket <code>        Ticket code to move to rank 1
+  -d, --tickets-dir <path>   Path to tickets directory (default: _tickets)
+  -h, --help                  Show this help message
+```
+
+<!-- cli_rank_first_help:end -->
+
+<!-- cli_rank_last_help:start -->
+```
+$ tickets rank last --help
+
+Usage: tickets rank last --ticket <code> [options]
+
+Options:
+  -t, --ticket <code>        Ticket code to move to the lowest rank
+  -d, --tickets-dir <path>   Path to tickets directory (default: _tickets)
+  -h, --help                  Show this help message
+```
+
+<!-- cli_rank_last_help:end -->
 
 All mutation subcommands normalize ranks first (closing gaps) before applying the operation. If the target is already at the boundary (rank 1 for `up`/`first`, highest rank number for `down`/`last`), the command prints a message and exits without changes.
 
@@ -538,6 +655,21 @@ The `tickets list` output is sorted ascending by `ticket_rank`. Tickets without 
 
 `tickets transition --ticket <code> --target <status>` changes a ticket's `ticket_status` with built-in business rules for rank management.
 
+<!-- cli_transition_help:start -->
+```
+$ tickets transition --help
+
+Usage: tickets transition --ticket <code> --target <status> [options]
+
+Options:
+  -t, --ticket <code>        Ticket code to transition
+  -T, --target <status>      Target status (backlog, ready, inprogress, complete, duplicate, wontfix; case-insensitive, fuzzy-matched)
+  -d, --tickets-dir <path>   Path to tickets directory (default: _tickets)
+  -h, --help                  Show this help message
+```
+
+<!-- cli_transition_help:end -->
+
 | Flag                | Short | Required | Description                                          |
 |---------------------|-------|----------|------------------------------------------------------|
 | `--ticket <code>`   | `-t`  | yes      | Ticket code to transition (e.g., `TIK001`)           |
@@ -545,11 +677,58 @@ The `tickets list` output is sorted ascending by `ticket_rank`. Tickets without 
 | `--tickets-dir`     | `-d`  | no       | Path to tickets directory (default: `.tickets`)      |
 | `--help`            | `-h`  | no       | Show usage text                                      |
 
+<!-- cli_transition_example:start -->
+```bash
+$ tickets transition --ticket TST001 --target inprogress
+
+Transitioned TST001 to 'inprogress'.
+
+$ tickets transition -t TST001 -T complete
+
+Transitioned TST001 to 'complete'.
+
+$ tickets transition --ticket TST003 --target ready -d other
+
+Transitioned TST003 to 'ready'.
 ```
-tickets transition --ticket TIK001 --target inprogress
-tickets transition -t TIK019 -T complete
-tickets transition --ticket TIK003 --target ready -d /other/dir
+
+Transitioned ticket file:
+
+```markdown
+---
+template: '[[Ticket]]'
+kind: ticket
+tags:
+- ticket
+code: TST001
+aliases:
+- TST001
+name: Alpha Ticket
+ticket_status: '[[Complete]]'
+ticket_priority: Medium
+ticket_rank: null
+ticket_created: '2026-01-01T00:00:00Z'
+ticket_updated: '2026-01-01T00:00:00Z'
+ticket_completed: '2026-01-01T00:00:00Z'
+---
+# Introduction
+
+Fixture ticket in Backlog status.
+
+# Requirements
+
+- Fixture requirement
+
+# Technical Solution
+
+TODO
+
+# Execution Plan
+
+TODO
 ```
+
+<!-- cli_transition_example:end -->
 
 ### Target Status Values
 
@@ -586,10 +765,9 @@ Any transition from any status to any status is allowed. If the ticket is alread
 
 ### CLI Interface
 
-<!-- cli_statistics:start -->
-
+<!-- cli_statistics_help:start -->
 ```
-tickets statistics --help
+$ tickets statistics --help
 
 Usage: tickets statistics snapshot [options]
 
@@ -598,7 +776,7 @@ Options:
   -h, --help                Show this help message
 ```
 
-<!-- cli_statistics:end -->
+<!-- cli_statistics_help:end -->
 
 Running `tickets statistics` without `snapshot` prints usage and exits.
 
@@ -613,42 +791,42 @@ If the tickets directory is empty (no `.md` files), all counts are zero and a sn
 
 ### Stdout Format
 
-Metrics are printed to stdout as key-value pairs:
+<!-- cli_statistics_example:start -->
+```bash
+$ tickets statistics snapshot
 
-```
-ts: 2026-06-14T07:30:00Z
-total: 34
+ts: 2026-01-01T00:00:00Z
+total: 6
 status:
-  backlog: 12
-  ready: 5
+  backlog: 1
+  ready: 1
   inprogress: 1
-  complete: 14
+  complete: 1
   duplicate: 1
   wontfix: 1
 groups:
-  todo: 18
-  done: 16
+  todo: 3
+  done: 3
 ```
 
-### Snapshot Recording
+Metrics are printed to stdout as key-value pairs:
 
-Each invocation appends a snapshot record to `.tickets/statistics.yaml`:
-
-```yaml
-statistics:
-  - ts: 2026-06-14T07:30:00Z
-    total: 34
-    status:
-      backlog: 12
-      ready: 5
-      inprogress: 1
-      complete: 14
-      duplicate: 1
-      wontfix: 1
-    groups:
-      todo: 18
-      done: 16
 ```
+ts: 2026-01-01T00:00:00Z
+total: 6
+status:
+  backlog: 1
+  ready: 1
+  inprogress: 1
+  complete: 1
+  duplicate: 1
+  wontfix: 1
+groups:
+  todo: 3
+  done: 3
+```
+
+<!-- cli_statistics_example:end -->
 
 The file is append-only; existing records are never modified. If `.tickets/statistics.yaml` does not exist, it is created. The `list` and `validate` subcommands ignore `statistics.yaml` (it does not match the ticket filename convention).
 

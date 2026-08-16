@@ -1,2 +1,3 @@
-# Timestamped test execution directories (tcXXX_yyyy-MM-ddTHH-mm-ssZ)
-tc*/
+# Everything under test/executions is generated runtime state
+# (test case execution dirs from test.sh, example execution dirs from doc_update.sh)
+*
