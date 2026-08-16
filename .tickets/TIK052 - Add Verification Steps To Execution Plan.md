@@ -6,9 +6,9 @@ ticket_name: Add Verification Steps To Execution Plan
 ticket_status: complete
 ticket_priority: Medium
 ticket_rank:
-ticket_created: "2026-08-07T15:47:23Z"
-ticket_updated: "2026-08-08T06:23:49Z"
-ticket_completed: "2026-08-08T06:23:43Z"
+ticket_created: '2026-08-07T15:47:23Z'
+ticket_updated: '2026-08-08T06:23:49Z'
+ticket_completed: '2026-08-08T06:23:43Z'
 ---
 # Introduction
 

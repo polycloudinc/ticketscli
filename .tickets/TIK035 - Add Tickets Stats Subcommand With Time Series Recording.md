@@ -6,9 +6,9 @@ ticket_name: Add Tickets Statistics Snapshot Subcommand
 ticket_status: complete
 ticket_priority: Medium
 ticket_rank:
-ticket_created: "2026-06-14T07:25:22Z"
-ticket_updated: "2026-06-14T14:47:01Z"
-ticket_completed: "2026-06-14T14:47:01Z"
+ticket_created: '2026-06-14T07:25:22Z'
+ticket_updated: '2026-06-14T14:47:01Z'
+ticket_completed: '2026-06-14T14:47:01Z'
 ---
 # Introduction
 

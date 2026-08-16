@@ -5,10 +5,10 @@ ticket_code: TIK028
 ticket_name: Serve Subcommand for Web Admin and Kanban View
 ticket_status: backlog
 ticket_priority: Medium
-ticket_rank: 8
-ticket_created: "2026-06-14T07:13:21Z"
-ticket_updated: "2026-08-16T01:43:19Z"
-ticket_completed:
+ticket_rank: 7
+ticket_created: '2026-06-14T07:13:21Z'
+ticket_updated: '2026-08-16T16:48:44Z'
+ticket_completed: null
 ---
 # Introduction
 

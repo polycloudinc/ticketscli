@@ -5,10 +5,10 @@ ticket_code: TIK063
 ticket_name: Json Output Option For List And Other Commands
 ticket_status: backlog
 ticket_priority: Medium
-ticket_rank: 19
-ticket_created: "2026-08-16T06:37:06Z"
-ticket_updated: "2026-08-16T06:37:06Z"
-ticket_completed:
+ticket_rank: 18
+ticket_created: '2026-08-16T06:37:06Z'
+ticket_updated: '2026-08-16T16:48:46Z'
+ticket_completed: null
 ---
 # Introduction
 

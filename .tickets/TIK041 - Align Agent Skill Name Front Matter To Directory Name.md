@@ -6,9 +6,9 @@ ticket_name: Align Agent Skill Name Front Matter To Directory Name
 ticket_status: complete
 ticket_priority: Medium
 ticket_rank:
-ticket_created: "2026-06-14T15:06:39Z"
-ticket_updated: "2026-06-14T15:28:19Z"
-ticket_completed: "2026-06-14T15:28:19Z"
+ticket_created: '2026-06-14T15:06:39Z'
+ticket_updated: '2026-06-14T15:28:19Z'
+ticket_completed: '2026-06-14T15:28:19Z'
 ---
 # Introduction
 

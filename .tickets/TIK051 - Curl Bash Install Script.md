@@ -6,9 +6,9 @@ ticket_name: Curl Bash Install Script
 ticket_status: backlog
 ticket_priority: Medium
 ticket_rank: 2
-ticket_created: "2026-07-24T14:57:26Z"
-ticket_updated: "2026-08-16T01:43:20Z"
-ticket_completed:
+ticket_created: '2026-07-24T14:57:26Z'
+ticket_updated: '2026-08-16T01:43:20Z'
+ticket_completed: null
 ---
 # Introduction
 

@@ -6,9 +6,9 @@ ticket_name: Publish Npm Package To Github Packages
 ticket_status: complete
 ticket_priority: Medium
 ticket_rank:
-ticket_created: "2026-07-17T12:48:44Z"
-ticket_updated: "2026-07-19T15:42:01Z"
-ticket_completed: "2026-07-19T15:41:56Z"
+ticket_created: '2026-07-17T12:48:44Z'
+ticket_updated: '2026-07-19T15:42:01Z'
+ticket_completed: '2026-07-19T15:41:56Z'
 ---
 # Introduction
 

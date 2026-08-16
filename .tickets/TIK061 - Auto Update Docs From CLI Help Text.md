@@ -6,9 +6,9 @@ ticket_name: Auto Update Docs From CLI Help Text
 ticket_status: complete
 ticket_priority: Medium
 ticket_rank:
-ticket_created: "2026-08-16T03:38:31Z"
-ticket_updated: "2026-08-16T04:59:34Z"
-ticket_completed: "2026-08-16T04:59:28Z"
+ticket_created: '2026-08-16T03:38:31Z'
+ticket_updated: '2026-08-16T04:59:34Z'
+ticket_completed: '2026-08-16T04:59:28Z'
 ---
 # Introduction
 

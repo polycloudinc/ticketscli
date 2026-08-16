@@ -6,9 +6,9 @@ ticket_name: Backlog Group Should Include Ready And In Progress Tickets
 ticket_status: wontfix
 ticket_priority: Medium
 ticket_rank:
-ticket_created: "2026-06-14T04:20:19Z"
-ticket_updated: "2026-06-14T05:45:20Z"
-ticket_completed: "2026-06-14T05:45:20Z"
+ticket_created: '2026-06-14T04:20:19Z'
+ticket_updated: '2026-06-14T05:45:20Z'
+ticket_completed: '2026-06-14T05:45:20Z'
 ---
 # Introduction
 

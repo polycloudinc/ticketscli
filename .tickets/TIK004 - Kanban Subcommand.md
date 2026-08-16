@@ -5,10 +5,10 @@ ticket_code: TIK004
 ticket_name: Kanban Subcommand
 ticket_status: backlog
 ticket_priority: Medium
-ticket_rank: 6
-ticket_created: "2026-06-09T06:11:51Z"
-ticket_updated: "2026-08-16T01:43:18Z"
-ticket_completed:
+ticket_rank: 5
+ticket_created: '2026-06-09T06:11:51Z'
+ticket_updated: '2026-08-16T16:48:44Z'
+ticket_completed: null
 ---
 # Introduction
 

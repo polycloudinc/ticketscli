@@ -6,9 +6,9 @@ ticket_name: Add Todo Group To List Subcommand
 ticket_status: complete
 ticket_priority: Medium
 ticket_rank:
-ticket_created: "2026-06-14T04:54:29Z"
-ticket_updated: "2026-06-14T05:45:20Z"
-ticket_completed: "2026-06-14T05:45:20Z"
+ticket_created: '2026-06-14T04:54:29Z'
+ticket_updated: '2026-06-14T05:45:20Z'
+ticket_completed: '2026-06-14T05:45:20Z'
 ---
 # Introduction
 

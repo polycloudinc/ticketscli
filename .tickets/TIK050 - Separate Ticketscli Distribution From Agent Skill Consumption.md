@@ -6,9 +6,9 @@ ticket_name: Separate Ticketscli Distribution From Agent Skill Consumption
 ticket_status: backlog
 ticket_priority: Medium
 ticket_rank: 1
-ticket_created: "2026-07-19T15:47:00Z"
-ticket_updated: "2026-08-16T01:43:21Z"
-ticket_completed:
+ticket_created: '2026-07-19T15:47:00Z'
+ticket_updated: '2026-08-16T01:43:21Z'
+ticket_completed: null
 ---
 # Introduction
 

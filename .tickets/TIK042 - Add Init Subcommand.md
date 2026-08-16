@@ -6,9 +6,9 @@ ticket_name: Add Init Subcommand
 ticket_status: complete
 ticket_priority: Medium
 ticket_rank:
-ticket_created: "2026-06-15T11:44:30Z"
-ticket_updated: "2026-06-15T14:42:41Z"
-ticket_completed: "2026-06-15T14:42:40Z"
+ticket_created: '2026-06-15T11:44:30Z'
+ticket_updated: '2026-06-15T14:42:41Z'
+ticket_completed: '2026-06-15T14:42:40Z'
 ---
 # Introduction
 

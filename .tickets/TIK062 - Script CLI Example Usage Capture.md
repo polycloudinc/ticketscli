@@ -5,10 +5,10 @@ ticket_code: TIK062
 ticket_name: Script CLI Example Usage Capture
 ticket_status: inprogress
 ticket_priority: Medium
-ticket_rank: 18
-ticket_created: "2026-08-16T05:15:08Z"
-ticket_completed:
-ticket_updated: "2026-08-16T05:45:55Z"
+ticket_rank: 17
+ticket_created: '2026-08-16T05:15:08Z'
+ticket_completed: null
+ticket_updated: '2026-08-16T16:48:45Z'
 ---
 # Introduction
 

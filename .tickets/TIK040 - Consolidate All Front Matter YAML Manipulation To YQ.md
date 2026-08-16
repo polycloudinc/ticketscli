@@ -6,9 +6,9 @@ ticket_name: Consolidate All Front Matter YAML Manipulation To YQ
 ticket_status: complete
 ticket_priority: Medium
 ticket_rank:
-ticket_created: "2026-06-14T15:04:35Z"
-ticket_updated: "2026-06-15T05:24:25Z"
-ticket_completed: "2026-06-15T05:24:24Z"
+ticket_created: '2026-06-14T15:04:35Z'
+ticket_updated: '2026-06-15T05:24:25Z'
+ticket_completed: '2026-06-15T05:24:24Z'
 ---
 # Introduction
 

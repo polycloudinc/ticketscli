@@ -5,10 +5,10 @@ ticket_code: TIK059
 ticket_name: Drop Underscore Tickets Directory Resolution
 ticket_status: backlog
 ticket_priority: Medium
-ticket_rank: 16
-ticket_created: "2026-08-16T01:54:17Z"
-ticket_updated: "2026-08-16T01:54:17Z"
-ticket_completed:
+ticket_rank: 15
+ticket_created: '2026-08-16T01:54:17Z'
+ticket_updated: '2026-08-16T16:48:45Z'
+ticket_completed: null
 ---
 # Introduction
 

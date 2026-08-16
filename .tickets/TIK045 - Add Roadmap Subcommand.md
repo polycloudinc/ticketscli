@@ -5,10 +5,10 @@ ticket_code: TIK045
 ticket_name: Add Roadmap Subcommand
 ticket_status: backlog
 ticket_priority: Medium
-ticket_rank: 12
-ticket_created: "2026-06-16T16:09:43Z"
-ticket_updated: "2026-08-16T01:43:20Z"
-ticket_completed:
+ticket_rank: 11
+ticket_created: '2026-06-16T16:09:43Z'
+ticket_updated: '2026-08-16T16:48:45Z'
+ticket_completed: null
 ---
 # Introduction
 
