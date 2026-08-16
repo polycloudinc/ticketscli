@@ -7,12 +7,12 @@ code: TIK048
 aliases:
 - TIK048
 name: Relocate From Forgejo To GitHub
-ticket_status: '[[Backlog]]'
+ticket_status: '[[Complete]]'
 ticket_priority: Medium
-ticket_rank: 9
+ticket_rank: null
 ticket_created: '2026-07-06T05:11:24Z'
-ticket_updated: '2026-08-15T08:32:04Z'
-ticket_completed: null
+ticket_updated: '2026-08-16T01:46:47Z'
+ticket_completed: '2026-08-16T01:46:41Z'
 ---
 # Introduction
 

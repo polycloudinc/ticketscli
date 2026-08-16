@@ -9,9 +9,9 @@ aliases:
 name: Add Roadmap Subcommand
 ticket_status: '[[Backlog]]'
 ticket_priority: Medium
-ticket_rank: 8
+ticket_rank: 12
 ticket_created: '2026-06-16T16:09:43Z'
-ticket_updated: '2026-08-15T08:32:04Z'
+ticket_updated: '2026-08-16T01:43:20Z'
 ticket_completed: null
 ---
 # Introduction
