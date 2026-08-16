@@ -6,6 +6,10 @@
 #   fixture()  echoes the code of the fixture this embedding requires
 #   run()      emits the transcript (invocation + captured output)
 
+transcript_fence() {
+  echo "bash"
+}
+
 fixture() {
   echo "f002"
 }

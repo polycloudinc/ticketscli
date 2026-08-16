@@ -509,7 +509,7 @@ TODO
 The `validate` command checks the structure of tickets in the `.tickets/` directory against the template to identify any differences in the schema of the YAML front matter.
 
 <!-- cli_validate_help:start -->
-```
+```bash
 $ tickets validate --help
 
 Usage: tickets validate [--all | --ticket <code>] [options]
@@ -549,7 +549,7 @@ The `statistics` command lets you track metrics related to your backlog and tick
 This capability is still a work in progress and it currently provides a snapshot subcommand that records the point in time metrics regarding your tickets to `.tickets/statistics.yaml`.  We will add reporting and visualization of these stats in the future.
 
 <!-- cli_statistics_snapshot_help:start -->
-```
+```bash
 $ tickets statistics snapshot --help
 
 Usage: tickets statistics snapshot [options]
