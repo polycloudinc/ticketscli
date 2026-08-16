@@ -9,9 +9,9 @@ aliases:
 name: Relocate Ticket Template To Tickets Directory
 ticket_status: '[[Backlog]]'
 ticket_priority: Medium
-ticket_rank: 4
+ticket_rank: 9
 ticket_created: '2026-06-14T07:22:09Z'
-ticket_updated: '2026-08-15T08:32:04Z'
+ticket_updated: '2026-08-16T01:43:19Z'
 ticket_completed: null
 ---
 # Introduction
