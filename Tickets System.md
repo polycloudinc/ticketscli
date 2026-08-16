@@ -79,13 +79,20 @@ This section walks through the subcommands offered by the CLI in logical order.
 
 The `init` subcommand initializes the Tickets system, setting up the .tickets/ directory and it's `settings.yaml` configuration file.
 
+<!-- cli_init:start -->
+
 ```
-$ tickets init --help
+tickets init --help
 
 Usage: tickets init [options]
 
-Options:                                          -d, --tickets-dir <path>   Path to tickets directory (default: _tickets)                     --code-prefix <prefix>     Ticket code prefix (3-4 alpha characters)
+Options:
+  -d, --tickets-dir <path>   Path to tickets directory (default: _tickets)
+  --code-prefix <prefix>      Ticket code prefix (3-4 alpha characters)
+  -h, --help                  Show this help message
 ```
+
+<!-- cli_init:end -->
 
 Typically this command is used only once when you're starting a new project:
 
@@ -108,6 +115,8 @@ code_prefix: MYP
 
 The `create` subcommand creates a new ticket.  It generates the ticket from the built-in template and injects values into the ticket's YAML front matter.
 
+<!-- cli_create:start -->
+
 ```
 tickets create --help
 
@@ -116,7 +125,10 @@ Usage: tickets create --name <subject> [options]
 Options:
   -n, --name <subject>       Subject/name for the new ticket (required)
   -d, --tickets-dir <path>   Path to tickets directory (default: _tickets)
+  -h, --help                  Show this help message
 ```
+
+<!-- cli_create:end -->
 
 Example usage:
 
@@ -171,13 +183,15 @@ tickets list --help
 
 Usage: tickets list [options]
 
-Output is sorted ascending by ticket_rank. Tickets without a rank or with a non-integer rank value sort last.
+Output is sorted ascending by ticket_rank. Tickets without a rank or with
+a non-integer rank value sort last.
 
 Options:
   -d, --tickets-dir <path>  Path to tickets directory (default: _tickets)
   -g, --group <backlog|active|done|todo>  Filter tickets by status group
   -l, --limit <N>           Limit output to the first N tickets after filtering and sorting
   -s, --status <status>    Filter by status (exact or distinguishing substring, case-insensitive)
+  -h, --help                Show this help message
 ```
 
 <!-- cli_list:end -->
@@ -198,6 +212,8 @@ The `rank` subcommand let's you change the planned execution order of your backl
 
 All four subcommands have the same switches:
 
+<!-- cli_rank_up:start -->
+
 ```
 tickets rank up --help
 
@@ -206,7 +222,10 @@ Usage: tickets rank up --ticket <code> [options]
 Options:
   -t, --ticket <code>        Ticket code to promote
   -d, --tickets-dir <path>   Path to tickets directory (default: _tickets)
+  -h, --help                  Show this help message
 ```
+
+<!-- cli_rank_up:end -->
 
 Example usage:
 
@@ -567,13 +586,19 @@ Any transition from any status to any status is allowed. If the ticket is alread
 
 ### CLI Interface
 
+<!-- cli_statistics:start -->
+
 ```
+tickets statistics --help
+
 Usage: tickets statistics snapshot [options]
 
 Options:
-  -d, --tickets-dir <path>  Path to tickets directory (default: .tickets)
+  -d, --tickets-dir <path>  Path to tickets directory (default: _tickets)
   -h, --help                Show this help message
 ```
+
+<!-- cli_statistics:end -->
 
 Running `tickets statistics` without `snapshot` prints usage and exits.
 
