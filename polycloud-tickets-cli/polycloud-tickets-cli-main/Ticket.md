@@ -1,11 +1,8 @@
 ---
-template: "[[Ticket]]"
+api: polycloudinc/ticketscli/v1
 kind: ticket
-tags:
-  - ticket
-code:
-aliases:
-name:
+ticket_code:
+ticket_name:
 ticket_status:
 ticket_priority:
 ticket_rank:
@@ -27,6 +24,4 @@ TODO: Capture enough detail on the technical solution for there to be no ambigui
 
 # Execution Plan
 
-TODO: A flat linear list of tasks expressed as Markdown checkboxes "- [ ]".  Very long execution plans may be broken up into multiple phases intended to be run in sequence each of which has a fiat linear list of tasks.  Where phases are used, each phase must have at least one verification step which must be validated successfully before moving on to the next phase 
-
-
+TODO: A flat linear list of tasks expressed as Markdown checkboxes "- [ ]".  Very long execution plans may be broken up into multiple phases intended to be run in sequence each of which has a fiat linear list of tasks.  Where phases are used, each phase must have at least one verification step which must be validated successfully before moving on to the next phase

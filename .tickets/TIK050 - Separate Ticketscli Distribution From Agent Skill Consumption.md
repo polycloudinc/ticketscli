@@ -1,13 +1,9 @@
 ---
-template: '[[Ticket]]'
+api: polycloudinc/ticketscli/v1
 kind: ticket
-tags:
-- ticket
-code: TIK050
-aliases:
-- TIK050
-name: Separate Ticketscli Distribution From Agent Skill Consumption
-ticket_status: '[[Backlog]]'
+ticket_code: TIK050
+ticket_name: Separate Ticketscli Distribution From Agent Skill Consumption
+ticket_status: backlog
 ticket_priority: Medium
 ticket_rank: 1
 ticket_created: '2026-07-19T15:47:00Z'

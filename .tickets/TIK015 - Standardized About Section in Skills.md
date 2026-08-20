@@ -1,13 +1,9 @@
 ---
-template: '[[Ticket]]'
+api: polycloudinc/ticketscli/v1
 kind: ticket
-tags:
-- ticket
-code: TIK015
-aliases:
-- TIK015
-name: Standardized About Section in Skills
-ticket_status: '[[Complete]]'
+ticket_code: TIK015
+ticket_name: Standardized About Section in Skills
+ticket_status: complete
 ticket_priority: Medium
 ticket_rank:
 ticket_created: '2026-06-13T07:19:59Z'

@@ -1,13 +1,9 @@
 ---
-template: '[[Ticket]]'
+api: polycloudinc/ticketscli/v1
 kind: ticket
-tags:
-- ticket
-code: TIK040
-aliases:
-- TIK040
-name: Consolidate All Front Matter YAML Manipulation To YQ
-ticket_status: '[[Complete]]'
+ticket_code: TIK040
+ticket_name: Consolidate All Front Matter YAML Manipulation To YQ
+ticket_status: complete
 ticket_priority: Medium
 ticket_rank:
 ticket_created: '2026-06-14T15:04:35Z'

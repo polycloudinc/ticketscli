@@ -1,13 +1,9 @@
 ---
-template: '[[Ticket]]'
+api: polycloudinc/ticketscli/v1
 kind: ticket
-tags:
-- ticket
-code: TIK026
-aliases:
-- TIK026
-name: Transition Ticket Agent Skill
-ticket_status: '[[Complete]]'
+ticket_code: TIK026
+ticket_name: Transition Ticket Agent Skill
+ticket_status: complete
 ticket_priority: Medium
 ticket_rank:
 ticket_created: '2026-06-14T04:59:46Z'

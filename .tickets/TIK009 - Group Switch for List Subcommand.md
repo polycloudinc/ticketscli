@@ -1,13 +1,9 @@
 ---
-template: '[[Ticket]]'
+api: polycloudinc/ticketscli/v1
 kind: ticket
-tags:
-- ticket
-code: TIK009
-aliases:
-- TIK009
-name: Group Switch for List Subcommand
-ticket_status: '[[Complete]]'
+ticket_code: TIK009
+ticket_name: Group Switch for List Subcommand
+ticket_status: complete
 ticket_priority: Medium
 ticket_rank:
 ticket_created: '2026-06-13T04:37:23Z'

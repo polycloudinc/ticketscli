@@ -56,6 +56,7 @@ Subcommands:
   list              List tickets from the tickets directory
   validate          Validate a ticket's front matter against the schema
   create            Create a new ticket file
+  migrate           Convert tickets from the unversioned schema to a versioned schema
   transition        Transition a ticket to a new status
   rank              Normalize ticket ranks across all tickets
   rank up           Promote a ticket's priority
@@ -195,6 +196,20 @@ Options:
 EOF
 }
 
+migrate_usage() {
+  cat <<EOF
+Usage: tickets migrate [options]
+
+Convert tickets from the current unversioned schema to a versioned schema.
+Tickets already at the target version are skipped.
+
+Options:
+  -t, --target <version>     Target schema version (default: v1)
+  -d, --tickets-dir <path>   Path to tickets directory (default: _tickets)
+  -h, --help                  Show this help message
+EOF
+}
+
 normalize_ranks() {
   local tickets_dir="$1"
   local tmpfile
@@ -204,11 +219,13 @@ normalize_ranks() {
     [[ "$ticket" == "$tickets_dir/.gitkeep" ]] && continue
     [[ -f "$ticket" ]] || continue
 
+    require_api_v1 "$ticket"
+
     local status
-    status=$(python3 "$SCRIPT_DIR/yz.py" extract "$ticket" .ticket_status | tr -d '"' | sed 's/^\[\[//; s/\]\]$//')
+    status=$(python3 "$SCRIPT_DIR/yz.py" extract "$ticket" .ticket_status | tr -d '"')
 
     case "$status" in
-      "Complete"|"Duplicate"|"Won't Fix")
+      complete|duplicate|wontfix)
         local old_rank
         old_rank=$(get_ticket_rank "$ticket")
         python3 "$SCRIPT_DIR/yz.py" update "$ticket" .ticket_rank null
@@ -250,6 +267,18 @@ find_ticket_by_code() {
     [[ -f "$f" ]] && { echo "$f"; return 0; }
   done
   return 1
+}
+
+# require_api_v1 <file>
+# Halts with an error when a ticket does not declare api: polycloudinc/ticketscli/v1.
+require_api_v1() {
+  local ticket_file="$1"
+  local api
+  api=$(python3 "$SCRIPT_DIR/yz.py" extract "$ticket_file" .api 2>/dev/null || true)
+  if [[ "$api" != "polycloudinc/ticketscli/v1" ]]; then
+    echo "Error: $ticket_file is not declared as api 'polycloudinc/ticketscli/v1' (got '${api:-}'). Run 'tickets migrate -t v1' first." >&2
+    exit 1
+  fi
 }
 
 get_ticket_rank() {
@@ -727,18 +756,20 @@ cmd_list() {
 
     all_total=$((all_total + 1))
 
+    require_api_v1 "$ticket"
+
     filename=$(basename "$ticket")
     number="${filename%% *}"
 
-    subject=$(python3 "$SCRIPT_DIR/yz.py" extract "$ticket" .name)
+    subject=$(python3 "$SCRIPT_DIR/yz.py" extract "$ticket" .ticket_name)
     [[ ${#subject} -gt $subject_width ]] && subject="${subject:0:$((subject_width - 3))}..."
-    status=$(python3 "$SCRIPT_DIR/yz.py" extract "$ticket" .ticket_status | tr -d '"' | sed 's/^\[\[//; s/\]\]$//')
+    status=$(python3 "$SCRIPT_DIR/yz.py" extract "$ticket" .ticket_status | tr -d '"')
 
     case "$filter" in
-      backlog) [[ "$status" != "Backlog" ]] && continue ;;
-      active)  [[ "$status" != "Ready" && "$status" != "In Progress" ]] && continue ;;
-      todo)    [[ "$status" != "Backlog" && "$status" != "Ready" && "$status" != "In Progress" ]] && continue ;;
-      done)    [[ "$status" != "Complete" && "$status" != "Duplicate" && "$status" != "Won't Fix" ]] && continue ;;
+      backlog) [[ "$status" != "backlog" ]] && continue ;;
+      active)  [[ "$status" != "ready" && "$status" != "inprogress" ]] && continue ;;
+      todo)    [[ "$status" != "backlog" && "$status" != "ready" && "$status" != "inprogress" ]] && continue ;;
+      done)    [[ "$status" != "complete" && "$status" != "duplicate" && "$status" != "wontfix" ]] && continue ;;
       status:*)
         expected="${filter#status:}"
         status_lower=$(echo "$status" | tr '[:upper:]' '[:lower:]' | tr -d ' ')
@@ -770,7 +801,7 @@ cmd_list() {
   sort -t$'\t' -k1 -n "$tmpfile" | head -n "${limit:-999999}" | tee "$shown_tmpfile" | while IFS=$'\t' read -r rank_val number subject status; do
     local display_rank="$rank_val"
     case "$status" in
-      Complete|Duplicate|"Won't Fix") display_rank="-" ;;
+      complete|duplicate|wontfix) display_rank="-" ;;
     esac
     printf "%-${code_width}s %-${subject_width}s %${rank_width}s %-${status_width}s\n" "$number" "$subject" "$display_rank" "$status"
   done
@@ -862,6 +893,8 @@ cmd_create() {
   local max_num=0
   for ticket_file in "$resolved_dir"/*.md; do
     [[ -f "$ticket_file" ]] || continue
+    [[ "$(basename "$ticket_file")" == ".gitkeep" ]] && continue
+    require_api_v1 "$ticket_file"
     local filename
     filename=$(basename "$ticket_file")
     if [[ "$filename" =~ ^${code_prefix}([0-9]{3}) ]]; then
@@ -896,15 +929,11 @@ cmd_create() {
 
   {
     printf '%s\n' "---"
-    printf '%s\n' 'template: "[[Ticket]]"'
+    printf '%s\n' "api: polycloudinc/ticketscli/v1"
     printf '%s\n' "kind: ticket"
-    printf '%s\n' "tags:"
-    printf '%s\n' "  - ticket"
-    printf '%s\n' "code: $next_code"
-    printf '%s\n' "aliases:"
-    printf '%s\n' "  - $next_code"
-    printf '%s\n' "name: $ticket_name"
-    printf '%s\n' 'ticket_status: "[[Backlog]]"'
+    printf '%s\n' "ticket_code: $next_code"
+    printf '%s\n' "ticket_name: $ticket_name"
+    printf '%s\n' "ticket_status: backlog"
     printf '%s\n' "ticket_priority: Medium"
     printf '%s\n' "ticket_rank: $next_rank"
     local created_ts
@@ -1159,10 +1188,10 @@ validate_one() {
   # Value constraint validations (hardcoded)
   local val
 
-  # template must be [[Ticket]]
-  val=$(python3 "$SCRIPT_DIR/yz.py" extract "$ticket_file" .template 2>/dev/null || true)
-  if [[ "$val" != "[[Ticket]]" ]]; then
-    echo "- Invalid value for template: expected '[[Ticket]]', got '$val'" >&2
+  # api must be polycloudinc/ticketscli/v1
+  val=$(python3 "$SCRIPT_DIR/yz.py" extract "$ticket_file" .api 2>/dev/null || true)
+  if [[ "$val" != "polycloudinc/ticketscli/v1" ]]; then
+    echo "- Invalid value for api: expected 'polycloudinc/ticketscli/v1', got '$val'" >&2
     errors=$((errors + 1))
   fi
 
@@ -1173,39 +1202,23 @@ validate_one() {
     errors=$((errors + 1))
   fi
 
-  # code must match <prefix>\d{3}
-  val=$(python3 "$SCRIPT_DIR/yz.py" extract "$ticket_file" .code 2>/dev/null || true)
+  # ticket_code must match <prefix>\d{3}
+  val=$(python3 "$SCRIPT_DIR/yz.py" extract "$ticket_file" .ticket_code 2>/dev/null || true)
   if ! [[ "$val" =~ ^${code_prefix}[0-9]{3}$ ]]; then
-    echo "- Invalid value for code: expected pattern '${code_prefix}\\d{3}', got '$val'" >&2
+    echo "- Invalid value for ticket_code: expected pattern '${code_prefix}\\d{3}', got '$val'" >&2
     errors=$((errors + 1))
   fi
 
-  # name must be non-empty
-  val=$(python3 "$SCRIPT_DIR/yz.py" extract "$ticket_file" .name 2>/dev/null || true)
+  # ticket_name must be non-empty
+  val=$(python3 "$SCRIPT_DIR/yz.py" extract "$ticket_file" .ticket_name 2>/dev/null || true)
   if [[ -z "$val" ]]; then
-    echo "- Invalid value for name: must be non-empty" >&2
+    echo "- Invalid value for ticket_name: must be non-empty" >&2
     errors=$((errors + 1))
   fi
 
-  # aliases must contain exactly one entry matching code
-  local ticket_code_val
-  ticket_code_val=$(python3 "$SCRIPT_DIR/yz.py" extract "$ticket_file" .code 2>/dev/null || true)
-  local alias_count
-  alias_count=$(python3 "$SCRIPT_DIR/yz.py" len "$ticket_file" .aliases 2>/dev/null || true)
-  if [[ "$alias_count" != "1" ]]; then
-    echo "- Invalid value for aliases: expected exactly 1 entry, got $alias_count" >&2
-    errors=$((errors + 1))
-  else
-    val=$(python3 "$SCRIPT_DIR/yz.py" extract "$ticket_file" .aliases[0] 2>/dev/null || true)
-    if [[ "$val" != "$ticket_code_val" ]]; then
-      echo "- Invalid value for aliases: expected '$ticket_code_val', got '$val'" >&2
-      errors=$((errors + 1))
-    fi
-  fi
-
-  # ticket_status must be one of the six known statuses
+  # ticket_status must be one of the six known lowercase codes
   val=$(python3 "$SCRIPT_DIR/yz.py" extract "$ticket_file" .ticket_status 2>/dev/null || true)
-  local valid_statuses=("[[Backlog]]" "[[Ready]]" "[[In Progress]]" "[[Complete]]" "[[Duplicate]]" "[[Won't Fix]]")
+  local valid_statuses=("backlog" "ready" "inprogress" "complete" "duplicate" "wontfix")
   local status_ok=0
   for s in "${valid_statuses[@]}"; do
     if [[ "$val" == "$s" ]]; then
@@ -1239,7 +1252,7 @@ validate_one() {
   status_val=$(python3 "$SCRIPT_DIR/yz.py" extract "$ticket_file" .ticket_status 2>/dev/null || true)
   local is_done=0
   case "$status_val" in
-    "[[Complete]]"|"[[Duplicate]]"|"[[Won't Fix]]") is_done=1 ;;
+    complete|duplicate|wontfix) is_done=1 ;;
   esac
   if [[ -z "$val" ]]; then
     if [[ $is_done -eq 0 ]]; then
@@ -1351,25 +1364,17 @@ cmd_transition() {
     exit 1
   fi
 
-  local current_status
-  current_status=$(python3 "$SCRIPT_DIR/yz.py" extract "$ticket_file" .ticket_status | tr -d '"' | sed 's/^\[\[//; s/\]\]$//')
-  local current_lower
-  current_lower=$(echo "$current_status" | tr '[:upper:]' '[:lower:]' | tr -d ' ')
+  require_api_v1 "$ticket_file"
 
-  if [[ "$current_lower" == "$target_canonical" ]]; then
+  local current_status
+  current_status=$(python3 "$SCRIPT_DIR/yz.py" extract "$ticket_file" .ticket_status | tr -d '"')
+
+  if [[ "$current_status" == "$target_canonical" ]]; then
     echo "Ticket $ticket_code is already in status '$current_status'."
     return 0
   fi
 
-  local status_label
-  case "$target_canonical" in
-    backlog)    status_label="[[Backlog]]" ;;
-    ready)      status_label="[[Ready]]" ;;
-    inprogress) status_label="[[In Progress]]" ;;
-    complete)   status_label="[[Complete]]" ;;
-    duplicate)  status_label="[[Duplicate]]" ;;
-    wontfix)    status_label="[[Won't Fix]]" ;;
-  esac
+  local status_label="$target_canonical"
 
   case "$target_canonical" in
     complete|duplicate|wontfix)
@@ -1385,7 +1390,7 @@ cmd_transition() {
   esac
 
   case "$current_status" in
-    "Complete"|"Duplicate"|"Won't Fix")
+    complete|duplicate|wontfix)
       local current_rank
       current_rank=$(get_ticket_rank "$ticket_file")
       if [[ -z "$current_rank" || ! "$current_rank" =~ ^[0-9]+$ ]]; then
@@ -1462,17 +1467,19 @@ cmd_statistics_snapshot() {
 
     total=$((total + 1))
 
+    require_api_v1 "$ticket"
+
     local status
     status=$(python3 "$SCRIPT_DIR/yz.py" extract "$ticket" .ticket_status 2>/dev/null || echo "")
-    status=$(echo "$status" | tr -d '"' | sed 's/^\[\[//; s/\]\]$//')
+    status=$(echo "$status" | tr -d '"')
 
     case "$status" in
-      Backlog)     backlog=$((backlog + 1)) ;;
-      Ready)       ready=$((ready + 1)) ;;
-      "In Progress") inprogress=$((inprogress + 1)) ;;
-      Complete)    complete=$((complete + 1)) ;;
-      Duplicate)   duplicate=$((duplicate + 1)) ;;
-      "Won't Fix") wontfix=$((wontfix + 1)) ;;
+      backlog)     backlog=$((backlog + 1)) ;;
+      ready)       ready=$((ready + 1)) ;;
+      inprogress)  inprogress=$((inprogress + 1)) ;;
+      complete)    complete=$((complete + 1)) ;;
+      duplicate)   duplicate=$((duplicate + 1)) ;;
+      wontfix)     wontfix=$((wontfix + 1)) ;;
     esac
   done
 
@@ -1505,6 +1512,172 @@ cmd_statistics_snapshot() {
   python3 "$SCRIPT_DIR/yz.py" append "$stats_file" .statistics "$snapshot_json"
 }
 
+# migrate_unversioned_to_v1 <file>
+# Converts a single ticket from the unversioned schema (no api key) to v1.
+# Exit codes: 0 = migrated, 1 = skipped (already at target version), 2 = error.
+migrate_unversioned_to_v1() {
+  local ticket_file="$1"
+  python3 - "$ticket_file" <<'PYEOF'
+import sys, re
+
+path = sys.argv[1]
+
+with open(path) as f:
+    content = f.read()
+
+parts = content.split('---', 2)
+if len(parts) < 3 or parts[0].strip() != '':
+    print(f"Error: {path} has no front matter block", file=sys.stderr)
+    sys.exit(2)
+
+try:
+    import yaml
+    # Prevent PyYAML from parsing ISO 8601 timestamps as datetime objects.
+    # The tickets system stores timestamps as plain strings and round-trips
+    # them as-is; datetime conversion would change '2026-06-20T12:00:00Z'
+    # to '2026-06-20 12:00:00+00:00', corrupting the stored value.
+    def _keep_timestamps_as_strings(loader, node):
+        return loader.construct_scalar(node)
+    yaml.SafeLoader.add_constructor('tag:yaml.org,2002:timestamp', _keep_timestamps_as_strings)
+    fm = yaml.safe_load(parts[1]) or {}
+except Exception:
+    print(f"Error: unparseable front matter in {path}", file=sys.stderr)
+    sys.exit(2)
+
+body = parts[2].lstrip('\n')
+
+target_api = 'polycloudinc/ticketscli/v1'
+
+current_api = fm.get('api')
+if current_api is not None and str(current_api) != '':
+    if str(current_api).strip("'\"") == target_api:
+        print(f"Skipping {path}: already at target version {target_api}", file=sys.stderr)
+        sys.exit(1)
+    print(f"Error: {path} declares api '{current_api}'; cannot migrate to {target_api}", file=sys.stderr)
+    sys.exit(2)
+
+STATUS_MAP = {
+    '[[Backlog]]': 'backlog',
+    '[[Ready]]': 'ready',
+    '[[In Progress]]': 'inprogress',
+    '[[Complete]]': 'complete',
+    '[[Duplicate]]': 'duplicate',
+    "[[Won't Fix]]": 'wontfix',
+}
+
+DROP_KEYS = ('template', 'tags', 'aliases')
+RENAME_KEYS = {'code': 'ticket_code', 'name': 'ticket_name'}
+
+status = fm.get('ticket_status')
+if isinstance(status, str) and status in STATUS_MAP:
+    fm['ticket_status'] = STATUS_MAP[status]
+
+def quote_value(s):
+    if s == '':
+        return ''
+    if (re.search(r'[:#\[\]{},&*!|>%@`\n]', s) or
+        re.match(r'^[\s"\'\-]', s) or re.search(r'[\s\-]$', s) or
+        s.lower() in ('null', 'true', 'false', 'yes', 'no', 'on', 'off')):
+        if '"' in s:
+            return "'" + s.replace("'", "''") + "'"
+        return '"' + s + '"'
+    return s
+
+lines = []
+lines.append(f"api: {target_api}")
+for key, value in fm.items():
+    if key in DROP_KEYS:
+        continue
+    out_key = RENAME_KEYS.get(key, key)
+    if value is None:
+        lines.append(f"{out_key}:")
+    elif isinstance(value, bool):
+        lines.append(f"{out_key}: {str(value).lower()}")
+    elif isinstance(value, (int, float)):
+        lines.append(f"{out_key}: {value}")
+    else:
+        lines.append(f"{out_key}: {quote_value(str(value))}")
+
+out = "---\n" + "\n".join(lines) + "\n---\n" + body + ("\n" if body and not body.endswith("\n") else "")
+
+tmp = path + ".migrate.tmp"
+with open(tmp, 'w') as f:
+    f.write(out)
+import os
+os.replace(tmp, path)
+print(f"Migrated {path} to {target_api}", file=sys.stderr)
+PYEOF
+  return $?
+}
+
+cmd_migrate() {
+  check_dependencies
+  local tickets_dir=""
+  local target="v1"
+
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      -t|--target)
+        [[ -z "${2:-}" ]] && { echo "Error: --target requires a version argument" >&2; exit 1; }
+        target="$2"
+        shift
+        ;;
+      -d|--tickets-dir)
+        [[ -z "${2:-}" ]] && { echo "Error: --tickets-dir requires a path argument" >&2; exit 1; }
+        tickets_dir="$2"
+        shift
+        ;;
+      -h|--help)
+        migrate_usage
+        return 0
+        ;;
+      -*)
+        echo "Unknown option: $1" >&2
+        echo "Run 'tickets migrate --help' for usage." >&2
+        exit 1
+        ;;
+      *)
+        echo "Error: unexpected argument '$1'" >&2
+        migrate_usage
+        exit 1
+        ;;
+    esac
+    shift
+  done
+
+  tickets_dir=$(resolve_tickets_dir "$tickets_dir")
+
+  if [[ ! -d "$tickets_dir" ]]; then
+    echo "Error: tickets directory '$tickets_dir' does not exist" >&2
+    exit 1
+  fi
+
+  if [[ "$target" != "v1" ]]; then
+    echo "Error: unsupported target version '$target' (supported: v1)" >&2
+    exit 1
+  fi
+
+  local migrated=0 skipped=0 failed=0
+  for ticket in "$tickets_dir"/*.md; do
+    [[ "$ticket" == "$tickets_dir/.gitkeep" ]] && continue
+    [[ -f "$ticket" ]] || continue
+
+    local rc=0
+    if migrate_unversioned_to_v1 "$ticket"; then
+      migrated=$((migrated + 1))
+    else
+      rc=$?
+      if [[ $rc -eq 1 ]]; then
+        skipped=$((skipped + 1))
+      else
+        failed=$((failed + 1))
+      fi
+    fi
+  done
+
+  echo "$migrated ticket(s) migrated to $target, $skipped skipped, $failed failed."
+}
+
 if [[ $# -eq 0 ]]; then
   usage
   exit 0
@@ -1525,6 +1698,9 @@ case "$subcommand" in
     ;;
   create)
     cmd_create "$@"
+    ;;
+  migrate)
+    cmd_migrate "$@"
     ;;
   transition)
     cmd_transition "$@"

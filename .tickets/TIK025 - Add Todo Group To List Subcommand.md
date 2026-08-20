@@ -1,13 +1,9 @@
 ---
-template: '[[Ticket]]'
+api: polycloudinc/ticketscli/v1
 kind: ticket
-tags:
-- ticket
-code: TIK025
-aliases:
-- TIK025
-name: Add Todo Group To List Subcommand
-ticket_status: '[[Complete]]'
+ticket_code: TIK025
+ticket_name: Add Todo Group To List Subcommand
+ticket_status: complete
 ticket_priority: Medium
 ticket_rank:
 ticket_created: '2026-06-14T04:54:29Z'

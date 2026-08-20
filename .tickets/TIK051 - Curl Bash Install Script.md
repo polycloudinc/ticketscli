@@ -1,13 +1,9 @@
 ---
-template: '[[Ticket]]'
+api: polycloudinc/ticketscli/v1
 kind: ticket
-tags:
-- ticket
-code: TIK051
-aliases:
-- TIK051
-name: Curl Bash Install Script
-ticket_status: '[[Backlog]]'
+ticket_code: TIK051
+ticket_name: Curl Bash Install Script
+ticket_status: backlog
 ticket_priority: Medium
 ticket_rank: 2
 ticket_created: '2026-07-24T14:57:26Z'

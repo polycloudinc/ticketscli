@@ -1,13 +1,9 @@
 ---
-template: '[[Ticket]]'
+api: polycloudinc/ticketscli/v1
 kind: ticket
-tags:
-- ticket
-code: TIK041
-aliases:
-- TIK041
-name: Align Agent Skill Name Front Matter To Directory Name
-ticket_status: '[[Complete]]'
+ticket_code: TIK041
+ticket_name: Align Agent Skill Name Front Matter To Directory Name
+ticket_status: complete
 ticket_priority: Medium
 ticket_rank:
 ticket_created: '2026-06-14T15:06:39Z'

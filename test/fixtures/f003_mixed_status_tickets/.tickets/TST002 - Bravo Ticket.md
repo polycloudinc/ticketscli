@@ -1,17 +1,13 @@
 ---
-template: "[[Ticket]]"
+api: polycloudinc/ticketscli/v1
 kind: ticket
-tags:
-  - ticket
-code: TST002
-aliases:
-  - TST002
-name: Bravo Ticket
-ticket_status: "[[Ready]]"
+ticket_code: TST002
+ticket_name: Bravo Ticket
+ticket_status: ready
 ticket_priority: High
 ticket_rank: 1
-ticket_created: 2026-06-02T10:00:00Z
-ticket_updated: 2026-06-03T11:00:00Z
+ticket_created: "2026-06-02T10:00:00Z"
+ticket_updated: "2026-06-03T11:00:00Z"
 ticket_completed:
 ---
 # Introduction

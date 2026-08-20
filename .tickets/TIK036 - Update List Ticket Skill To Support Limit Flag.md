@@ -1,13 +1,9 @@
 ---
-template: '[[Ticket]]'
+api: polycloudinc/ticketscli/v1
 kind: ticket
-tags:
-- ticket
-code: TIK036
-aliases:
-- TIK036
-name: Update List Ticket Skill To Support Limit Flag
-ticket_status: '[[Complete]]'
+ticket_code: TIK036
+ticket_name: Update List Ticket Skill To Support Limit Flag
+ticket_status: complete
 ticket_priority: Medium
 ticket_rank:
 ticket_created: '2026-06-14T07:26:31Z'

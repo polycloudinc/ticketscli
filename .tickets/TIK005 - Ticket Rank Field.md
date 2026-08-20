@@ -1,13 +1,9 @@
 ---
-template: '[[Ticket]]'
+api: polycloudinc/ticketscli/v1
 kind: ticket
-tags:
-- ticket
-code: TIK005
-aliases:
-- TIK005
-name: Ticket Rank Field
-ticket_status: '[[Complete]]'
+ticket_code: TIK005
+ticket_name: Ticket Rank Field
+ticket_status: complete
 ticket_priority: Medium
 ticket_rank:
 ticket_created: '2026-06-09T06:11:51Z'

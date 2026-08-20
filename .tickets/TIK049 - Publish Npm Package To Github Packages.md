@@ -1,13 +1,9 @@
 ---
-template: '[[Ticket]]'
+api: polycloudinc/ticketscli/v1
 kind: ticket
-tags:
-- ticket
-code: TIK049
-aliases:
-- TIK049
-name: Publish Npm Package To Github Packages
-ticket_status: '[[Complete]]'
+ticket_code: TIK049
+ticket_name: Publish Npm Package To Github Packages
+ticket_status: complete
 ticket_priority: Medium
 ticket_rank:
 ticket_created: '2026-07-17T12:48:44Z'

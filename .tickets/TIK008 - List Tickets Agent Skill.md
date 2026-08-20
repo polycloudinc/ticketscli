@@ -1,13 +1,9 @@
 ---
-template: '[[Ticket]]'
+api: polycloudinc/ticketscli/v1
 kind: ticket
-tags:
-- ticket
-code: TIK008
-aliases:
-- TIK008
-name: List Tickets Agent Skill
-ticket_status: '[[Complete]]'
+ticket_code: TIK008
+ticket_name: List Tickets Agent Skill
+ticket_status: complete
 ticket_priority: Medium
 ticket_rank:
 ticket_created: '2026-06-13T04:37:23Z'

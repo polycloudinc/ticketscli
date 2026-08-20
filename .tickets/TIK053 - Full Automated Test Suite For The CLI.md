@@ -1,13 +1,9 @@
 ---
-template: '[[Ticket]]'
+api: polycloudinc/ticketscli/v1
 kind: ticket
-tags:
-- ticket
-code: TIK053
-aliases:
-- TIK053
-name: Full Automated Test Suite For The CLI
-ticket_status: '[[Complete]]'
+ticket_code: TIK053
+ticket_name: Full Automated Test Suite For The CLI
+ticket_status: complete
 ticket_priority: Medium
 ticket_rank:
 ticket_created: '2026-08-15T09:36:45Z'

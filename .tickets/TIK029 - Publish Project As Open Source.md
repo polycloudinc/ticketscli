@@ -1,13 +1,9 @@
 ---
-template: '[[Ticket]]'
+api: polycloudinc/ticketscli/v1
 kind: ticket
-tags:
-- ticket
-code: TIK029
-aliases:
-- TIK029
-name: Publish Project As Open Source
-ticket_status: '[[Complete]]'
+ticket_code: TIK029
+ticket_name: Publish Project As Open Source
+ticket_status: complete
 ticket_priority: Medium
 ticket_rank:
 ticket_created: '2026-06-14T07:19:17Z'

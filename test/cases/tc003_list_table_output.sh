@@ -26,8 +26,8 @@ run() {
   (( l2 < l1 && l1 < l3 )) || { echo "rows not in ascending rank order"; return 1; }
 
   # Done tickets display '-' in the rank column
-  grep -E 'TST004\s+.*\s-\s+Complete' <<< "$out" >/dev/null || { echo "TST004 rank is not '-'"; return 1; }
-  grep -E "TST006\s+.*\s-\s+Won't Fix" <<< "$out" >/dev/null || { echo "TST006 rank is not '-'"; return 1; }
+  grep -E 'TST004\s+.*\s-\s+complete' <<< "$out" >/dev/null || { echo "TST004 rank is not '-'"; return 1; }
+  grep -E 'TST006\s+.*\s-\s+wontfix' <<< "$out" >/dev/null || { echo "TST006 rank is not '-'"; return 1; }
 
   # Summary line
   grep -q '^6 matching from 6 total tickets$' <<< "$out" || { echo "summary line wrong: $(tail -1 <<< "$out")"; return 1; }

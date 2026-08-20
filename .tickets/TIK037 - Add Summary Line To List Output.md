@@ -1,13 +1,9 @@
 ---
-template: '[[Ticket]]'
+api: polycloudinc/ticketscli/v1
 kind: ticket
-tags:
-- ticket
-code: TIK037
-aliases:
-- TIK037
-name: Add Summary Line To List Output
-ticket_status: '[[Complete]]'
+ticket_code: TIK037
+ticket_name: Add Summary Line To List Output
+ticket_status: complete
 ticket_priority: Medium
 ticket_rank:
 ticket_created: '2026-06-14T08:15:10Z'

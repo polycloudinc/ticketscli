@@ -1,13 +1,9 @@
 ---
-template: '[[Ticket]]'
+api: polycloudinc/ticketscli/v1
 kind: ticket
-tags:
-- ticket
-code: TIK047
-aliases:
-- TIK047
-name: Change Default Tickets Directory From Underscore Tickets To Dot Tickets
-ticket_status: '[[Complete]]'
+ticket_code: TIK047
+ticket_name: Change Default Tickets Directory From Underscore Tickets To Dot Tickets
+ticket_status: complete
 ticket_priority: Medium
 ticket_rank:
 ticket_created: '2026-06-20T06:44:30Z'

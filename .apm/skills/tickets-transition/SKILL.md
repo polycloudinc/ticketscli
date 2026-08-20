@@ -5,7 +5,7 @@ description: Use when the user asks to transition a ticket, move a ticket, or ch
 
 # About Tickets System
 
-The tickets system manages work items as Markdown files in the `.tickets/` directory, each with YAML frontmatter containing fields such as `code`, `name`, `ticket_status`, `ticket_priority`, and `ticket_rank`. Tickets progress through statuses: `[[Backlog]]` (unscheduled), `[[Ready]]` (scheduled), `[[In Progress]]` (active work), `[[Complete]]` (done), `[[Duplicate]]`, and `[[Won't Fix]]`. A `tickets` CLI provides `init`, `list`, `validate`, `create`, `transition`, `rank`, and `statistics` subcommands for managing tickets.
+The tickets system manages work items as Markdown files in the `.tickets/` directory, each with YAML frontmatter declaring `api: polycloudinc/ticketscli/v1` and containing fields such as `ticket_code`, `ticket_name`, `ticket_status`, `ticket_priority`, and `ticket_rank`. Tickets progress through statuses: `backlog` (unscheduled), `ready` (scheduled), `inprogress` (active work), `complete` (done), `duplicate`, and `wontfix`. A `tickets` CLI provides `init`, `list`, `validate`, `create`, `transition`, `rank`, `statistics`, and `migrate` subcommands for managing tickets.
 
 The `tickets` CLI is published as `@polycloudinc/ticketscli`. Always invoke it using `npx @polycloudinc/ticketscli@latest`.
 
@@ -21,11 +21,11 @@ When the user asks to transition, move, or change the status of a ticket:
 
 ## Target Status Mapping
 
-| Natural Language          | Canonical   | Maps to frontmatter     |
-|---------------------------|-------------|-------------------------|
-| backlog, unscheduled      | `backlog`   | `"[[Backlog]]"`         |
-| ready, scheduled          | `ready`     | `"[[Ready]]"`           |
-| in progress, wip, active  | `inprogress`| `"[[In Progress]]"`     |
-| complete, done, finished  | `complete`  | `"[[Complete]]"`        |
-| duplicate, dup            | `duplicate` | `"[[Duplicate]]"`       |
-| wont fix, wontfix, reject | `wontfix`   | `"[[Won't Fix]]"`       |
+| Natural Language          | Canonical   | Frontmatter `ticket_status` |
+|---------------------------|-------------|-----------------------------|
+| backlog, unscheduled      | `backlog`   | `backlog`                   |
+| ready, scheduled          | `ready`     | `ready`                     |
+| in progress, wip, active  | `inprogress`| `inprogress`                |
+| complete, done, finished  | `complete`  | `complete`                  |
+| duplicate, dup            | `duplicate` | `duplicate`                 |
+| wont fix, wontfix, reject | `wontfix`   | `wontfix`                   |

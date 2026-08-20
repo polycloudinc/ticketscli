@@ -1,13 +1,9 @@
 ---
-template: '[[Ticket]]'
+api: polycloudinc/ticketscli/v1
 kind: ticket
-tags:
-- ticket
-code: TIK048
-aliases:
-- TIK048
-name: Relocate From Forgejo To GitHub
-ticket_status: '[[Complete]]'
+ticket_code: TIK048
+ticket_name: Relocate From Forgejo To GitHub
+ticket_status: complete
 ticket_priority: Medium
 ticket_rank:
 ticket_created: '2026-07-06T05:11:24Z'

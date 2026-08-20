@@ -1,13 +1,9 @@
 ---
-template: '[[Ticket]]'
+api: polycloudinc/ticketscli/v1
 kind: ticket
-tags:
-- ticket
-code: TIK023
-aliases:
-- TIK023
-name: Backlog Group Should Include Ready And In Progress Tickets
-ticket_status: '[[Won''t Fix]]'
+ticket_code: TIK023
+ticket_name: Backlog Group Should Include Ready And In Progress Tickets
+ticket_status: wontfix
 ticket_priority: Medium
 ticket_rank:
 ticket_created: '2026-06-14T04:20:19Z'

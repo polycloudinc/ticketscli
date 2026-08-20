@@ -1,13 +1,9 @@
 ---
-template: '[[Ticket]]'
+api: polycloudinc/ticketscli/v1
 kind: ticket
-tags:
-- ticket
-code: TIK031
-aliases:
-- TIK031
-name: Update List Ticket Skill To Support Todo Group
-ticket_status: '[[Complete]]'
+ticket_code: TIK031
+ticket_name: Update List Ticket Skill To Support Todo Group
+ticket_status: complete
 ticket_priority: Medium
 ticket_rank:
 ticket_created: '2026-06-14T07:20:52Z'

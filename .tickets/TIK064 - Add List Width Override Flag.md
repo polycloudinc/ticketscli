@@ -1,18 +1,14 @@
 ---
-template: "[[Ticket]]"
+api: polycloudinc/ticketscli/v1
 kind: ticket
-tags:
-  - ticket
-code: TIK064
-aliases:
-  - TIK064
-name: Add List Width Override Flag
-ticket_status: "[[Backlog]]"
+ticket_code: TIK064
+ticket_name: Add List Width Override Flag
+ticket_status: backlog
 ticket_priority: Medium
-ticket_rank: 20
-ticket_created: 2026-08-16T07:14:54Z
-ticket_updated: 2026-08-16T07:14:54Z
-ticket_completed:
+ticket_rank: 19
+ticket_created: '2026-08-16T07:14:54Z'
+ticket_updated: '2026-08-16T16:48:46Z'
+ticket_completed: null
 ---
 # Introduction
 

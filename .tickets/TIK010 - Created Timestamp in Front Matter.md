@@ -1,13 +1,9 @@
 ---
-template: '[[Ticket]]'
+api: polycloudinc/ticketscli/v1
 kind: ticket
-tags:
-- ticket
-code: TIK010
-aliases:
-- TIK010
-name: Created Timestamp in Front Matter
-ticket_status: '[[Complete]]'
+ticket_code: TIK010
+ticket_name: Created Timestamp in Front Matter
+ticket_status: complete
 ticket_priority: Medium
 ticket_rank:
 ticket_created: '2026-06-13T07:20:45Z'

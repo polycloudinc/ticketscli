@@ -1,13 +1,9 @@
 ---
-template: '[[Ticket]]'
+api: polycloudinc/ticketscli/v1
 kind: ticket
-tags:
-- ticket
-code: TIK020
-aliases:
-- TIK020
-name: Rank Normalization Subcommand
-ticket_status: '[[Won''t Fix]]'
+ticket_code: TIK020
+ticket_name: Rank Normalization Subcommand
+ticket_status: wontfix
 ticket_priority: Medium
 ticket_rank:
 ticket_created: '2026-06-14T03:35:08Z'

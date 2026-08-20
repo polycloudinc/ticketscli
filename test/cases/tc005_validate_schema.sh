@@ -17,10 +17,10 @@ run() {
   out=$("$TICKETS_CLI" validate --ticket TST001 2>&1) || { echo "validate --ticket TST001 failed on pristine ticket: $out"; return 1; }
 
   # Invalid status value
-  sed -i 's/^ticket_status:.*$/ticket_status: "[[Bogus]]"/' "$f"
+  sed -i 's/^ticket_status:.*$/ticket_status: bogus/' "$f"
   out=$("$TICKETS_CLI" validate --ticket TST001 2>&1) && { echo "validate passed with bogus status"; return 1; }
   grep -q 'Invalid value for ticket_status' <<< "$out" || { echo "missing ticket_status error: $out"; return 1; }
-  sed -i 's/^ticket_status:.*$/ticket_status: "[[Backlog]]"/' "$f"
+  sed -i 's/^ticket_status:.*$/ticket_status: backlog/' "$f"
 
   # Unknown field
   sed -i '/^ticket_priority:/i bogus_field: surprise' "$f"
