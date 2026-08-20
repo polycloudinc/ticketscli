@@ -1,26 +1,38 @@
 # Introduction
 
-The ticketscli project lets you plan out your project and track delivery using a terminal-based CLI and also using agent skills.
+The **ticketscli** project lets you plan out your project and track delivery using a terminal-based CLI and also using [agent skills](https://agentskills.io/) with your tickets tracked in Git rather than an external tool.
 
-With ticketscli you can:
+With **ticketscli** you can:
 - Plan your project and track execution
 - Capture your complete backlog in Git
-- Track code changes and backlog changes together where appropriate
+- Track code changes and backlog changes together in the same commits where appropriate
 - Implement spec-driven development (SDD) using tickets as the central context for your coding agent
 
 We have personally used this system to deliver work with
-- GitHub Copilot with Claude Opus 4.5 through 4.8 and with GPT 5.6 Sol
-- OpenCode with Claude Sonnet 4.5, DeepSeek V4 Pro, DeepSeek V4 Flash, Kimi K3 and with GPT 5.6 Luna
+- [GitHub Copilot](https://github.com/copilot) with Claude Opus 4.5 through 4.8 and with GPT 5.6 Sol
+- [OpenCode](https://opencode.ai/) with Claude Sonnet 4.5, DeepSeek V4 Pro, DeepSeek V4 Flash, Kimi K3 and with GPT 5.6 Luna
 
 # Demo / Quick Start
 
 TODO
 
+# Who is this for?
+
+ticketscli is intended for people and teams that:
+- Consider tickets / issues to be an integral part of the definition and documentation of a project and want them to be tracked in lockstep with the code, rather than in a separate database.
+- Want to be able to `git blame` on tickets.
+- Want the tickets including "Won't Fix" items to be available for coding agents to use as context without making MCP or other tool calls.
+
+It's probably not a good fit for those that:
+- Have existing workflow automations that are driven off issue events and content, for example using GitHub Actions.
+- Have a philosophical objection to having entries like "Backlog grooming" that contain only ticket changes in the commit history.
+- Have non-technical team members who would not be comfortable with using a CLI or coding agent for working with tickets.
+
 # Tickets
 
-A ticket represents a feature, a bug fix, it some other piece of work to be done on your project.  Other work planning systems use different names for these - for example JIRA calls these "Issues" and Azure DevOps calls them "Work Items".
+A ticket represents a feature, a bug fix, it some other piece of work to be done on your project.  Other work planning systems use different names for these - for example [JIRA](https://www.atlassian.com/agile/tutorials/issues) and [GitHub](https://github.com/features/issues) calls these "Issues" and [Azure DevOps](https://learn.microsoft.com/en-us/azure/devops/boards/work-items/about-work-items?view=azure-devops&tabs=agile-process) calls them "Work Items".
 
-A ticket is simply a Markdown file created from our template and stored in the `.tickets/` directory in your project.  A ticket has a code which identifies it, and a name, and ticket files are named with the following pattern:
+In **ticketscli**, a ticket is simply a [Markdown](https://daringfireball.net/projects/markdown/) file created from our template and stored in the `.tickets/` directory in your project.  A ticket has a code which is it's referenceable identity, and a name.  Ticket files are named with the following pattern:
 
 ```
 <code> - <name>.md
@@ -70,26 +82,26 @@ The ticketscli project itself is managed with ticketscli, and you can browse it'
 
 # Workflow
 
-Regardless of whether you are interacting with the tickets system directly or through agent skills, the general workflow is similar to what you would be used to from other tools:
+Regardless of whether you are interacting with ticketscli directly via it's CLI or through the provided agent skills, the general workflow is similar to what you would be used to from other tools:
 
-- Create a ticket to represent a new feature, bug fix, etc.  The new ticket is created in Backlog status.
+- Create a ticket to represent a new feature, bug fix, etc.  The new ticket is created in _Backlog_ status.
 - Elaborate the ticket, fleshing out the requirements, making technical choices and ultimately rendering down an execution plan with verification steps for the delivery of the work represented by the ticket.
 - For most projects there's some kind of overarching prioritization or backlog grooming cadence that maintains a roadmap or a delivery plan based on what features are the most important and also which are actually ready to work on.
-- Eventually our feature ticket is fully fleshed out and we mark it as Ready.  Thereafter it is ranked / prioritized to be executed.
-- Once work starts it's status is changed to In Progress and the feature is delivered and verified according to the execution plan.
-- When fully delivered the tcmicjetd status is changed to Complete.
+- Eventually our feature ticket is fully fleshed out and we mark it as _Ready_.  Thereafter it is ranked / prioritized to be executed.
+- Once work starts it's status is changed to _In Progress_ and the feature is delivered and verified according to the execution plan.
+- When fully delivered the ticket status is changed to _Complete_.
 
 # Command-Line Interface (CLI)
 
 ## Introduction
 
-The CLI is the primary way of working with the tickets system, and you can fully manage your project backlog and roadmap vie CLI.
+The CLI is the primary way of working with ticketscli, and you can fully manage your project backlog and roadmap via CLI and your preferred text editor.
 
 This section walks through the subcommands offered by the CLI in logical order.
 
 ## init
 
-The `init` command initializes the Tickets system, setting up the .tickets/ directory and it's `settings.yaml` configuration file.  You only need to `init` a project once and if you accidentally try to re-initialize a project the command will refuse to avoid unintended changes.
+The `init` command initializes the tickets system, setting up the `.tickets/` directory and it's `settings.yaml` configuration file.  You only need to `init` a project once and if you accidentally try to re-initialize a project the command will refuse to avoid unintended changes.
 
 <!-- cli_init_help:start -->
 ```
@@ -119,14 +131,14 @@ $ git add .
 $ git commit -m "Scaffold project"
 ```
 
-Resultant settings.yaml file in the `.tickets/` directory:
+Resultant `settings.yaml` file in the `.tickets/` directory:
 
 ```yaml
 code_prefix: MYP
 ```
 <!-- cli_init_example:end -->
 
-For information about the file `statistics.yaml` see the statistics command, below.
+For information about the file `statistics.yaml` see the `statistics` command, below.
 
 ## create
 
@@ -611,7 +623,7 @@ TODO
 
 ## Introduction
 
-The Tickets System includes a set of agent skills that guide your coding agent on how to use the CLI and to assist you throughout the planning and delivery workflow.
+ticketscli includes a set of agent skills that guide your coding agent on how to use the CLI and to assist you throughout the planning and delivery workflow.
 
 ## Overview
 
@@ -691,6 +703,19 @@ Or:
 Review ticket TIK033
 ```
 
+Or even:
+
+```
+let's work on it TIK054.  review it
+
++ Thought: 304ms
+→ Skill "tickets-review"
+✱ Glob ".tickets/TIK054*"
+$ ls .tickets/ | grep -i TIK054
+
+  TIK054 - Revise Ticket Front Matter.md
+```
+
 ## tickets-execution-plan Skill
 
 The `tickets-execution-plan` skill uses the coding agent to review the Requirements and Technical Solution in the ticket and propose an execution plan for delivery.
@@ -749,9 +774,25 @@ Move TIK043 down three slots.
 
 ## Installing the Agent Skills
 
-We currently support Agent Package Manager for distributing the Tickets System agent skills.  Adding parallel support for distribution via Vercel skills.sh is in our roadmap.
+### Installing via Agent Package Manager (APM)
+
+We support [Agent Package Manager](https://microsoft.github.io/apm/) for distributing the ticketscli agent skills.  
 
 To install via Agent Package Manager you must first [install the APM CLI](https://microsoft.github.io/apm/#install-apm).
+
+```bash
+apm install https://github.com/polycloudinc/ticketscli.git --dev --target <your coding agent>
+```
+
+The `--dev` switch marks `ticketscli` as a dev dependency - this is only important if your project itself publishes an APM package so that ticketscli does not become a runtime dependency of your project.
+
+See the APM docs for the list of [valid target values](https://microsoft.github.io/apm/reference/cli/install/#target-selection)
+
+TODO
+
+### Installing via Vercel skills.sh
+
+Adding parallel support for distribution via Vercel skills.sh is in our roadmap.
 
 TODO
 
