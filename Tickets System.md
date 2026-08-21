@@ -26,6 +26,7 @@ ticketscli is intended for people and teams that:
 It's probably not a good fit for those that:
 - Have existing workflow automations that are driven off issue events and content, for example using GitHub Actions.
 - Have a philosophical objection to having entries like "Backlog grooming" that contain only ticket changes in the commit history.
+- Like the rich work planning UI's and visualizations offered by the aforementioned tools
 - Have non-technical team members who would not be comfortable with using a CLI or coding agent for working with tickets.
 
 # Tickets
@@ -107,7 +108,19 @@ Regardless of whether you are interacting with ticketscli directly via it's CLI 
 
 The CLI is the primary way of working with ticketscli, and you can fully manage your project backlog and roadmap via CLI and your preferred text editor.
 
-This section walks through the subcommands offered by the CLI in logical order.
+Below, we walk through the subcommands offered by the CLI in logical order.
+
+## Tickets Directory Resolution
+
+The CLI resolves the tickets directory on every invocation:
+
+| Condition | Behavior |
+|---|---|
+| `--tickets-dir` / `-d` flag provided | Uses the given path (no resolution) |
+| `.tickets/` exists, `_tickets/` does not | Uses `.tickets/` (silent) |
+| `_tickets/` exists, `.tickets/` does not | Uses `_tickets/` and prints a deprecation warning to stderr: `Warning: _tickets is deprecated. Rename the directory to .tickets to migrate.` |
+| Both exist | Error: `Error: both .tickets and _tickets directories exist. Remove one or use --tickets-dir.` |
+| Neither exists | Defaults to `.tickets/` |
 
 ## init
 
@@ -235,6 +248,8 @@ Options:
 ```
 <!-- cli_list_help:end -->
 
+TODO clean up the status discussion and flag discussion
+
 The `ticket_status` field stores one of the following lowercase codes:
 
 | Status (`ticket_status` value) | Display name      | Filter Group      |
@@ -263,6 +278,8 @@ Only one filter (`--group` or `--status`) may be specified at a time. `--limit` 
 
 ### List Table Output
 
+TODO simplify the discussion of column width to a single paragraph explanation and an example invocation with a custom width.
+
 The `list` subcommand renders tickets as a four-column table: **Code**, **Subject**, **Rank**, and **Status**.
 
 Output adapts to the available terminal width (detected via `tput cols` with a fallback to `$COLUMNS`/`80`). Column widths are computed as follows:
@@ -286,6 +303,9 @@ Both `--group` and `--status` accept case-insensitive input and distinguishing s
 
 - `--group act` resolves to `active`, `--group BACKLOG` resolves to `backlog`, `--group don` resolves to `done`, `--group tod` resolves to `todo`
 - `--status prog` resolves to `inprogress`, `--status READY` resolves to `ready`, `--status won` resolves to `wontfix`
+
+TODO find a better example of a substring or if there is none, drop the point.
+
 - An exact match takes priority over substring matching (e.g. `--group backlog` matches even though `backlog` is also a substring of… itself)
 - If the input is ambiguous (matches multiple values), the command prints an error listing the candidates
 - If the input does not match any value, the command prints an error listing all valid values
@@ -401,6 +421,8 @@ Options:
 <!-- cli_transition_help:end -->
 
 Example usage:
+
+TODO drop this and related commands from the following example: cp -a .tickets other
 
 <!-- cli_transition_example:start -->
 ```bash
@@ -619,7 +641,7 @@ As mentioned our CLI distribution is a bit rough right now and cleaning that up 
 
 The CLI is a Bash script, with a Python dependency, distributed via npm.  For more details on why this is the case see Implementation Notes, below.
 
-TODO
+TODO document how to install the prerequisites and the CLI via npx
 
 # Agent Skills
 
@@ -645,7 +667,7 @@ The `tickets-init` skill is a convenience skill that wraps the `tickets init` CL
 
 Example usage:
 
-```
+```Prompt
 Initialize the tickets system with the code TIK
 ```
 
@@ -657,13 +679,13 @@ After triggering this skill you will likely iterate with the coding agent to fle
 
 Example usage - initial ticket creation:
 
-```
+```Prompt
 Create a ticket for porting the tickets CLI from bash to Rust
 ```
 
 Follow up prompts to flesh out the requirements and solution:
 
-```
+```Prompt
 The functional correctness of Rust ported CLI can be verified using the existing test suite.  All tests should pass.
 ```
 
@@ -673,7 +695,7 @@ The `tickets-list` skill is a convenience skill that uses the `tickets list` CLI
 
 Example usage:
 
-```
+```Prompt
 Show me all tickets in the backlog
 
 → Skill "tickets-list"
@@ -682,7 +704,7 @@ $ ./tickets.sh list --group backlog
 
 Or:
 
-```
+```Prompt
 What is our WIP
 
 → Skill "tickets-list"
@@ -695,19 +717,19 @@ The `tickets-review` skill uses the capabilities of the coding agent to review t
 
 Example usage:
 
-```
+```Prompt
 Review the ticket
 ```
 
 Or:
 
-```
+```Prompt
 Review ticket TIK033
 ```
 
 Or even:
 
-```
+```Prompt
 let's work on it TIK054.  review it
 
 + Thought: 304ms
@@ -728,7 +750,7 @@ Execution plans also intentionally break the tasks up into phases of at most 5 t
 
 Most of the time, after you have iterated the Requirements and Technical Solution to your satisfaction with the coding agent, the simple prompt:
 
-```
+```Prompt
 Define the execution plan
 ```
 
@@ -740,19 +762,19 @@ The `tickets-transition` skill is a lightweight convenience skill for invoking t
 
 You might use it by telling the agent to transition s specific skill:
 
-```
+```Prompt
 Mark ticket TIK055 as done
 ```
 
 Or if you have been working on a ticket with the agent then simply:
 
-```
+```Prompt
 Move this ticket to complete
 ```
 
 You can also specify multiple tickets and the agent will invoke the CLI for each:
 
-```
+```Prompt
 Update TIK055, TIK056 and 42 through 45 to done
 ```
 
@@ -764,13 +786,13 @@ The `tickets-rank` skill is a convenience skill over the four ranking `tickets` 
 
 You can describe the ranking operation you want to perform and the agent will resolve your intent to the appropriate CLI invocation(s).  For example:
 
-```
+```Prompt
 Move this ticket to the top of the backlog
 ```
 
 Or:
 
-```
+```Prompt
 Move TIK043 down three slots.
 ```
 
@@ -788,15 +810,17 @@ apm install https://github.com/polycloudinc/ticketscli.git --dev --target <your 
 
 The `--dev` switch marks `ticketscli` as a dev dependency - this is only important if your project itself publishes an APM package so that ticketscli does not become a runtime dependency of your project.
 
-See the APM docs for the list of [valid target values](https://microsoft.github.io/apm/reference/cli/install/#target-selection)
+See the APM docs for the list of [valid target values](https://microsoft.github.io/apm/reference/cli/install/#target-selection).  For example to install for use with [OpenCode](https://opencode.ai/):
 
-TODO
+```bash
+apm install https://github.com/polycloudinc/ticketscli.git --dev --target opencode
+```
 
 ### Installing via Vercel skills.sh
 
 Adding parallel support for distribution via Vercel skills.sh is in our roadmap.
 
-TODO
+TODO link to ticket for this work 
 
 # Feature Roadmap
 
@@ -812,6 +836,8 @@ TODO
 
 ## Prerequisites
 
+TODO merge this into the CLI installation section 
+
 The CLI requires **Python 3** and the **PyYAML** library. YAML operations are handled by a bundled Python helper script (`yz.py`) instead of an external `yq` binary.
 
 ```bash
@@ -823,27 +849,21 @@ python3 -c "import yaml; print(yaml.__version__)"
 tickets validate --all   # should pass without errors
 ```
 
-The dev container Dockerfile installs Python 3 and PyYAML automatically.
-
-## Directory Resolution
-
-The CLI resolves the tickets directory on every invocation:
-
-| Condition | Behavior |
-|---|---|
-| `--tickets-dir` / `-d` flag provided | Uses the given path (no resolution) |
-| `.tickets/` exists, `_tickets/` does not | Uses `.tickets/` (silent) |
-| `_tickets/` exists, `.tickets/` does not | Uses `_tickets/` and prints a deprecation warning to stderr: `Warning: _tickets is deprecated. Rename the directory to .tickets to migrate.` |
-| Both exist | Error: `Error: both .tickets and _tickets directories exist. Remove one or use --tickets-dir.` |
-| Neither exists | Defaults to `.tickets/` |
-
 # Implementation Notes
+
+## Ticket Template Resolution
+
+The ticket template is always resolved from the directory where `tickets.sh` resides (`$(dirname "$(readlink -f "$0")")/Ticket.md`). Both `tickets create` and `tickets validate` locate the template alongside the script itself. The `tickets init` subcommand no longer copies the template into the project directory.
+
+## yz.py
+
+### Introduction
 
 `tickets.sh` is a bash script that delegates all YAML operations to a bundled Python helper (`yz.py`) using PyYAML. The helper is located alongside `tickets.sh` in the npm package and handles both front matter manipulation in Markdown files and plain YAML file operations.
 
-The Python dependency is a shim that we used to get consistent processing of YAML front matter.
+TODO elaborate the two incompatible yq projects and why we found it necessary to create yz.py and what problem it solves.
 
-The ticket template is always resolved from the directory where `tickets.sh` resides (`$(dirname "$(readlink -f "$0")")/Ticket.md`). Both `tickets create` and `tickets validate` locate the template alongside the script itself. The `tickets init` subcommand no longer copies the template into the project directory.
+The Python dependency is a shim that we used to get consistent processing of YAML front matter.
 
 ### Reads
 
@@ -877,5 +897,7 @@ sed -i 's/^ticket_rank: null$/ticket_rank:/' "$ticket"
 ```
 
 ### Creating New Front Matter
+
+TODO verify the following statement against the actual code
 
 Writing front matter from scratch (e.g. in `cmd_create`) uses `printf`, not yq, since there is no existing YAML to manipulate.
