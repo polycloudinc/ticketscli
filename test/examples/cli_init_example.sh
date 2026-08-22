@@ -31,7 +31,7 @@ run() {
 }
 
 result_description() {
-  echo "Resultant settings.yaml file in the \`.tickets/\` directory:"
+  echo "Resultant \`settings.yaml\` file in the \`.tickets/\` directory:"
 }
 
 result_file() {

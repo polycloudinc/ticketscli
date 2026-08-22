@@ -422,8 +422,6 @@ Options:
 
 Example usage:
 
-TODO drop this and related commands from the following example: cp -a .tickets other
-
 <!-- cli_transition_example:start -->
 ```bash
 $ tickets list
@@ -466,39 +464,6 @@ Code     Subject                                               Rank Status
 -------- ---------------------------------------------------- ----- ------------
 TST002   Bravo Ticket                                             1 ready       
 TST003   Charlie Ticket                                           2 inprogress  
-TST001   Alpha Ticket                                             - complete    
-TST004   Delta Ticket                                             - complete    
-TST005   Echo Ticket                                              - duplicate   
-TST006   Foxtrot Ticket                                           - wontfix     
--------- ---------------------------------------------------- ----- ------------
-6 matching from 6 total tickets
-
-$ cp -a .tickets other
-
-
-$ tickets list -d other
-
-Code     Subject                                               Rank Status      
--------- ---------------------------------------------------- ----- ------------
-TST002   Bravo Ticket                                             1 ready       
-TST003   Charlie Ticket                                           2 inprogress  
-TST001   Alpha Ticket                                             - complete    
-TST004   Delta Ticket                                             - complete    
-TST005   Echo Ticket                                              - duplicate   
-TST006   Foxtrot Ticket                                           - wontfix     
--------- ---------------------------------------------------- ----- ------------
-6 matching from 6 total tickets
-
-$ tickets transition --ticket TST003 --target ready -d other
-
-Transitioned TST003 to 'ready'.
-
-$ tickets list -d other
-
-Code     Subject                                               Rank Status      
--------- ---------------------------------------------------- ----- ------------
-TST002   Bravo Ticket                                             1 ready       
-TST003   Charlie Ticket                                           2 ready       
 TST001   Alpha Ticket                                             - complete    
 TST004   Delta Ticket                                             - complete    
 TST005   Echo Ticket                                              - duplicate   
@@ -818,9 +783,7 @@ apm install https://github.com/polycloudinc/ticketscli.git --dev --target openco
 
 ### Installing via Vercel skills.sh
 
-Adding parallel support for distribution via Vercel skills.sh is in our roadmap.
-
-TODO link to ticket for this work 
+Adding parallel support for distribution via Vercel skills.sh is in our roadmap — see [TIK065 - Add Vercel Skills Sh Distribution Channel](.tickets/TIK065%20-%20Add%20Vercel%20Skills%20Sh%20Distribution%20Channel.md).
 
 # Feature Roadmap
 
@@ -861,9 +824,14 @@ The ticket template is always resolved from the directory where `tickets.sh` res
 
 `tickets.sh` is a bash script that delegates all YAML operations to a bundled Python helper (`yz.py`) using PyYAML. The helper is located alongside `tickets.sh` in the npm package and handles both front matter manipulation in Markdown files and plain YAML file operations.
 
-TODO elaborate the two incompatible yq projects and why we found it necessary to create yz.py and what problem it solves.
+The CLI originally used ad-hoc `sed`/`grep` pipelines for front matter manipulation, which were fragile. We consolidated everything onto `yq` — and promptly ran into the fact that there are two completely unrelated projects sharing that name:
 
-The Python dependency is a shim that we used to get consistent processing of YAML front matter.
+- [mikefarah/yq](https://github.com/mikefarah/yq) — a standalone Go binary with its own expression language and native Markdown front matter support (`--front-matter extract`/`process`). This is the one we standardized on first, but distributing a system-level Go binary alongside an npm package is awkward, requiring a separate download and install step.
+- [kislyuk/yq](https://github.com/kislyuk/yq) — a Python package, but merely a thin wrapper around the `jq` binary: it requires `jq` to be installed and has no front matter support at all, so it was never a viable alternative.
+
+The name collision alone causes real confusion — any instruction to "install yq" is ambiguous, and scripts written for one project fail against the other. And even when the right project is installed, depending on an externally provided `yq` exposes us to potential conflicts with whatever version the user happens to have on their system. We avoid these conflicts entirely by creating our own script: `yz.py`, a small helper bundled directly in the npm package that uses PyYAML for all YAML operations — front matter reads and writes in Markdown tickets, and plain YAML reads and writes for `settings.yaml` and `statistics.yaml`. The only dependencies are `python3` and `pyyaml`, and no system-level `yq` or `jq` binary is required. The Python dependency is a shim that gives us consistent processing of YAML front matter.
+
+`yz.py` is an interim solution: it will be retired, along with the Python dependency, when the CLI is rewritten in Rust — see [TIK021 - Rewrite CLI in Rust](.tickets/TIK021%20-%20Rewrite%20CLI%20in%20Rust.md).
 
 ### Reads
 

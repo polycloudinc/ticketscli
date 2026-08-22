@@ -38,22 +38,6 @@ run() {
   echo '$ tickets list'
   echo ''
   "$TICKETS_CLI" list
-  echo ''
-  echo '$ cp -a .tickets other'
-  echo ''
-  cp -a .tickets other
-  echo ''
-  echo '$ tickets list -d other'
-  echo ''
-  "$TICKETS_CLI" list -d other
-  echo ''
-  echo '$ tickets transition --ticket TST003 --target ready -d other'
-  echo ''
-  "$TICKETS_CLI" transition --ticket TST003 --target ready -d other
-  echo ''
-  echo '$ tickets list -d other'
-  echo ''
-  "$TICKETS_CLI" list -d other
 }
 
 result_description() {
