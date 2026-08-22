@@ -248,54 +248,36 @@ Options:
 ```
 <!-- cli_list_help:end -->
 
-TODO clean up the status discussion and flag discussion
+Tickets can be filtered by status group or by an individual status. Each status belongs to one filter group:
 
-The `ticket_status` field stores one of the following lowercase codes:
+| Status | Filter group (`--group`) |
+| --- | --- |
+| `backlog` | `backlog` |
+| `ready` | `active` |
+| `inprogress` | `active` |
+| `complete` | `done` |
+| `duplicate` | `done` |
+| `wontfix` | `done` |
 
-| Status (`ticket_status` value) | Display name      | Filter Group      |
-| ------------------------------ | ----------------- | ----------------- |
-| `backlog`                      | Backlog           | `--group backlog` |
-| `ready`                        | Ready             | `--group active`  |
-| `inprogress`                   | In Progress       | `--group active`  |
-| `complete`                     | Complete          | `--group done`    |
-| `duplicate`                    | Duplicate         | `--group done`    |
-| `wontfix`                      | Won't Fix         | `--group done`    |
+The `--group todo` filter combines the `backlog` and `active` groups, returning `backlog`, `ready`, and `inprogress` tickets sorted by rank.
 
-The `--group todo` filter returns tickets from both `--group backlog` and `--group active` (i.e., `backlog`, `ready`, `inprogress`), sorted by rank.
-
-## CLI Filters
-
-| Flag                     | Short | Matches                                   |
-|--------------------------|-------|-------------------------------------------|
-| `--group backlog`        | `-g`  | `backlog`                                 |
-| `--group active`         | `-g`  | `ready`, `inprogress`                     |
-| `--group done`           | `-g`  | `complete`, `duplicate`, `wontfix`        |
-| `--group todo`           | `-g`  | `backlog`, `ready`, `inprogress`          |
-| `--status <value>`       | `-s`  | Tickets whose `ticket_status` matches the given value. Valid values (case-insensitive, single-word): `backlog`, `ready`, `inprogress`, `complete`, `duplicate`, `wontfix`. |
-| `--limit <N>`            | `-l`  | Limits output to the first N tickets after filtering and sorting. `N` must be a positive integer >= 1. If the limit exceeds the number of matching tickets, all are displayed.
+| Flag | Short | Description |
+| --- | --- | --- |
+| `--group <group>` | `-g` | Filter by status group: `backlog`, `active`, `done`, or `todo`. |
+| `--status <status>` | `-s` | Filter by a single status code. |
+| `--limit <N>` | `-l` | Limit output to the first N tickets after filtering and sorting. `N` must be a positive integer. |
 
 Only one filter (`--group` or `--status`) may be specified at a time. `--limit` is not a filter and may be combined with `--group` or `--status`.
 
 ### List Table Output
 
-TODO simplify the discussion of column width to a single paragraph explanation and an example invocation with a custom width.
+The `list` subcommand renders tickets as a four-column table: **Code**, **Subject**, **Rank**, and **Status**. The table adapts to the terminal width detected by `tput cols`, falling back to `$COLUMNS` and then `80`; Code, Rank, and Status use fixed widths while Subject absorbs the remaining space and is truncated with `...` when necessary. On very narrow terminals, minimum column widths are preserved even if lines overflow. Completed, duplicate, and won't-fix tickets display `-` in the Rank column; all other tickets display their numeric rank.
 
-The `list` subcommand renders tickets as a four-column table: **Code**, **Subject**, **Rank**, and **Status**.
+In a non-interactive shell, set `COLUMNS` to render the table at a specific width:
 
-Output adapts to the available terminal width (detected via `tput cols` with a fallback to `$COLUMNS`/`80`). Column widths are computed as follows:
-
-| Column   | Width                                              |
-|----------|----------------------------------------------------|
-| Code     | Fixed at 8                                         |
-| Rank     | Fixed at 5                                         |
-| Status   | Fixed at 12                                        |
-| Subject  | `terminal_width - 8 - 5 - 12 - 3` (3 accounts for inter-column spaces), clamped to a minimum of 10 |
-
-The Subject column absorbs all remaining space. When a subject exceeds the computed Subject width, it is truncated at `subject_width - 3` characters and `...` is appended.
-
-On extremely narrow terminals (below ~40 columns), column minimums are enforced and line overflow is tolerated rather than breaking table structure.
-
-Completed, duplicate, and won't-fix tickets display `-` in the Rank column. All other tickets display their numeric rank.
+```bash
+COLUMNS=100 tickets list
+```
 
 ### Fuzzy Matching
 
