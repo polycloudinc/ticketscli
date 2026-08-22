@@ -286,9 +286,6 @@ Both `--group` and `--status` accept case-insensitive input and distinguishing s
 - `--group act` resolves to `active`, `--group BACKLOG` resolves to `backlog`, `--group don` resolves to `done`, `--group tod` resolves to `todo`
 - `--status prog` resolves to `inprogress`, `--status READY` resolves to `ready`, `--status won` resolves to `wontfix`
 
-TODO find a better example of a substring or if there is none, drop the point.
-
-- An exact match takes priority over substring matching (e.g. `--group backlog` matches even though `backlog` is also a substring of… itself)
 - If the input is ambiguous (matches multiple values), the command prints an error listing the candidates
 - If the input does not match any value, the command prints an error listing all valid values
 
@@ -588,7 +585,28 @@ As mentioned our CLI distribution is a bit rough right now and cleaning that up 
 
 The CLI is a Bash script, with a Python dependency, distributed via npm.  For more details on why this is the case see Implementation Notes, below.
 
-TODO document how to install the prerequisites and the CLI via npx
+Install the CLI globally via npm (exposing the `tickets` command), or run it on demand with npx:
+
+```bash
+npm install -g @polycloudinc/ticketscli
+tickets --help
+
+# or, without a global install:
+npx @polycloudinc/ticketscli list
+```
+
+The package is published to npmjs.org and mirrored to GitHub Packages (`npm install @polycloudinc/ticketscli --registry https://npm.pkg.github.com`).
+
+The CLI requires **Python 3** and the **PyYAML** library. YAML operations are handled by a bundled Python helper script (`yz.py`) instead of an external `yq` binary.
+
+```bash
+# Install dependencies
+pip install pyyaml
+
+# Verify
+python3 -c "import yaml; print(yaml.__version__)"
+tickets validate --all   # should pass without errors
+```
 
 # Agent Skills
 
@@ -779,21 +797,6 @@ The backlog is as follows:
 TODO
 ```
 
-## Prerequisites
-
-TODO merge this into the CLI installation section 
-
-The CLI requires **Python 3** and the **PyYAML** library. YAML operations are handled by a bundled Python helper script (`yz.py`) instead of an external `yq` binary.
-
-```bash
-# Install dependencies
-pip install pyyaml
-
-# Verify
-python3 -c "import yaml; print(yaml.__version__)"
-tickets validate --all   # should pass without errors
-```
-
 # Implementation Notes
 
 ## Ticket Template Resolution
@@ -848,6 +851,4 @@ sed -i 's/^ticket_rank: null$/ticket_rank:/' "$ticket"
 
 ### Creating New Front Matter
 
-TODO verify the following statement against the actual code
-
-Writing front matter from scratch (e.g. in `cmd_create`) uses `printf`, not yq, since there is no existing YAML to manipulate.
+Writing front matter from scratch (e.g. in `cmd_create`) uses `printf`, not `yz.py`, since there is no existing YAML to manipulate.
