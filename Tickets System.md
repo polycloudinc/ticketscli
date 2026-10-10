@@ -102,6 +102,12 @@ Regardless of whether you are interacting with ticketscli directly via it's CLI 
 - Once work starts it's status is changed to _In Progress_ and the feature is delivered and verified according to the execution plan.
 - When fully delivered the ticket status is changed to _Complete_.
 
+## Ticket Review
+
+The `tickets-review` skill reviews a ticket's requirements, technical solution, and execution plan against the current codebase and relevant project documentation or conventions. It identifies concrete gaps or mismatches, explains their impact, and distinguishes blockers from non-blocking observations when assessing readiness. Ticket review is read-only; it does not edit tickets or code.
+
+When issues are found, each has a bold `Issue N: Brief Title` caption without an additional number before it, a left-aligned summary paragraph, and a plain-text `Options:` caption followed by a bullet list of possible resolutions. A single available solution is still shown as one bullet. The `tickets-review` skill preserves the Ticket Status, Open Issues, and Readiness sections and the no-issues response. After the full report and readiness assessment, it asks exactly `Want me to step through these one-by-one?`. On agreement, it asks about one issue at a time with selectable options and a custom response, without modifying files; on decline, it ends after the full report.
+
 ## Commit Preparation
 
 The Assist Commit skill helps a developer prepare commits without executing them. It reviews staged and unstaged changes against the current ticket, when one is clearly identified, and proposes one or more logical commits for user approval.

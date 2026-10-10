@@ -3,9 +3,11 @@ generated_at: '2026-06-14T14:48:32.214105+00:00'
 apm_version: 0.18.0
 dependencies: []
 local_deployed_files:
+- .agents/skills/tickets-assist-commit
 - .agents/skills/tickets-create
 - .agents/skills/tickets-execute
 - .agents/skills/tickets-execution-plan
+- .agents/skills/tickets-init
 - .agents/skills/tickets-list
 - .agents/skills/tickets-rank
 - .agents/skills/tickets-review
