@@ -41,6 +41,8 @@ Keep a blank line before and after each Markdown heading. Tasks and agent verifi
 
 ### VH01: Human Verification Name
 
+Status: Pending
+
 Prerequisites and working directory: state required setup and where to run commands.
 
 Instructions:
@@ -72,6 +74,8 @@ Expected result: describe how the human can recognize success.
 ### Human Verification Steps
 
 #### VH01: Human Verification Name
+
+Status: Pending
 
 Prerequisites and working directory: state required setup and where to run commands.
 
@@ -106,6 +110,7 @@ Provide at least one human verification procedure in a single-plan format and in
 
 Each human verification must include:
 
+- A `Status: Pending` marker directly below its heading. Treat a missing marker in a legacy ticket as pending. Change the marker to `Status: Passed` only after the user explicitly confirms success; skipped, stopped, failed, or unconfirmed checks remain pending.
 - Prerequisites and working directory.
 - Ordered, step-by-step instructions, flush-left and not nested or indented under a list.
 - One or more copy-pasteable commands needed to conduct the check. Put every command in its own fenced code block; never combine multiple commands in one block. Keep command labels and fences flush-left, outside lists, so Markdown tools can provide a single-click copy action.

@@ -639,6 +639,7 @@ We provide several skills, some of which are convenience skills thst simply tran
 - tickets-list
 - tickets-review
 - tickets-execution-plan
+- tickets-assist-verification
 - tickets-transition
 - tickets-rank
 
@@ -727,7 +728,7 @@ The `tickets-execution-plan` skill uses the coding agent to review the Requireme
 
 Execution plans are a linear set of tasks that should be performed in sequence.
 
-Execution plans also intentionally break the tasks up into phases of at most 5 tasks, and for each phase, at least two verification steps are defined.
+Break work into phases when the task count exceeds five or when logically different components can be completed and tested individually. Plans distinguish deterministic checks for the agent from step-by-step human verification procedures. Human verification sections use `VH##` codes and start with `Status: Pending`; only explicit user confirmation changes a check to `Status: Passed`.
 
 Most of the time, after you have iterated the Requirements and Technical Solution to your satisfaction with the coding agent, the simple prompt:
 
@@ -736,6 +737,16 @@ Define the execution plan
 ```
 
 Will yield a good plan.  You should review the plan before letting the agent execute it.  If you see anything that needs fixing you can prompt the agent further to make those corrections 
+
+## tickets-assist-verification Skill
+
+The `tickets-assist-verification` skill guides the user through pending human verification procedures from completed phases or a completed single-plan execution plan. Before each procedure it asks the user to proceed, skip, or stop. When proceeding, it presents instructions and individually copyable commands one at a time. A verification is marked passed only after the user explicitly confirms success; skipped, stopped, failed, or unconfirmed checks remain pending for a later run.
+
+Example usage:
+
+```Prompt
+Assist me with the remaining human verifications for this ticket
+```
 
 ## tickets-transition Skill
 
