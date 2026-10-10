@@ -102,6 +102,16 @@ Regardless of whether you are interacting with ticketscli directly via it's CLI 
 - Once work starts it's status is changed to _In Progress_ and the feature is delivered and verified according to the execution plan.
 - When fully delivered the ticket status is changed to _Complete_.
 
+## Commit Preparation
+
+The Assist Commit skill helps a developer prepare commits without executing them. It reviews staged and unstaged changes against the current ticket, when one is clearly identified, and proposes one or more logical commits for user approval.
+
+- Associate each commit with one ticket where possible; a ticket may have multiple commits.
+- Keep unrelated ancillary changes in separate commits without a ticket number when appropriate.
+- Use `<ticket code> <short summary>` for new ticket-associated commit messages, without a dash. Historical messages are not rewritten.
+- Put newly created future-work tickets and ticket metadata changes caused by status transitions into a final `Backlog grooming` commit when they are part of the same series.
+- The agent may unstage and restage approved changes but does not run `git commit`; the developer reviews and runs each provided command.
+
 # Command-Line Interface (CLI)
 
 ## Introduction

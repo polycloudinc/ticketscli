@@ -22,5 +22,8 @@ The CLI is published as `@polycloudinc/ticketscli` (invoke via `npx @polycloudin
 
 ## Commit Conventions
 
-- One ticket per commit; the commit message is the ticket code and name, e.g. `TIK029 - Publish Project As Open Source`.
-- `./gitct.sh` infers the commit message from the single staged ticket file under `.tickets/` and prompts for confirmation before committing.
+- Associate each commit with one ticket where possible. A ticket may be represented by multiple commits when that improves clarity.
+- Ancillary changes that are unrelated to a ticket may be committed separately without a ticket number.
+- New ticket-associated commit messages use the ticket code followed by a short summary without a dash, e.g. `TIK029 Publish Project As Open Source`.
+- New future-work tickets and ticket metadata changes from status transitions belong in a final `Backlog grooming` commit when they are part of the same commit series.
+- `./gitct.sh` infers the no-dash commit message from one staged ticket file and prompts for confirmation. Use a direct `git commit` command for ancillary commits or grouped backlog-grooming changes.

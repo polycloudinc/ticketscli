@@ -23,13 +23,15 @@ fi
 
 ticket_file="${staged_tickets[0]}"
 ticket_name="$(basename "$ticket_file" .md)"
+ticket_code="${ticket_name%% - *}"
+ticket_summary="${ticket_name#* - }"
 
 echo "Staged files:"
 printf '  %s\n' "${all_files[@]}"
-echo "Proposed commit message: $ticket_name"
+echo "Proposed commit message: $ticket_code $ticket_summary"
 read -r -p "Proceed with commit? [y/N] " response
 if [[ "$response" =~ ^[Yy]$ ]]; then
-    git commit -m "$ticket_name"
+    git commit -m "$ticket_code $ticket_summary"
 else
     echo "Commit aborted."
     exit 1
