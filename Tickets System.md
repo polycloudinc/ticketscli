@@ -110,13 +110,14 @@ When issues are found, each has a bold `Issue N: Brief Title` caption without an
 
 ## Commit Preparation
 
-The Assist Commit skill helps a developer prepare commits without executing them. It reviews staged and unstaged changes against the current ticket, when one is clearly identified, and proposes one or more logical commits for user approval.
+The Assist Commit skill is triggered by a standalone `commit` prompt as well as requests such as `let's commit` or `help me commit`. It reviews staged and unstaged changes against the current ticket, when one is clearly identified, and proposes one or more logical commits for user approval. After staging and verifying a commit, it displays the message in a fenced `text` block followed by the copy-pasteable `git commit` command in a separate fenced `bash` block, then asks whether the user wants the agent to execute it or will run it themselves. The agent executes only after the user explicitly selects **Yes, execute the commit**.
 
 - Associate each commit with one ticket where possible; a ticket may have multiple commits.
 - Keep unrelated ancillary changes in separate commits without a ticket number when appropriate.
 - Use `<ticket code> <short summary>` for new ticket-associated commit messages, without a dash. Historical messages are not rewritten.
-- Put newly created future-work tickets and ticket metadata changes caused by status transitions into a final `Backlog grooming` commit when they are part of the same series.
-- The agent may unstage and restage approved changes but does not run `git commit`; the developer reviews and runs each provided command.
+- Keep the current ticket file, including its own status transition, with its ticket-associated commit. After transitions or rank changes, audit all changed ticket files for collateral rank, timestamp, completion-field, or YAML-serialization edits; group those collateral changes and newly created future-work tickets into a final `Backlog grooming` commit.
+- Show each proposed commit message in its own fenced `text` block immediately before the separately fenced `bash` commit command.
+- The agent may unstage and restage approved changes. It runs `git commit` only after the user selects **Yes, execute the commit**; otherwise it provides the exact command for the developer to run.
 
 # Command-Line Interface (CLI)
 
