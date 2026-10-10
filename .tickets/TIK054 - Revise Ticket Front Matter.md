@@ -5,7 +5,7 @@ ticket_code: TIK054
 ticket_name: Revise Ticket Front Matter
 ticket_status: complete
 ticket_priority: Medium
-ticket_rank: null
+ticket_rank:
 ticket_created: '2026-08-15T16:56:25Z'
 ticket_updated: '2026-08-16T16:48:46Z'
 ticket_completed: '2026-08-16T16:48:36Z'
