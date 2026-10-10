@@ -5,7 +5,7 @@ ticket_code: TIK067
 ticket_name: Assist Commit Skill
 ticket_status: complete
 ticket_priority: Medium
-ticket_rank: null
+ticket_rank:
 ticket_created: '2026-10-10T01:54:48Z'
 ticket_updated: '2026-10-10T02:48:01Z'
 ticket_completed: '2026-10-10T02:47:51Z'

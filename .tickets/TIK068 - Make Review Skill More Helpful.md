@@ -6,9 +6,9 @@ ticket_name: Make Review Skill More Helpful
 ticket_status: backlog
 ticket_priority: Medium
 ticket_rank: 22
-ticket_created: 2026-10-10T03:49:56Z
-ticket_updated: 2026-10-10T05:36:48Z
-ticket_completed:
+ticket_created: '2026-10-10T03:49:56Z'
+ticket_updated: '2026-10-10T05:36:48Z'
+ticket_completed: null
 ---
 # Introduction
 

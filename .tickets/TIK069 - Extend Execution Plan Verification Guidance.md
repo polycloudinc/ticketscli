@@ -6,9 +6,9 @@ ticket_name: Extend Execution Plan Verification Guidance
 ticket_status: backlog
 ticket_priority: Medium
 ticket_rank: 23
-ticket_created: 2026-10-10T05:50:03Z
-ticket_updated: 2026-10-10T05:50:03Z
-ticket_completed:
+ticket_created: '2026-10-10T05:50:03Z'
+ticket_updated: '2026-10-10T05:50:03Z'
+ticket_completed: null
 ---
 # Introduction
 
