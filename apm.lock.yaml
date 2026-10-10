@@ -1,14 +1,196 @@
 lockfile_version: '1'
-generated_at: '2026-06-14T14:48:32.214105+00:00'
+generated_at: '2026-10-10T06:39:54.713137+00:00'
 apm_version: 0.18.0
 dependencies: []
+deployments:
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/tickets-assist-commit
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/tickets-assist-commit/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:d42aac5207afbc9656b27c9ed73c7539a9075d6718e96fedd08db35901e463dd
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/tickets-create
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/tickets-create/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:ffecfb2b7c174fce8d6542c4214a093bf2d60998178e1befbd617ab45ef14657
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/tickets-execute
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/tickets-execute/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:2f6ef07108515ef822ec668aa39680586556f7d01d4fdb86fe4f8d6a5cfd12ea
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/tickets-execution-plan
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/tickets-execution-plan/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:74fed86b4cb6cd41e989772b9e5d3ee954c4f11a3d5c168d98c2e1545cf4e529
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/tickets-init
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/tickets-init/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:5e958e70fb92a803ded537fc2448cbf0983b1db5396d91f20519be6621b1388d
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/tickets-list
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/tickets-list/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:e805a7015075a380850669c4c5c69d073c77e72c0b2fda0204e4cda3cad1d3cd
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/tickets-rank
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/tickets-rank/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:efae086c50816b8f0c533c902db204695822b9c96372f68ba2d1c66ef053c302
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/tickets-review
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/tickets-review/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:0e4d47f9739f6a2bf4028a6db287afd1af8fad5192b051695749494c451c44df
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/tickets-transition
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/tickets-transition/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:f9bdbc0c122743a415fab78f0c59ef6ca52dac1721e52918da454a6f440eaec9
 local_deployed_files:
 - .agents/skills/tickets-assist-commit
+- .agents/skills/tickets-assist-commit/SKILL.md
 - .agents/skills/tickets-create
+- .agents/skills/tickets-create/SKILL.md
 - .agents/skills/tickets-execute
+- .agents/skills/tickets-execute/SKILL.md
 - .agents/skills/tickets-execution-plan
+- .agents/skills/tickets-execution-plan/SKILL.md
 - .agents/skills/tickets-init
+- .agents/skills/tickets-init/SKILL.md
 - .agents/skills/tickets-list
+- .agents/skills/tickets-list/SKILL.md
 - .agents/skills/tickets-rank
+- .agents/skills/tickets-rank/SKILL.md
 - .agents/skills/tickets-review
+- .agents/skills/tickets-review/SKILL.md
 - .agents/skills/tickets-transition
+- .agents/skills/tickets-transition/SKILL.md
+local_deployed_file_hashes:
+  .agents/skills/tickets-assist-commit/SKILL.md: sha256:d42aac5207afbc9656b27c9ed73c7539a9075d6718e96fedd08db35901e463dd
+  .agents/skills/tickets-create/SKILL.md: sha256:ffecfb2b7c174fce8d6542c4214a093bf2d60998178e1befbd617ab45ef14657
+  .agents/skills/tickets-execute/SKILL.md: sha256:2f6ef07108515ef822ec668aa39680586556f7d01d4fdb86fe4f8d6a5cfd12ea
+  .agents/skills/tickets-execution-plan/SKILL.md: sha256:74fed86b4cb6cd41e989772b9e5d3ee954c4f11a3d5c168d98c2e1545cf4e529
+  .agents/skills/tickets-init/SKILL.md: sha256:5e958e70fb92a803ded537fc2448cbf0983b1db5396d91f20519be6621b1388d
+  .agents/skills/tickets-list/SKILL.md: sha256:e805a7015075a380850669c4c5c69d073c77e72c0b2fda0204e4cda3cad1d3cd
+  .agents/skills/tickets-rank/SKILL.md: sha256:efae086c50816b8f0c533c902db204695822b9c96372f68ba2d1c66ef053c302
+  .agents/skills/tickets-review/SKILL.md: sha256:0e4d47f9739f6a2bf4028a6db287afd1af8fad5192b051695749494c451c44df
+  .agents/skills/tickets-transition/SKILL.md: sha256:f9bdbc0c122743a415fab78f0c59ef6ca52dac1721e52918da454a6f440eaec9
