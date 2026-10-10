@@ -783,7 +783,7 @@ Move TIK043 down three slots.
 
 We support [Agent Package Manager](https://microsoft.github.io/apm/) for distributing the ticketscli agent skills.  
 
-To install via Agent Package Manager you must first [install the APM CLI](https://microsoft.github.io/apm/#install-apm).
+The project devcontainer includes the APM CLI. When working outside the devcontainer, first [install the APM CLI](https://microsoft.github.io/apm/#install-apm).
 
 ```bash
 apm install https://github.com/polycloudinc/ticketscli.git --dev --target <your coding agent>

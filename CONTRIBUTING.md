@@ -7,7 +7,7 @@ A devcontainer is provided under `.devcontainer/` (requires Docker and the devco
 - `bash .devcontainer/up.sh` — build and start the devcontainer, then drop into a shell inside it
 - `bash .devcontainer/down.sh` — stop and remove the container
 
-The image includes git, python3 with pyyaml, and opencode.
+The image includes git, python3 with pyyaml, the APM CLI, and opencode.
 
 ## Ticket-Driven Workflow
 
