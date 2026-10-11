@@ -108,17 +108,6 @@ The `tickets-review` skill reviews a ticket's requirements, technical solution, 
 
 When issues are found, each has a bold `Issue N: Brief Title` caption without an additional number before it, a left-aligned summary paragraph, and a plain-text `Options:` caption followed by a bullet list of possible resolutions. A single available solution is still shown as one bullet. The `tickets-review` skill preserves the Ticket Status, Open Issues, and Readiness sections and the no-issues response. After the full report and readiness assessment, it asks exactly `Want me to step through these one-by-one?`. On agreement, it asks about one issue at a time with selectable options and a custom response, without modifying files; on decline, it ends after the full report.
 
-## Commit Preparation
-
-The Assist Commit skill is triggered by a standalone `commit` prompt as well as requests such as `let's commit` or `help me commit`. It reviews staged and unstaged changes against the current ticket, when one is clearly identified, and proposes one or more logical commits for user approval. After staging and verifying a commit, it displays the message in a fenced `text` block followed by the copy-pasteable `git commit` command in a separate fenced `bash` block, then asks whether the user wants the agent to execute it or will run it themselves. The agent executes only after the user explicitly selects **Yes, execute the commit**.
-
-- Associate each commit with one ticket where possible; a ticket may have multiple commits.
-- Keep unrelated ancillary changes in separate commits without a ticket number when appropriate.
-- Use `<ticket code> <short summary>` for new ticket-associated commit messages, without a dash. Historical messages are not rewritten.
-- Keep the current ticket file, including its own status transition, with its ticket-associated commit. After transitions or rank changes, audit all changed ticket files for collateral rank, timestamp, completion-field, or YAML-serialization edits; group those collateral changes and newly created future-work tickets into a final `Backlog grooming` commit.
-- Show each proposed commit message in its own fenced `text` block immediately before the separately fenced `bash` commit command.
-- The agent may unstage and restage approved changes. It runs `git commit` only after the user selects **Yes, execute the commit**; otherwise it provides the exact command for the developer to run.
-
 # Command-Line Interface (CLI)
 
 ## Introduction
@@ -640,7 +629,9 @@ We provide several skills, some of which are convenience skills thst simply tran
 - tickets-list
 - tickets-review
 - tickets-execution-plan
+- tickets-execute
 - tickets-assist-verification
+- tickets-assist-commit
 - tickets-transition
 - tickets-rank
 
@@ -696,7 +687,11 @@ $ ./tickets.sh list --status inprogress
 
 ## tickets-review Skill
 
-The `tickets-review` skill uses the capabilities of the coding agent to review the ticket for completeness and readiness.  Where it identifies issues it presents them as a numbered list so that you can respond and guide the agent on how to address each point with further updates to the ticket.
+The `tickets-review` skill checks a ticket's Requirements, Technical Solution, and Execution Plan against the current codebase and relevant project documentation or conventions. It reports concrete issues affecting clarity, consistency, implementation alignment, or readiness, explains their impact, and distinguishes blockers from non-blocking observations. The review is read-only: it does not modify ticket or code files.
+
+The report has **Ticket Status**, **Open Issues**, and **Readiness** sections. Each issue has a bold `Issue N: Brief Title` caption (without an additional list number), a left-aligned summary paragraph, and a plain-text `Options:` caption followed by solution bullets. Even a single option is shown as a bullet. If no issues are found, the report says so and still gives a readiness assessment.
+
+When issues are found, the skill asks exactly `Want me to step through these one-by-one?` after the full report. If the user agrees, it presents one issue at a time with selectable solution options and a custom response, then recaps the user's choices. Discussing options does not authorize file changes. If the user declines, the skill ends after the report.
 
 Example usage:
 
@@ -725,11 +720,11 @@ $ ls .tickets/ | grep -i TIK054
 
 ## tickets-execution-plan Skill
 
-The `tickets-execution-plan` skill uses the coding agent to review the Requirements and Technical Solution in the ticket and propose an execution plan for delivery.
+The `tickets-execution-plan` skill reviews the ticket's Requirements and Technical Solution and proposes an execution plan. A single plan, or each phase in a phased plan, has separate `Tasks`, `Agent Verifications`, and `Human Verification Steps` sections.
 
-Execution plans are a linear set of tasks that should be performed in sequence.
+Plans are linear and tasks should be performed in sequence. Split work into phases when there are more than five tasks, or when logically different components can be completed and tested individually. Each plan must include at least one agent verification; each phase must include checks for its goals before work proceeds to the next phase. Agent verifications use sequential `VA##` codes, state the expected result, and should favor deterministic, repeatable automated checks. If a check fails, the agent pauses and reports the failure rather than continuing.
 
-Break work into phases when the task count exceeds five or when logically different components can be completed and tested individually. Plans distinguish deterministic checks for the agent from step-by-step human verification procedures. Human verification sections use `VH##` codes and start with `Status: Pending`; only explicit user confirmation changes a check to `Status: Passed`.
+Each single plan or phase also includes at least one human verification procedure. Human checks use sequential `VH##` codes that do not restart between phases. Each procedure has a `Status: Pending` marker, prerequisites and working directory, ordered step-by-step instructions, any required commands in separate flush-left fenced code blocks, and an expected result. Only the user's explicit confirmation of success changes the status to `Status: Passed`; skipped, stopped, failed, and unconfirmed checks remain pending.
 
 Most of the time, after you have iterated the Requirements and Technical Solution to your satisfaction with the coding agent, the simple prompt:
 
@@ -741,12 +736,30 @@ Will yield a good plan.  You should review the plan before letting the agent exe
 
 ## tickets-assist-verification Skill
 
-The `tickets-assist-verification` skill guides the user through pending human verification procedures from completed phases or a completed single-plan execution plan. Before each procedure it asks the user to proceed, skip, or stop. When proceeding, it presents instructions and individually copyable commands one at a time. A verification is marked passed only after the user explicitly confirms success; skipped, stopped, failed, or unconfirmed checks remain pending for a later run.
+The `tickets-assist-verification` skill guides the user through pending human verification procedures in plan order. A check is eligible only when its containing phase has all tasks and agent verifications checked, or when all tasks and agent verifications in a single-plan execution plan are checked. Already-passed checks are excluded; a missing status marker in a legacy ticket is treated as pending. If no eligible pending checks remain, the skill says that there is nothing remaining to verify.
+
+Before each check, the skill shows its code and description and asks the user to **Proceed**, **Skip**, or **Stop**. **Skip** leaves the check pending and moves to the next eligible check; **Stop** ends the session without offering later checks. On **Proceed**, the skill presents prerequisites and then each instruction or command individually, waiting for the user's response between steps. Each command is shown in its own flush-left fenced code block. A failure leaves the check pending and ends guidance for that check. The skill records `Status: Passed` only after explicit user confirmation, updates only that check's status, and summarizes which checks passed and which remain pending or were skipped.
 
 Example usage:
 
 ```Prompt
 Assist me with the remaining human verifications for this ticket
+```
+
+## tickets-assist-commit Skill
+
+The `tickets-assist-commit` skill assists with preparing commits after ticket-based or independent work. It responds to a standalone `commit` prompt and requests such as `let's commit`, `prepare commit`, `assist commit`, or `help me commit`. It reviews staged and unstaged changes and compares them with the current ticket when one is clear; when the ticket is unclear, it asks which ticket applies. Partial ticket work can be committed without completing the ticket.
+
+If the ticket scope appears complete and its status is still `inprogress`, the skill offers a transition to `complete`. It performs the transition through the tickets CLI only after user approval and before proposing the commit strategy. The strategy may contain one or multiple logical commits and identifies changes to exclude. The skill confirms the strategy before changing the index, then stages and verifies one planned commit at a time. For multiple commits, it waits for the preceding commit to finish before preparing the next one.
+
+Associate each commit with one ticket where possible; a ticket may have multiple commits. Keep unrelated ancillary changes in separate commits without a ticket number when appropriate. Ticket-associated messages use `<ticket code> <short summary>` without a dash; historical messages are not rewritten. Keep the current ticket file, including its status transition, with its ticket-associated commit. Group newly created future-work tickets and collateral ticket metadata changes into a final `Backlog grooming` commit when needed.
+
+For each prepared commit, the skill shows the message in its own fenced `text` block, followed by the copy-pasteable `git commit` command in a separate fenced `bash` block. It asks the user to choose **Yes, execute the commit** or **No, I will do it myself**. The agent executes the command only after the user selects **Yes, execute the commit** for the currently verified staged changes and message; otherwise, it leaves the command for the user to run.
+
+Example usage:
+
+```Prompt
+Help me prepare commits for this work
 ```
 
 ## tickets-transition Skill
