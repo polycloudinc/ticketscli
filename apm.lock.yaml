@@ -1,5 +1,5 @@
 lockfile_version: '1'
-generated_at: '2026-10-10T08:54:03.551145+00:00'
+generated_at: '2026-10-16T03:30:39.055843+00:00'
 apm_version: 0.18.0
 dependencies: []
 deployments:
@@ -164,7 +164,7 @@ deployments:
   owners:
   - .
   active_owner: .
-  content_hash: sha256:0e4d47f9739f6a2bf4028a6db287afd1af8fad5192b051695749494c451c44df
+  content_hash: sha256:d540f3020400af0f88b26ce742370df4bb4b629ed294a6306ba3d1716f6280a8
 - kind: project-relative
   target: legacy
   value: .agents/skills/tickets-transition
@@ -213,5 +213,5 @@ local_deployed_file_hashes:
   .agents/skills/tickets-init/SKILL.md: sha256:5e958e70fb92a803ded537fc2448cbf0983b1db5396d91f20519be6621b1388d
   .agents/skills/tickets-list/SKILL.md: sha256:e805a7015075a380850669c4c5c69d073c77e72c0b2fda0204e4cda3cad1d3cd
   .agents/skills/tickets-rank/SKILL.md: sha256:efae086c50816b8f0c533c902db204695822b9c96372f68ba2d1c66ef053c302
-  .agents/skills/tickets-review/SKILL.md: sha256:0e4d47f9739f6a2bf4028a6db287afd1af8fad5192b051695749494c451c44df
+  .agents/skills/tickets-review/SKILL.md: sha256:d540f3020400af0f88b26ce742370df4bb4b629ed294a6306ba3d1716f6280a8
   .agents/skills/tickets-transition/SKILL.md: sha256:f9bdbc0c122743a415fab78f0c59ef6ca52dac1721e52918da454a6f440eaec9

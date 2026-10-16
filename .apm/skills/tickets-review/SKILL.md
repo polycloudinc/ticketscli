@@ -21,7 +21,7 @@ Read the ticket file and review it against the current state of the codebase and
 4. Report how each issue affects the work and distinguish issues that block implementation from non-blocking observations in the Readiness section.
 5. If no issues are found, state that explicitly and indicate readiness based on the ticket and codebase.
 
-This skill is read-only. Do not modify the ticket, code, or other project files while reviewing. Do not create tickets, rank tickets, operate kanban, transition ticket statuses, or edit execution plans.
+The review report and issue walkthrough are read-only. Do not modify any files while reviewing or collecting issue decisions. Only after the walkthrough recap, the user may explicitly choose to apply those decisions to the reviewed ticket. If they choose to apply, update only relevant content in that ticket's Requirements, Technical Solution, and/or Execution Plan, preserving its front matter and all unrelated content. Never modify code or other project files. If they choose to discard, leave all files unchanged. Do not create tickets, rank tickets, operate kanban, transition ticket statuses, or otherwise edit execution plans outside this explicitly approved ticket update.
 
 Respond in three sections:
 
@@ -78,9 +78,19 @@ If there are no issues, do not ask this question. If the user declines, end afte
 If the user agrees:
 
 1. Revisit the reported issues in order, presenting only one issue at a time with its caption and summary.
-2. Ask how the user wants to proceed on that issue. Present each solution from its **Options:** list as a selectable choice and allow the user to enter their own alternative text through the question's custom response.
-3. Wait for the user's choice or alternative before presenting the next issue. Do not treat an option selection as authorization to modify files; this skill remains read-only.
-4. After all issues have been discussed, briefly recap the user's choices.
+2. Ask how the user wants to proceed on that issue. Present each solution from its **Options:** list as a selectable choice, and also include these selectable follow-ups:
+   - Elaborate on the background
+   - Make a recommendation, including pros, cons, and reasons for the recommendation
+   Allow the user to enter their own alternative text through the question's custom response.
+3. If the user asks for more background, explain relevant context for the issue, such as its underlying cause, project conventions, or likely impact, without inventing facts. Then repeat the choices for the same issue.
+4. If the user asks for a recommendation, compare the available solutions, state which one you recommend, and explain its pros, cons, and rationale. Then repeat the choices for the same issue so the user can select a resolution or provide an alternative.
+5. Wait for the user's resolution or alternative before presenting the next issue. Do not treat an informational follow-up or a resolution selection as authorization to modify files.
+6. After all issues have been discussed, summarize the user's selected resolution or alternative for each issue. Do not treat background or recommendation follow-ups as a resolution.
+7. After presenting the summary, ask the user to choose one of these selectable options:
+   - Apply decisions to the ticket
+   - Discard decisions
+8. If the user chooses to discard, confirm that no files were changed and end the walkthrough.
+9. If the user chooses to apply, update only the relevant content in the reviewed ticket's Requirements, Technical Solution, and/or Execution Plan to reflect their decisions. Preserve its front matter and unrelated content; do not modify code or other project files. If a decision is too ambiguous to apply accurately, ask a focused clarification before editing. After applying the decisions, summarize which ticket sections changed.
 
 ## Review Next Ticket
 
